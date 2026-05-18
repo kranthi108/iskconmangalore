@@ -7,12 +7,22 @@ export type DonationStatus =
   | 'failed'
   | 'refunded';
 
+export interface DonorAddress {
+  house?: string;
+  street?: string;
+  city?: string;
+  state?: string;
+  pincode?: string;
+}
+
 export interface IDonation extends Document {
   campaignId: Types.ObjectId;
+  sevaName: string;
   donorName: string;
   donorEmail: string;
   donorPhone: string;
   donorPAN?: string;
+  donorAddress?: DonorAddress;
   amount: number;
   currency: string;
   paymentMethod?: string;
@@ -34,10 +44,18 @@ const DonationSchema = new Schema<IDonation>(
       ref: 'DonationCampaign',
       required: true,
     },
+    sevaName: { type: String, required: true, trim: true },
     donorName: { type: String, required: true, trim: true },
     donorEmail: { type: String, required: true, trim: true, lowercase: true },
     donorPhone: { type: String, required: true, trim: true },
     donorPAN: { type: String, trim: true, uppercase: true },
+    donorAddress: {
+      house: { type: String, trim: true },
+      street: { type: String, trim: true },
+      city: { type: String, trim: true },
+      state: { type: String, trim: true },
+      pincode: { type: String, trim: true },
+    },
     amount: { type: Number, required: true, min: 1 },
     currency: { type: String, default: 'INR', uppercase: true },
     paymentMethod: { type: String, trim: true },

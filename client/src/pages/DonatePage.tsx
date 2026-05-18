@@ -190,6 +190,13 @@ export default function DonatePage() {
         const amount = Math.round(donateAmount)
         const donorName = values.fullName.trim()
         const panNormalized = values.pan?.trim() ? values.pan.trim().toUpperCase() : undefined
+        const donorAddress = {
+          house: values.house?.trim() || undefined,
+          street: values.street?.trim() || undefined,
+          city: values.city?.trim() || undefined,
+          state: values.state?.trim() || undefined,
+          pincode: values.pincode?.trim() || undefined,
+        }
 
         const order = await createOrder({
           campaignId: campaign._id,
@@ -197,6 +204,8 @@ export default function DonatePage() {
           donorEmail: values.email.trim(),
           donorName,
           donorPhone: values.phone.trim(),
+          donorPAN: panNormalized,
+          donorAddress,
         })
 
         await new Promise<void>((resolvePromise, rejectPromise) => {

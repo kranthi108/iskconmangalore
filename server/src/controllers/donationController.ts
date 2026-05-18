@@ -30,6 +30,7 @@ export async function createOrder(
       donorEmail,
       donorPhone,
       donorPAN,
+      donorAddress,
       isAnonymous,
       dedication,
     } = req.body as {
@@ -39,6 +40,7 @@ export async function createOrder(
       donorEmail: string;
       donorPhone: string;
       donorPAN?: string;
+      donorAddress?: { house?: string; street?: string; city?: string; state?: string; pincode?: string };
       isAnonymous?: boolean;
       dedication?: string;
     };
@@ -47,6 +49,8 @@ export async function createOrder(
     if (!campaign || !campaign.active) {
       throw new HttpError(404, 'Campaign not found or inactive');
     }
+
+    const sevaName = campaign.title;
 
     const amountPaise = toPaise(Number(amount));
     if (amountPaise < 100) {
@@ -57,14 +61,17 @@ export async function createOrder(
 
     const order = await createRazorpayOrder(amountPaise, 'INR', receipt, {
       campaignId: String(campaign._id),
+      sevaName,
     });
 
     const donation = await Donation.create({
       campaignId: new mongoose.Types.ObjectId(campaignId),
+      sevaName,
       donorName,
       donorEmail,
       donorPhone,
       donorPAN,
+      donorAddress,
       amount: Number(amount),
       currency: 'INR',
       razorpayOrderId: order.id,

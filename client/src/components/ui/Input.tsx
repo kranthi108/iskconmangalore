@@ -18,7 +18,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     <div className="w-full">
       {label ? (
         <label htmlFor={inputId} className="mb-1.5 block font-heading text-sm font-semibold text-maroon">
-          {label}
+          {label}{props.required && <span className="text-red-500"> *</span>}
         </label>
       ) : null}
       <div className="relative">

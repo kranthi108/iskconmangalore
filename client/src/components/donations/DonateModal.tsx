@@ -14,7 +14,7 @@ const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]$/
 const donorSchema = z
   .object({
     fullName: z.string().min(2, 'Name must be at least 2 characters'),
-    email: z.string().email('Enter a valid email').or(z.literal('')),
+    email: z.string().email('Enter a valid email').or(z.literal('')).optional(),
     phone: z
       .string()
       .length(10, 'Phone must be exactly 10 digits')

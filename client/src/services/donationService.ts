@@ -2,12 +2,22 @@ import type { ApiResponse, Donation, RazorpayOrder, RazorpayPaymentResponse } fr
 import type { AxiosResponse } from 'axios'
 import { api, assertApiEnvelope } from '@/services/api'
 
+export interface DonorAddress {
+  house?: string
+  street?: string
+  city?: string
+  state?: string
+  pincode?: string
+}
+
 export interface CreateDonationOrderInput {
   campaignId: string
   amount: number
   donorEmail: string
   donorName: string
   donorPhone: string
+  donorPAN?: string
+  donorAddress?: DonorAddress
 }
 
 export async function createOrder(payload: CreateDonationOrderInput): Promise<RazorpayOrder> {
