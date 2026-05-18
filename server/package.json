@@ -1,42 +1,25 @@
 {
-  "name": "server",
+  "name": "iskcon-mangalore-api",
   "version": "1.0.0",
-  "description": "",
   "type": "module",
-  "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "tsx watch src/index.ts",
-    "build": "tsc",
-    "start": "node dist/index.js",
-    "seed": "tsx src/seed.ts"
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "compression": "^1.8.1",
-    "cors": "^2.8.6",
-    "dotenv": "^17.4.2",
-    "express": "^5.2.1",
-    "express-rate-limit": "^8.5.2",
-    "express-validator": "^7.3.2",
-    "helmet": "^8.1.0",
-    "mongoose": "^9.6.2",
-    "morgan": "^1.10.1",
-    "razorpay": "^2.9.6",
-    "uuid": "^14.0.0"
+    "@neondatabase/serverless": "^1.0.0",
+    "drizzle-orm": "^0.44.0",
+    "hono": "^4.7.0",
+    "zod": "^3.25.0"
   },
   "devDependencies": {
-    "@types/compression": "^1.8.1",
-    "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.6",
-    "@types/morgan": "^1.9.10",
-    "@types/node": "^25.8.0",
-    "@types/uuid": "^10.0.0",
-    "nodemon": "^3.1.14",
-    "ts-node": "^10.9.2",
-    "tsx": "^4.22.0",
-    "typescript": "^6.0.3"
+    "@cloudflare/workers-types": "^4.20250510.0",
+    "drizzle-kit": "^0.31.0",
+    "wrangler": "^4.14.0",
+    "typescript": "^5.8.0"
   }
 }

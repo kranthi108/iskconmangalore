@@ -1,0 +1,13 @@
+name = "iskcon-mangalore-api"
+main = "src/index.ts"
+compatibility_date = "2025-05-15"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+# Non-secret env vars can go here
+
+# Secrets (set via `wrangler secret put`):
+# DATABASE_URL
+# RAZORPAY_KEY_ID
+# RAZORPAY_KEY_SECRET
+# CLIENT_URL

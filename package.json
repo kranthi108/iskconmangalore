@@ -6,8 +6,10 @@
     "dev": "npm run dev --prefix client",
     "dev:server": "npm run dev --prefix server",
     "build": "npm run build --prefix client",
-    "build:server": "npm run build --prefix server",
-    "seed": "npm run seed --prefix server",
+    "deploy:server": "npm run deploy --prefix server",
+    "db:push": "npm run db:push --prefix server",
+    "db:generate": "npm run db:generate --prefix server",
+    "db:studio": "npm run db:studio --prefix server",
     "install:all": "npm install --prefix client && npm install --prefix server"
   }
 }
