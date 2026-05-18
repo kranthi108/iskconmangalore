@@ -1,0 +1,71 @@
+import { motion } from 'framer-motion'
+import { Sparkles } from 'lucide-react'
+import Button from '@/components/ui/Button'
+import Card from '@/components/ui/Card'
+import Input from '@/components/ui/Input'
+import { formatCurrency } from '@/utils/formatCurrency'
+import { cn } from '@/utils/cn'
+
+export interface DonationAmountSelectorProps {
+  amounts: number[]
+  selectedAmount: number | null
+  onSelect: (amount: number | null) => void
+  customAmount: string
+  onCustomAmountChange: (value: string) => void
+  className?: string
+}
+
+export default function DonationAmountSelector({
+  amounts,
+  selectedAmount,
+  onSelect,
+  customAmount,
+  onCustomAmountChange,
+  className,
+}: DonationAmountSelectorProps) {
+  return (
+    <Card className={cn('border border-gold-400/30 bg-gradient-to-br from-cream via-white to-peacock-50 shadow-xl', className)}>
+      <div className="flex items-center gap-3">
+        <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-maroon/90 text-gold-400 shadow-md">
+          <Sparkles className="h-5 w-5" aria-hidden />
+        </span>
+        <div>
+          <h3 className="font-heading text-lg font-semibold text-maroon sm:text-xl">Choose your offering</h3>
+          <p className="text-sm text-peacock-900/75">Every rupee becomes flowers, lamps, and sanctified prasādam for the Lord.</p>
+        </div>
+      </div>
+      <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {amounts.map((amount) => {
+          const active = selectedAmount === amount
+          return (
+            <motion.div key={amount} whileTap={{ scale: 0.98 }}>
+              <Button
+                type="button"
+                variant={active ? 'maroon' : 'outline'}
+                size="lg"
+                className="w-full justify-center border-2 font-semibold tracking-wide"
+                onClick={() => onSelect(amount)}
+                aria-pressed={active}
+              >
+                {formatCurrency(amount)}
+              </Button>
+            </motion.div>
+          )
+        })}
+      </div>
+      <div className="mt-6">
+        <Input
+          label="Custom amount"
+          inputMode="decimal"
+          placeholder="Enter any amount in ₹"
+          value={customAmount}
+          onChange={(e) => {
+            const next = e.target.value.replace(/[^0-9.]/g, '')
+            onCustomAmountChange(next)
+            onSelect(null)
+          }}
+        />
+      </div>
+    </Card>
+  )
+}

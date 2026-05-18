@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+@theme {
+  --color-peacock-50: #eff6ff;
+  --color-peacock-100: #dbeafe;
+  --color-peacock-200: #bfdbfe;
+  --color-peacock-300: #93c5fd;
+  --color-peacock-400: #60a5fa;
+  --color-peacock-500: #3b82f6;
+  --color-peacock-600: #1D4ED8;
+  --color-peacock-700: #1e40af;
+  --color-peacock-800: #1e3a8a;
+  --color-peacock-900: #172554;
+  --color-gold-50: #fefce8;
+  --color-gold-100: #fef9c3;
+  --color-gold-200: #fef08a;
+  --color-gold-300: #fde047;
+  --color-gold-400: #facc15;
+  --color-gold-500: #D4AF37;
+  --color-gold-600: #ca8a04;
+  --color-gold-700: #a16207;
+  --color-gold-800: #854d0e;
+  --color-gold-900: #713f12;
+  --color-cream: #FFF8E7;
+  --color-saffron: #FF9933;
+  --color-maroon: #6D071A;
+  --color-maroon-light: #8B1A2B;
+  --font-heading: 'Playfair Display', serif;
+  --font-body: 'Inter', sans-serif;
+  --font-sanskrit: 'Tiro Devanagari Sanskrit', serif;
+}
+
+@layer base {
+  body {
+    font-family: var(--font-body);
+    background-color: var(--color-cream);
+    color: #1a1a2e;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+  }
+}
