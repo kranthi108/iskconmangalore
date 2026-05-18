@@ -31,6 +31,7 @@ import { FEATURED_CAMPAIGNS, FEATURED_FESTIVALS, DARSHAN_TIMINGS } from '@/const
 import { GALLERY_IMAGES, LIVESTREAM_PREVIEW } from '@/constants/placeholders'
 import krishnaBalaramBg from '@/assets/krishna_balaram.JPG'
 import templeExterior from '@/assets/side_view.png'
+import quoteBg from '@/assets/bg.webp'
 import { cn } from '@/utils/cn'
 
 const timingIconLookup: Record<string, LucideIcon> = {
@@ -201,11 +202,12 @@ export default function HomePage() {
 
       <LotusDevider />
 
-      <section className="bg-maroon py-16 text-cream">
+      <section className="bg-gradient-to-br from-peacock-900 via-maroon to-peacock-800 py-16 text-cream">
         <Container size="lg">
           <KrishnaQuoteCard
             quote="Abandon all varieties of religion and just surrender unto Me. I shall deliver you from all sinful reactions. Do not fear."
             source="Bhagavad Gītā 18.66"
+            backgroundImage={quoteBg}
           />
         </Container>
       </section>
