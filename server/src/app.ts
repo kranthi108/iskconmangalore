@@ -7,6 +7,7 @@ import campaignRoutes from './routes/campaignRoutes.js';
 import donationRoutes from './routes/donationRoutes.js';
 import festivalRoutes from './routes/festivalRoutes.js';
 import contactRoutes from './routes/contactRoutes.js';
+import volunteerRoutes from './routes/volunteerRoutes.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { generalLimiter } from './middleware/rateLimiter.js';
 import { env } from './config/env.js';
@@ -33,6 +34,7 @@ app.use('/api/campaigns', campaignRoutes);
 app.use('/api/donations', donationRoutes);
 app.use('/api/festivals', festivalRoutes);
 app.use('/api/contact', contactRoutes);
+app.use('/api/volunteers', volunteerRoutes);
 
 app.use(errorHandler);
 

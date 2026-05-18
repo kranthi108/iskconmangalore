@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { Sparkles } from 'lucide-react'
+import { Heart, Sparkles } from 'lucide-react'
 import Button from '@/components/ui/Button'
 import Card from '@/components/ui/Card'
 import Input from '@/components/ui/Input'
@@ -12,6 +12,7 @@ export interface DonationAmountSelectorProps {
   onSelect: (amount: number | null) => void
   customAmount: string
   onCustomAmountChange: (value: string) => void
+  onDonate?: (amount: number) => void
   className?: string
 }
 
@@ -21,8 +22,14 @@ export default function DonationAmountSelector({
   onSelect,
   customAmount,
   onCustomAmountChange,
+  onDonate,
   className,
 }: DonationAmountSelectorProps) {
+  const parsedCustom = Number.parseFloat(customAmount.replace(/,/g, ''))
+  const resolvedAmount =
+    selectedAmount ?? (Number.isFinite(parsedCustom) && parsedCustom >= 1 ? Math.round(parsedCustom) : null)
+  const canDonate = resolvedAmount !== null && resolvedAmount >= 1
+
   return (
     <Card className={cn('border border-gold-400/30 bg-gradient-to-br from-cream via-white to-peacock-50 shadow-xl', className)}>
       <div className="flex items-center gap-3">
@@ -31,7 +38,7 @@ export default function DonationAmountSelector({
         </span>
         <div>
           <h3 className="font-heading text-lg font-semibold text-maroon sm:text-xl">Choose your offering</h3>
-          <p className="text-sm text-peacock-900/75">Every rupee becomes flowers, lamps, and sanctified prasādam for the Lord.</p>
+          <p className="text-sm text-peacock-900/75">Every rupee becomes flowers, lamps, and sanctified prasadam for the Lord.</p>
         </div>
       </div>
       <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -44,7 +51,10 @@ export default function DonationAmountSelector({
                 variant={active ? 'maroon' : 'outline'}
                 size="lg"
                 className="w-full justify-center border-2 font-semibold tracking-wide"
-                onClick={() => onSelect(amount)}
+                onClick={() => {
+                  onSelect(amount)
+                  onCustomAmountChange(String(amount))
+                }}
                 aria-pressed={active}
               >
                 {formatCurrency(amount)}
@@ -66,6 +76,23 @@ export default function DonationAmountSelector({
           }}
         />
       </div>
+      {onDonate && (
+        <motion.div className="mt-6" whileTap={canDonate ? { scale: 0.98 } : undefined}>
+          <Button
+            type="button"
+            variant="maroon"
+            size="lg"
+            className="w-full justify-center gap-2"
+            disabled={!canDonate}
+            onClick={() => {
+              if (canDonate && resolvedAmount) onDonate(resolvedAmount)
+            }}
+          >
+            <Heart className="h-5 w-5 fill-current" aria-hidden />
+            Donate{resolvedAmount ? ` ${formatCurrency(resolvedAmount, { maximumFractionDigits: 0 })}` : ''}
+          </Button>
+        </motion.div>
+      )}
     </Card>
   )
 }

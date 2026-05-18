@@ -2,23 +2,22 @@ import type { ApiResponse, ContactFormData } from '@/types'
 import type { AxiosResponse } from 'axios'
 import { api, assertApiEnvelope } from '@/services/api'
 
-export interface VolunteerApplicationData {
+export interface VolunteerSignupData {
   name: string
-  email: string
   phone: string
-  sevaAreas: string[]
-  availabilityNotes: string
-  skills?: string
-  message?: string
+  date: string
+  hoursAvailable: number
+  sevaCategory: string
 }
 
 interface ContactSubmissionAck {
   id: string
-  receivedAt: string
+  createdAt: string
 }
 
-interface VolunteerSubmissionAck extends ContactSubmissionAck {
-  onboardingEmailSent?: boolean
+interface VolunteerSubmissionAck {
+  id: string
+  createdAt: string
 }
 
 export async function submitContact(data: ContactFormData): Promise<ContactSubmissionAck> {
@@ -31,11 +30,11 @@ export async function submitContact(data: ContactFormData): Promise<ContactSubmi
   return assertApiEnvelope(response.data)
 }
 
-export async function submitVolunteer(data: VolunteerApplicationData): Promise<VolunteerSubmissionAck> {
+export async function submitVolunteer(data: VolunteerSignupData): Promise<VolunteerSubmissionAck> {
   const response = await api.post<
     ApiResponse<VolunteerSubmissionAck>,
     AxiosResponse<ApiResponse<VolunteerSubmissionAck>>,
-    VolunteerApplicationData
+    VolunteerSignupData
   >('/volunteers', data)
 
   return assertApiEnvelope(response.data)

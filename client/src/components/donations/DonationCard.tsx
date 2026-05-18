@@ -80,7 +80,7 @@ export default function DonationCard({ campaign, className }: DonationCardProps)
             ))}
           </div>
           <Link
-            to={`/donate/${campaign.slug}`}
+            to={`/donate/${campaign.slug}#choose-offering`}
             className={cn(
               buttonVariants({ variant: 'maroon', size: 'lg', className: 'w-full justify-between' }),
               'no-underline',

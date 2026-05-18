@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
@@ -5,6 +6,7 @@ import { Loader2, Mail, MapPinned, Phone } from 'lucide-react'
 import { Helmet } from 'react-helmet-async'
 import { useForm } from 'react-hook-form'
 import HeroBanner from '@/components/layout/HeroBanner'
+import VolunteerModal from '@/components/volunteer/VolunteerModal'
 import { buttonVariants } from '@/components/ui/buttonVariants'
 import Container from '@/components/ui/Container'
 import Input from '@/components/ui/Input'
@@ -31,6 +33,8 @@ const contactSchema = z.object({
 type ContactValues = z.infer<typeof contactSchema>
 
 export default function ContactPage() {
+  const [volunteerOpen, setVolunteerOpen] = useState(false)
+
   const mutation = useMutation({
     mutationFn: (payload: ContactFormData) => submitContact(payload),
   })
@@ -157,9 +161,22 @@ export default function ContactPage() {
 
             <div className="rounded-3xl border border-white/20 bg-maroon-light/85 p-5 text-white/82">
               <p className="text-xs uppercase tracking-[0.3em] text-gold-100">Sacred topography</p>
-              <div className="mt-4 flex aspect-video items-center justify-center rounded-2xl border border-white/35 bg-maroon-dark/40 text-xs font-semibold uppercase tracking-[0.24em]" role="presentation">
-                Map Loading…
-              </div>
+              <a
+                href="https://www.google.com/maps/place/ISKCON+Sri+Sri+Krishna+Balaram+Mandir,+Mangaluru/@12.8773348,74.8388406,20.98z"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 block overflow-hidden rounded-2xl border border-white/35"
+              >
+                <iframe
+                  title="ISKCON Sri Sri Krishna Balaram Mandir, Mangaluru"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d623.1!2d74.8388406!3d12.8773348!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba35a37f5f689d5%3A0xd5b76b06c2b5e8ee!2sISKCON%20Sri%20Sri%20Krishna%20Balaram%20Mandir%2C%20Mangaluru!5e0!3m2!1sen!2sin!4v1"
+                  className="aspect-video w-full rounded-2xl"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              </a>
             </div>
           </motion.aside>
         </Container>
@@ -171,21 +188,24 @@ export default function ContactPage() {
 
           <div className="space-y-4 text-peacock-900/85">
             <p>Select your availability rhythm — coordinators pair you without overwhelming household duties.</p>
-            <motion.a
-              href={`mailto:${TEMPLE_INFO.email}?subject=Volunteer+sankalpa`}
+            <motion.button
+              type="button"
               whileHover={{ scale: 1.015 }}
-              className={cn(buttonVariants({ variant: 'outline', size: 'lg', className: 'inline-flex w-full md:w-max' }), 'no-underline')}
+              className={cn(buttonVariants({ variant: 'outline', size: 'lg', className: 'inline-flex w-full md:w-max' }))}
+              onClick={() => setVolunteerOpen(true)}
             >
-              Sign up seva desk corridor
-            </motion.a>
+              Sign up for volunteer seva
+            </motion.button>
           </div>
         </Container>
       </section>
 
+      <VolunteerModal open={volunteerOpen} onClose={() => setVolunteerOpen(false)} />
+
       <section className="relative overflow-hidden bg-maroon pb-28 pt-20 text-white">
         <motion.div aria-hidden className="pointer-events-none absolute inset-x-[-20%] bottom-[-30%] h-[60%] bg-gradient-to-t from-gold-400/15 to-transparent" />
         <Container size="md" className="relative rounded-[34px] border border-white/20 bg-maroon-light/70 p-10 text-center backdrop-blur">
-          <SectionHeading decorative alignment="center" title="Sunday Love Feast etiquette" subtitle="12:45 PM onward · Children welcome · Śrīla Prabhupāda lecture · Bhajan flight · Śuddha vegetarian feast." className="text-cream [&_h2]:text-cream [&_p]:text-gold-100/88" />
+          <SectionHeading decorative alignment="center" title="Sunday Love Feast etiquette" subtitle="12:45 PM onward · Children welcome · Śrīla Prabhupāda lecture · Bhajan flight · Sathvic feast." className="text-cream [&_h2]:text-cream [&_p]:text-gold-100/88" />
           <p className="mt-8 text-base text-white/85">
             Bring questions, bring friends, bring empty stomachs — prasādam flows until every plate glows with gratitude toward Śrī Rādhā’s cooks.
           </p>

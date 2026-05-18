@@ -1,13 +1,15 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 import { ArrowLeft, Gauge, Landmark, ReceiptText, ShieldCheck } from 'lucide-react'
 import { Helmet } from 'react-helmet-async'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import CountdownTimer from '@/components/krishna/CountdownTimer'
 import SlokaSection from '@/components/krishna/SlokaSection'
 import DonationAmountSelector from '@/components/donations/DonationAmountSelector'
 import DonationCard from '@/components/donations/DonationCard'
-import DonationForm from '@/components/donations/DonationForm'
+import DonateModal from '@/components/donations/DonateModal'
+import type { DonateModalFormValues } from '@/components/donations/DonateModal'
+import BlessingsSuccessScreen from '@/components/donations/BlessingsSuccessScreen'
 import PlaceholderImage from '@/components/placeholders/PlaceholderImage'
 import HeroBanner from '@/components/layout/HeroBanner'
 import Button from '@/components/ui/Button'
@@ -16,6 +18,9 @@ import SectionHeading from '@/components/ui/SectionHeading'
 import { FEATURED_CAMPAIGNS, type FeaturedCampaignCard } from '@/constants/data'
 import { SEVA_THUMBNAILS } from '@/constants/placeholders'
 import { useCampaigns, useCampaignBySlug } from '@/hooks/useCampaigns'
+import { useRazorpay } from '@/hooks/useRazorpay'
+import { createOrder, verifyPayment } from '@/services/donationService'
+import { ApiHttpError } from '@/services/api'
 import type { DonationCampaign } from '@/types'
 import { useDonationStore } from '@/store/donationStore'
 import { cn } from '@/utils/cn'
@@ -25,7 +30,7 @@ type CategoryFilter = 'all' | DonationCampaign['category']
 const DEFAULT_SLOKA = {
   text: 'यज्ञार्थात्कर्मणोऽन्यत्र लोकोऽयं कर्मबन्धनः',
   translation:
-    'Work done as sacrifice for Viṣṇu frees the performer — lest other work binds the performer to worldly reaction.',
+    'Work done as a sacrifice for Viṣṇu has to be performed; otherwise work causes bondage in this material world. Therefore, O son of Kuntī, perform your prescribed duties for His satisfaction, and in that way you will always remain free from bondage.',
   reference: 'Bhagavad-gītā 3.9',
 } as const
 
@@ -94,17 +99,44 @@ function buildStory(card: FeaturedCampaignCard): StorySource {
   }
 }
 
+type RazorpayHandlerResponseSimple = {
+  razorpay_order_id?: string
+  razorpay_payment_id?: string
+  razorpay_signature?: string
+}
+
 export default function DonatePage() {
   const navigate = useNavigate()
+  const location = useLocation()
   const { slug } = useParams<{ slug?: string }>()
   const campaignsQuery = useCampaigns(false)
   const campaignQuery = useCampaignBySlug(slug)
+  const razorpay = useRazorpay()
   const selectedAmount = useDonationStore((state) => state.selectedAmount)
   const customAmount = useDonationStore((state) => state.customAmount)
   const setAmount = useDonationStore((state) => state.setAmount)
   const setCustomAmount = useDonationStore((state) => state.setCustomAmount)
   const [category, setCategory] = useState<CategoryFilter>('all')
   const [openFaq, setOpenFaq] = useState<number | null>(0)
+  const [modalOpen, setModalOpen] = useState(false)
+  const [donateAmount, setDonateAmount] = useState(0)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [blessings, setBlessings] = useState<{ receiptNumber: string; amount: number } | null>(null)
+
+  useEffect(() => {
+    if (location.hash) {
+      const id = location.hash.replace('#', '')
+      const timer = setTimeout(() => {
+        const el = document.getElementById(id)
+        if (el) {
+          const navbarHeight = document.querySelector('header')?.offsetHeight ?? 0
+          const top = el.getBoundingClientRect().top + window.scrollY - navbarHeight - 16
+          window.scrollTo({ top, behavior: 'smooth' })
+        }
+      }, 300)
+      return () => clearTimeout(timer)
+    }
+  }, [location.hash])
 
   const featuredMatch = FEATURED_CAMPAIGNS.find((campaign) => campaign.slug === slug)
   const story: StorySource | undefined = useMemo(() => {
@@ -135,9 +167,99 @@ export default function DonatePage() {
 
   const filteredList = listingSource.filter((campaign) => (category === 'all' ? true : campaign.category === category))
 
-  const parsedCustom = Number.parseFloat(customAmount.replace(/,/g, ''))
-  const resolvedAmount =
-    selectedAmount ?? (Number.isFinite(parsedCustom) && parsedCustom >= 108 ? Math.round(parsedCustom) : null)
+  const campaign = campaignQuery.data
+  const featured = FEATURED_CAMPAIGNS.find((card) => card.slug === slug)
+  const campaignTitle = useMemo(
+    () => campaign?.title ?? featured?.title ?? (slug ?? '').replace(/-/g, ' '),
+    [campaign?.title, slug, featured?.title],
+  )
+
+  const handleOpenDonateModal = useCallback((amount: number) => {
+    setDonateAmount(amount)
+    setModalOpen(true)
+  }, [])
+
+  const handleModalSubmit = useCallback(
+    async (values: DonateModalFormValues) => {
+      if (!campaign?._id || donateAmount < 1) return
+
+      setIsSubmitting(true)
+      try {
+        await razorpay.reload()
+
+        const amount = Math.round(donateAmount)
+        const donorName = values.fullName.trim()
+        const panNormalized = values.pan?.trim() ? values.pan.trim().toUpperCase() : undefined
+
+        const order = await createOrder({
+          campaignId: campaign._id,
+          amount,
+          donorEmail: values.email.trim(),
+          donorName,
+          donorPhone: values.phone.trim(),
+        })
+
+        await new Promise<void>((resolvePromise, rejectPromise) => {
+          void razorpay
+            .openPayment(order, {
+              donorName,
+              donorEmail: values.email.trim(),
+              donorPhone: values.phone.trim(),
+              description: `${campaign.title} · ISKCON Mangalore`,
+              imageUrl: campaign.bannerImage,
+              themeColor: campaign.themeConfig?.primaryColor ?? '#6D071A',
+              onSuccess(response: RazorpayHandlerResponseSimple) {
+                void (async () => {
+                  try {
+                    if (
+                      typeof response.razorpay_order_id !== 'string' ||
+                      typeof response.razorpay_payment_id !== 'string' ||
+                      typeof response.razorpay_signature !== 'string'
+                    ) {
+                      rejectPromise(new Error('invalid razorpay response'))
+                      return
+                    }
+
+                    const donation = await verifyPayment({
+                      campaignId: campaign._id,
+                      amount,
+                      donorEmail: values.email.trim(),
+                      donorName,
+                      donorPhone: values.phone.trim(),
+                      isAnonymous: false,
+                      donorPAN: panNormalized,
+                      razorpay_order_id: response.razorpay_order_id,
+                      razorpay_payment_id: response.razorpay_payment_id,
+                      razorpay_signature: response.razorpay_signature,
+                    })
+
+                    setModalOpen(false)
+                    setBlessings({ receiptNumber: donation.receiptNumber, amount })
+                    resolvePromise()
+                  } catch (error: unknown) {
+                    console.error('[DonateModal] verify failed', error)
+                    rejectPromise(error instanceof Error ? error : new Error('verify failed'))
+                  }
+                })()
+              },
+              onFailure(reason: unknown) {
+                rejectPromise(reason instanceof Error ? reason : new Error('payment dismissed'))
+              },
+            })
+            .catch((error: unknown) => {
+              rejectPromise(error instanceof Error ? error : new Error('checkout bootstrap failed'))
+            })
+        })
+      } catch (error) {
+        if (error instanceof ApiHttpError) {
+          console.error('[DonateModal] API error', error.message)
+        }
+      } finally {
+        setIsSubmitting(false)
+      }
+    },
+    [campaign, donateAmount, razorpay],
+  )
 
   if (!slug) {
     const heroImage = FEATURED_CAMPAIGNS[0]?.bannerImage ?? SEVA_THUMBNAILS.annadanam
@@ -253,18 +375,36 @@ export default function DonatePage() {
         </Container>
       </section>
 
-      <section className="bg-gradient-to-b from-white via-peacock-50 to-white py-20">
-        <Container size="xl" className="grid gap-10 lg:grid-cols-[1.05fr_minmax(0,0.95fr)] lg:gap-14">
+      <section id="choose-offering" className="bg-gradient-to-b from-white via-peacock-50 to-white py-20">
+        <Container size="md">
           <DonationAmountSelector
             amounts={[...story.suggestedAmounts]}
             selectedAmount={selectedAmount}
             onSelect={setAmount}
             customAmount={customAmount}
             onCustomAmountChange={setCustomAmount}
+            onDonate={handleOpenDonateModal}
           />
-          <DonationForm campaignSlug={slug} selectedAmount={resolvedAmount} />
         </Container>
       </section>
+
+      <DonateModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        amount={donateAmount}
+        sevaName={campaignTitle}
+        onSubmit={handleModalSubmit}
+        isSubmitting={isSubmitting}
+      />
+
+      {blessings && (
+        <BlessingsSuccessScreen
+          amount={blessings.amount}
+          receiptNumber={blessings.receiptNumber}
+          campaignTitle={campaignTitle}
+          onClose={() => setBlessings(null)}
+        />
+      )}
 
       <section className="bg-maroon py-16 text-cream">
         <Container size="xl">

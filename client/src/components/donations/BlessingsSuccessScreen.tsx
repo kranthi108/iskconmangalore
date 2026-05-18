@@ -118,8 +118,7 @@ export default function BlessingsSuccessScreen({
             </div>
             <div className="mt-8 rounded-3xl bg-gradient-to-br from-peacock-900 to-maroon px-6 py-5 text-left text-cream shadow-lg">
               <p className="font-heading text-xl leading-relaxed italic text-gold-200">
-                “Work done as a sacrifice for Viṣṇu has to be performed, otherwise work causes bondage in this material
-                world.”
+                “Work done as a sacrifice for Viṣṇu has to be performed; otherwise work causes bondage in this material world. Therefore, O son of Kuntī, perform your prescribed duties for His satisfaction, and in that way you will always remain free from bondage.”
               </p>
               <p className="mt-2 text-right text-sm font-semibold text-gold-500/90">— Bhagavad-gītā 3.9 (paraphrase)</p>
             </div>
