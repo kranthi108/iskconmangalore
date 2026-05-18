@@ -28,8 +28,9 @@ import Card from '@/components/ui/Card'
 import Container from '@/components/ui/Container'
 import SectionHeading from '@/components/ui/SectionHeading'
 import { FEATURED_CAMPAIGNS, FEATURED_FESTIVALS, DARSHAN_TIMINGS } from '@/constants/data'
-import { GALLERY_IMAGES, LIVESTREAM_PREVIEW, TEMPLE_EXTERIOR } from '@/constants/placeholders'
+import { GALLERY_IMAGES, LIVESTREAM_PREVIEW } from '@/constants/placeholders'
 import krishnaBalaramBg from '@/assets/krishna_balaram.JPG'
+import templeExterior from '@/assets/side_view.png'
 import { cn } from '@/utils/cn'
 
 const timingIconLookup: Record<string, LucideIcon> = {
@@ -282,7 +283,7 @@ export default function HomePage() {
               transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
               className="order-1 lg:order-2"
             >
-              <PlaceholderImage src={TEMPLE_EXTERIOR} alt="ISKCON Mangalore temple exterior overview" aspectRatio="video" />
+              <PlaceholderImage src={templeExterior} alt="ISKCON Mangalore temple exterior overview" aspectRatio="video" />
             </motion.div>
           </div>
         </Container>

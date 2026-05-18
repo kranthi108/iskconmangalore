@@ -10,7 +10,8 @@ import { buttonVariants } from '@/components/ui/buttonVariants'
 import Container from '@/components/ui/Container'
 import SectionHeading from '@/components/ui/SectionHeading'
 import { FEATURED_CAMPAIGNS, FEATURED_FESTIVALS } from '@/constants/data'
-import { LIVESTREAM_PREVIEW, TEMPLE_EXTERIOR, DEITY_DARSHAN } from '@/constants/placeholders'
+import { LIVESTREAM_PREVIEW, DEITY_DARSHAN } from '@/constants/placeholders'
+import templeExterior from '@/assets/side_view.png'
 import { cn } from '@/utils/cn'
 
 export default function FestivalDetailPage() {
@@ -43,7 +44,7 @@ export default function FestivalDetailPage() {
     )
   }
 
-  const gallery = [festival.bannerImage, DEITY_DARSHAN, TEMPLE_EXTERIOR, LIVESTREAM_PREVIEW]
+  const gallery = [festival.bannerImage, DEITY_DARSHAN, templeExterior, LIVESTREAM_PREVIEW]
 
   return (
     <>
