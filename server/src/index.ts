@@ -13,7 +13,6 @@ type Env = {
     RAZORPAY_KEY_ID: string
     RAZORPAY_KEY_SECRET: string
     RAZORPAY_WEBHOOK_SECRET: string
-    CLIENT_URL: string
   }
 }
 
@@ -25,14 +24,9 @@ app.route('/api/webhook', webhook)
 app.use(
   '/api/*',
   cors({
-    origin: (origin, c) => {
-      const allowed = c.env.CLIENT_URL
-      if (!allowed || allowed === '*') return '*'
-      return origin === allowed ? origin : ''
-    },
-    allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowHeaders: ['Content-Type', 'Authorization'],
-    maxAge: 86400,
+    origin: ['http://localhost:5173', 'https://iskconmangalore.org', 'https://www.iskconmangalore.org'],
+    allowMethods: ['GET', 'POST', 'OPTIONS'],
+    allowHeaders: ['Content-Type'],
   }),
 )
 

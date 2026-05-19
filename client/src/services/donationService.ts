@@ -18,6 +18,8 @@ export interface CreateDonationOrderInput {
   donorPhone: string
   donorPAN?: string
   donorAddress?: DonorAddress
+  isAnonymous?: boolean
+  dedication?: string
 }
 
 export async function createOrder(payload: CreateDonationOrderInput): Promise<RazorpayOrder> {
@@ -31,16 +33,7 @@ export async function createOrder(payload: CreateDonationOrderInput): Promise<Ra
   return assertApiEnvelope(response.data)
 }
 
-export interface VerifyPaymentInput extends RazorpayPaymentResponse {
-  campaignId: string
-  donorEmail: string
-  donorName: string
-  donorPhone: string
-  amount: number
-  isAnonymous?: boolean
-  dedication?: string
-  donorPAN?: string
-}
+export type VerifyPaymentInput = RazorpayPaymentResponse
 
 export async function verifyPayment(payload: VerifyPaymentInput): Promise<Donation> {
   const response = await api.post<ApiResponse<Donation>, AxiosResponse<ApiResponse<Donation>>, VerifyPaymentInput>(

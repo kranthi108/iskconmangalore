@@ -232,13 +232,6 @@ export default function DonatePage() {
                     }
 
                     const donation = await verifyPayment({
-                      campaignId: campaign._id,
-                      amount,
-                      donorEmail,
-                      donorName,
-                      donorPhone: values.phone.trim(),
-                      isAnonymous: false,
-                      donorPAN: panNormalized,
                       razorpay_order_id: response.razorpay_order_id,
                       razorpay_payment_id: response.razorpay_payment_id,
                       razorpay_signature: response.razorpay_signature,
