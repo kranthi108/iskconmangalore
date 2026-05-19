@@ -5,17 +5,22 @@ import festivals from './routes/festivals'
 import contact from './routes/contact'
 import volunteers from './routes/volunteers'
 import donations from './routes/donations'
+import webhook from './routes/webhook'
 
 type Env = {
   Bindings: {
     DATABASE_URL: string
     RAZORPAY_KEY_ID: string
     RAZORPAY_KEY_SECRET: string
+    RAZORPAY_WEBHOOK_SECRET: string
     CLIENT_URL: string
   }
 }
 
 const app = new Hono<Env>()
+
+// Webhook route registered before CORS so Razorpay can POST without preflight
+app.route('/api/webhook', webhook)
 
 app.use(
   '/api/*',

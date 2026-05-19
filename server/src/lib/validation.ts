@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-export const contactSchema = z.object({
+export const feedbackSchema = z.object({
   name: z.string().trim().min(1, 'Name is required').max(120),
   email: z.string().email('Enter a valid email'),
   phone: z.string().trim().min(1, 'Phone is required').max(20),

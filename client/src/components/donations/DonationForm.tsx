@@ -309,7 +309,7 @@ export default function DonationForm({
         <Input label="Saṅkalpa dedication (optional)" placeholder="Remembering Śrīla Prabhupāda…" {...register('dedication')} />
 
         <Button type="submit" variant="maroon" size="lg" className="w-full" disabled={busy} isLoading={busy}>
-          Proceed to Śrī Rādhā’s secure treasury
+          Proceed to Śrī Krishna Balaram’s secure treasury
         </Button>
       </form>
 

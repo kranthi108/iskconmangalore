@@ -10,7 +10,7 @@ import {
   real,
 } from 'drizzle-orm/pg-core'
 
-export const contacts = pgTable('contacts', {
+export const feedbacks = pgTable('feedbacks', {
   id: uuid('id').defaultRandom().primaryKey(),
   name: varchar('name', { length: 120 }).notNull(),
   email: varchar('email', { length: 255 }).notNull(),

@@ -10,8 +10,7 @@ import { buttonVariants } from '@/components/ui/buttonVariants'
 import Container from '@/components/ui/Container'
 import SectionHeading from '@/components/ui/SectionHeading'
 import { FEATURED_CAMPAIGNS, FEATURED_FESTIVALS } from '@/constants/data'
-import { LIVESTREAM_PREVIEW, DEITY_DARSHAN } from '@/constants/placeholders'
-import templeExterior from '@/assets/side_view.png'
+import { LIVESTREAM_PREVIEW, DEITY_DARSHAN, FESTIVAL_GALLERY_PLACEHOLDER } from '@/constants/placeholders'
 import { cn } from '@/utils/cn'
 
 export default function FestivalDetailPage() {
@@ -44,7 +43,7 @@ export default function FestivalDetailPage() {
     )
   }
 
-  const gallery = [festival.bannerImage, DEITY_DARSHAN, templeExterior, LIVESTREAM_PREVIEW]
+  const gallery = [festival.bannerImage, DEITY_DARSHAN, FESTIVAL_GALLERY_PLACEHOLDER, LIVESTREAM_PREVIEW]
 
   return (
     <>
@@ -87,7 +86,7 @@ export default function FestivalDetailPage() {
           <div>
             <h3 className="font-heading text-3xl text-maroon">Fuel this ecstasy with practical seva</h3>
             <p className="mt-4 max-w-xl text-peacock-900/85">
-              Garlands multiply when hearts sponsor them — earmark donations toward this festival arc and Śrī Rādhā’s cooks will amplify prasadam oceans.
+              Garlands multiply when hearts sponsor them — earmark donations toward this festival arc and Śrī Krishna Balaram's cooks will amplify prasadam oceans.
             </p>
           </div>
           <Link to={donationHref} className={cn(buttonVariants({ variant: 'maroon', size: 'xl' }), 'inline-flex whitespace-nowrap no-underline')}>
@@ -97,7 +96,7 @@ export default function FestivalDetailPage() {
       </section>
       <section className="bg-peacock-900 py-20 text-white">
         <Container size="lg">
-          <SectionHeading alignment="center" title="Global darśanas" subtitle="When your city cannot commute, Śrī Rādhā’s livestream veil still trembles." decorative className="text-cream [&_h2]:text-cream [&_p]:text-gold-100/82" />
+          <SectionHeading alignment="center" title="Global darśanas" subtitle="When your city cannot commute, Śrī Krishna Balaram's livestream veil still trembles." decorative className="text-cream [&_h2]:text-cream [&_p]:text-gold-100/82" />
           <PlaceholderVideo posterSrc={LIVESTREAM_PREVIEW} className="mt-12" />
           <div className="mt-10 text-center">
             <a href="https://www.youtube.com/@iskconmangalore" target="_blank" rel="noreferrer" className={cn(buttonVariants({ variant: 'secondary', size: 'lg' }), 'inline-flex no-underline')}>

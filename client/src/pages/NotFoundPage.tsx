@@ -21,7 +21,7 @@ export default function NotFoundPage() {
 
         <Container size="md" className="relative flex flex-col items-center gap-8 text-center">
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-xs font-semibold uppercase tracking-[0.55em] text-gold-200">
-            Śrī Rādhā’s library · 404
+            Śrī Krishna Balaram's library · 404
           </motion.p>
           <motion.h1 initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} className="font-heading text-4xl sm:text-[2.8rem]" transition={{ duration: 0.55 }}>
             Lost in the spiritual realm?

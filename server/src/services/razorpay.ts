@@ -67,3 +67,25 @@ export async function verifyRazorpaySignature(
 
   return expectedSignature === signature
 }
+
+export async function verifyWebhookSignature(
+  rawBody: string,
+  signature: string,
+  webhookSecret: string,
+): Promise<boolean> {
+  const encoder = new TextEncoder()
+  const key = await crypto.subtle.importKey(
+    'raw',
+    encoder.encode(webhookSecret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign'],
+  )
+
+  const signatureBuffer = await crypto.subtle.sign('HMAC', key, encoder.encode(rawBody))
+  const expectedSignature = Array.from(new Uint8Array(signatureBuffer))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('')
+
+  return expectedSignature === signature
+}

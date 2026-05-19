@@ -64,7 +64,7 @@ export default function ContactPage() {
     }
   }
 
-  let statusMessage = 'We respond Tuesdays–Saturdays prior to Śrī Rādhā’s evening offerings.'
+  let statusMessage = 'We respond Tuesdays–Saturdays prior to Śrī Krishna Balaram evening offerings.'
   let statusTone = 'text-peacock-800'
   if (mutation.isSuccess) {
     statusMessage = 'Mercy-letter queued — devotees at the seva desk rejoice reading your sincerity.'
@@ -84,7 +84,7 @@ export default function ContactPage() {
         <title>Contact · ISKCON Mangalore</title>
         <meta name="description" content="Write the mandir seva desk · volunteer · schedule visits · seek spiritual guidance lovingly." />
       </Helmet>
-      <HeroBanner title="Connect With Us" subtitle="Every sincere letter becomes garland incense at Śrī Rādhā’s mirror." backgroundImage={HERO_BANNER} height="medium" />
+      <HeroBanner title="Connect With Us" subtitle="Every sincere letter becomes garland incense at Śrī Krishna Balaram’s mirror." backgroundImage={HERO_BANNER} height="medium" />
 
       <section className="bg-gradient-to-b from-white via-cream to-peacock-50 py-20 md:py-24">
         <Container size="xl" className="grid gap-12 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.9fr)]">

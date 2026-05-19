@@ -98,6 +98,8 @@ export const TEMPLE_INTERIOR = ph(
 
 export const DEITY_DARSHAN = ph(960, 1200, P.maroon, P.gold, 'Sri Sri Gaura Nitai Darshan')
 
+export const FESTIVAL_GALLERY_PLACEHOLDER = ph(1200, 800, P.saffron, P.maroon, 'Festival Gallery - Add Your Photo')
+
 export const SPIRITUAL_LECTURE = ph(
   1200,
   675,

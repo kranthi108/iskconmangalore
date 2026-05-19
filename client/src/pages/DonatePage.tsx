@@ -198,10 +198,12 @@ export default function DonatePage() {
           pincode: values.pincode?.trim() || undefined,
         }
 
+        const donorEmail = (values.email ?? '').trim()
+
         const order = await createOrder({
           campaignId: campaign._id,
           amount,
-          donorEmail: values.email.trim(),
+          donorEmail,
           donorName,
           donorPhone: values.phone.trim(),
           donorPAN: panNormalized,
@@ -212,7 +214,7 @@ export default function DonatePage() {
           void razorpay
             .openPayment(order, {
               donorName,
-              donorEmail: values.email.trim(),
+              donorEmail,
               donorPhone: values.phone.trim(),
               description: `${campaign.title} · ISKCON Mangalore`,
               imageUrl: campaign.bannerImage,
@@ -232,7 +234,7 @@ export default function DonatePage() {
                     const donation = await verifyPayment({
                       campaignId: campaign._id,
                       amount,
-                      donorEmail: values.email.trim(),
+                      donorEmail,
                       donorName,
                       donorPhone: values.phone.trim(),
                       isAnonymous: false,
@@ -368,7 +370,7 @@ export default function DonatePage() {
       <section className="border-y border-gold-200/60 bg-cream py-16">
         <Container size="lg" className="grid gap-8 lg:grid-cols-[1.05fr_minmax(0,0.9fr)] lg:items-center">
           <div>
-            <SectionHeading alignment="left" title="Spiritual importance" subtitle="How mercy moves from your heart to Śrī Rādhā’s altar floor." decorative />
+            <SectionHeading alignment="left" title="Spiritual importance" subtitle="How mercy moves from your heart to Śrī Krishna Balaram's altar floor." decorative />
             <p className="mt-8 text-peacock-900/85">{story.spiritualImportance}</p>
           </div>
           {countdownTarget ? (

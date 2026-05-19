@@ -1,8 +1,8 @@
 import { Hono } from 'hono'
-import { contacts } from '../db/schema'
+import { feedbacks } from '../db/schema'
 import { createDb } from '../db/client'
 import { successResponse, errorResponse } from '../lib/response'
-import { contactSchema } from '../lib/validation'
+import { feedbackSchema } from '../lib/validation'
 
 type Env = { Bindings: { DATABASE_URL: string } }
 
@@ -10,7 +10,7 @@ const app = new Hono<Env>()
 
 app.post('/', async (c) => {
   const body = await c.req.json()
-  const parsed = contactSchema.safeParse(body)
+  const parsed = feedbackSchema.safeParse(body)
 
   if (!parsed.success) {
     const messages = parsed.error.errors.map((e) => e.message)
@@ -19,7 +19,7 @@ app.post('/', async (c) => {
 
   const db = createDb(c.env.DATABASE_URL)
   const [row] = await db
-    .insert(contacts)
+    .insert(feedbacks)
     .values({
       name: parsed.data.name,
       email: parsed.data.email,
@@ -27,7 +27,7 @@ app.post('/', async (c) => {
       subject: parsed.data.subject,
       message: parsed.data.message,
     })
-    .returning({ id: contacts.id, createdAt: contacts.createdAt })
+    .returning({ id: feedbacks.id, createdAt: feedbacks.createdAt })
 
   return successResponse(
     c,

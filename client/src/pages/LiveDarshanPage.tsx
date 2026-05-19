@@ -46,7 +46,7 @@ export default function LiveDarshanPage() {
               Darśanas flow according to Śrīla Prabhupāda’s deity worship manual — Śrī Krishna Balaram are gorgeously adorned for late afternoon greetings right now.</p>
               <motion.div animate={{ opacity: [0.6, 1, 0.6] }} transition={{ repeat: Infinity, duration: 4 }}>
                 <span className="mt-6 inline-flex items-center rounded-full bg-gold-400/90 px-4 py-2 text-maroon">
-                  Śrī Rādhā’s curtains open during scheduled darśanas
+                  Śrī Krishna Balaram's curtains open during scheduled darśanas
                 </span>
               </motion.div>
             </Card>
