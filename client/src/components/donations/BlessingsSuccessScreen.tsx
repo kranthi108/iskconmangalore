@@ -1,16 +1,33 @@
 import { AnimatePresence, motion } from 'framer-motion'
-import { Download } from 'lucide-react'
-import { useMemo } from 'react'
+import { Download, Loader2 } from 'lucide-react'
+import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Button from '@/components/ui/Button'
 import { buttonVariants } from '@/components/ui/buttonVariants'
 import { formatCurrency } from '@/utils/formatCurrency'
 import { cn } from '@/utils/cn'
+import { numberToWords, formatDate, formatAddress } from '@/utils/receiptHelpers'
+
+export interface DonorInfo {
+  name: string
+  email?: string
+  phone: string
+  pan?: string
+  address?: {
+    house?: string
+    street?: string
+    city?: string
+    state?: string
+    pincode?: string
+  }
+}
 
 export interface BlessingsSuccessScreenProps {
   amount: number
   campaignTitle: string
   receiptNumber?: string
+  donorInfo: DonorInfo
+  paymentMethod?: string
   onClose: () => void
 }
 
@@ -18,29 +35,38 @@ export default function BlessingsSuccessScreen({
   amount,
   campaignTitle,
   receiptNumber,
+  donorInfo,
+  paymentMethod,
   onClose,
 }: BlessingsSuccessScreenProps) {
   const confetti = useMemo(() => Array.from({ length: 48 }, (_, i) => ({ id: i })), [])
 
-  function downloadReceipt() {
-    const lines = [
-      'ISKCON Sri Krishna Balaram Mandir · Mangalore Blessings Receipt',
-      `Campaign : ${campaignTitle}`,
-      `Blessed amount : ${formatCurrency(amount)}`,
-      receiptNumber ? `Receipt number : ${receiptNumber}` : 'Receipt number : pending confirmation',
-      '',
-      'Hare Krishna Hare Krishna Krishna Krishna Hare Hare',
-      'Hare Rama Hare Rama Rama Rama Hare Hare',
-      '',
-      'All glories to Śrīla Prabhupāda!',
-    ]
-    const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' })
-    const url = URL.createObjectURL(blob)
-    const anchor = document.createElement('a')
-    anchor.href = url
-    anchor.download = `iskcon-mangalore-receipt-${Date.now()}.txt`
-    anchor.click()
-    URL.revokeObjectURL(url)
+  const [downloading, setDownloading] = useState(false)
+
+  async function handleDownloadReceipt() {
+    if (!receiptNumber || downloading) return
+
+    setDownloading(true)
+    try {
+      const { downloadReceipt } = await import('@/utils/generateReceipt')
+      await downloadReceipt({
+        receiptNumber,
+        date: formatDate(),
+        donorName: donorInfo.name,
+        donorAddress: formatAddress(donorInfo.address),
+        donorPhone: donorInfo.phone,
+        donorEmail: donorInfo.email || '',
+        donorPan: donorInfo.pan || '',
+        amount,
+        amountInWords: numberToWords(Math.round(amount)),
+        paymentType: paymentMethod || 'Online',
+        sevaType: campaignTitle,
+      })
+    } catch {
+      alert('Failed to generate receipt. Please try again.')
+    } finally {
+      setDownloading(false)
+    }
   }
 
   return (
@@ -118,7 +144,7 @@ export default function BlessingsSuccessScreen({
             </div>
             <div className="mt-8 rounded-3xl bg-gradient-to-br from-peacock-900 to-maroon px-6 py-5 text-left text-cream shadow-lg">
               <p className="font-heading text-xl leading-relaxed italic text-gold-200">
-                “Work done as a sacrifice for Viṣṇu has to be performed; otherwise work causes bondage in this material world. Therefore, O son of Kuntī, perform your prescribed duties for His satisfaction, and in that way you will always remain free from bondage.”
+                "Work done as a sacrifice for Viṣṇu has to be performed; otherwise work causes bondage in this material world. Therefore, O son of Kuntī, perform your prescribed duties for His satisfaction, and in that way you will always remain free from bondage."
               </p>
               <p className="mt-2 text-right text-sm font-semibold text-gold-500/90">— Bhagavad-gītā 3.9 </p>
             </div>
@@ -128,10 +154,13 @@ export default function BlessingsSuccessScreen({
                 variant="outline"
                 size="lg"
                 className="w-full border-maroon/30"
-                leftIcon={<Download className="h-5 w-5" aria-hidden />}
-                onClick={downloadReceipt}
+                leftIcon={downloading
+                  ? <Loader2 className="h-5 w-5 animate-spin" aria-hidden />
+                  : <Download className="h-5 w-5" aria-hidden />}
+                onClick={handleDownloadReceipt}
+                disabled={!receiptNumber || downloading}
               >
-                Download receipt
+                {downloading ? 'Generating PDF…' : 'Download receipt'}
               </Button>
               <Link
                 to="/"

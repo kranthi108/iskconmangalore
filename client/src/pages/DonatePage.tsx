@@ -10,6 +10,7 @@ import DonationCard from '@/components/donations/DonationCard'
 import DonateModal from '@/components/donations/DonateModal'
 import type { DonateModalFormValues } from '@/components/donations/DonateModal'
 import BlessingsSuccessScreen from '@/components/donations/BlessingsSuccessScreen'
+import type { DonorInfo } from '@/components/donations/BlessingsSuccessScreen'
 import PlaceholderImage from '@/components/placeholders/PlaceholderImage'
 import HeroBanner from '@/components/layout/HeroBanner'
 import Button from '@/components/ui/Button'
@@ -121,7 +122,11 @@ export default function DonatePage() {
   const [modalOpen, setModalOpen] = useState(false)
   const [donateAmount, setDonateAmount] = useState(0)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [blessings, setBlessings] = useState<{ receiptNumber: string; amount: number } | null>(null)
+  const [blessings, setBlessings] = useState<{
+    receiptNumber: string
+    amount: number
+    donorInfo: DonorInfo
+  } | null>(null)
 
   useEffect(() => {
     if (location.hash) {
@@ -257,7 +262,17 @@ export default function DonatePage() {
                     })
 
                     setModalOpen(false)
-                    setBlessings({ receiptNumber: donation.receiptNumber, amount })
+                    setBlessings({
+                      receiptNumber: donation.receiptNumber,
+                      amount,
+                      donorInfo: {
+                        name: donorName,
+                        email: donorEmail || undefined,
+                        phone: values.phone.trim(),
+                        pan: panNormalized,
+                        address: donorAddress,
+                      },
+                    })
                     resolvePromise()
                   } catch (error: unknown) {
                     console.error('[DonateModal] verify failed', error)
@@ -430,6 +445,7 @@ export default function DonatePage() {
           amount={blessings.amount}
           receiptNumber={blessings.receiptNumber}
           campaignTitle={campaignTitle}
+          donorInfo={blessings.donorInfo}
           onClose={() => setBlessings(null)}
         />
       )}
