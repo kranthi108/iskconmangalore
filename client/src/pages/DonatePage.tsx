@@ -179,9 +179,28 @@ export default function DonatePage() {
     setModalOpen(true)
   }, [])
 
+  const campaignId = campaign?._id
+  const campaignMeta = useMemo(() => {
+    if (campaign) {
+      return {
+        title: campaign.title,
+        bannerImage: campaign.bannerImage,
+        themeColor: campaign.themeConfig?.primaryColor ?? '#6D071A',
+      }
+    }
+    if (featuredMatch) {
+      return {
+        title: featuredMatch.title,
+        bannerImage: featuredMatch.bannerImage,
+        themeColor: '#6D071A',
+      }
+    }
+    return null
+  }, [campaign, featuredMatch])
+
   const handleModalSubmit = useCallback(
     async (values: DonateModalFormValues) => {
-      if (!campaign?._id || donateAmount < 1) return
+      if (!campaignId || !campaignMeta || donateAmount < 1) return
 
       setIsSubmitting(true)
       try {
@@ -201,7 +220,7 @@ export default function DonatePage() {
         const donorEmail = (values.email ?? '').trim()
 
         const order = await createOrder({
-          campaignId: campaign._id,
+          campaignId,
           amount,
           donorEmail,
           donorName,
@@ -216,9 +235,9 @@ export default function DonatePage() {
               donorName,
               donorEmail,
               donorPhone: values.phone.trim(),
-              description: `${campaign.title} · ISKCON Mangalore`,
-              imageUrl: campaign.bannerImage,
-              themeColor: campaign.themeConfig?.primaryColor ?? '#6D071A',
+              description: `${campaignMeta.title} · ISKCON Mangalore`,
+              imageUrl: campaignMeta.bannerImage,
+              themeColor: campaignMeta.themeColor,
               onSuccess(response: RazorpayHandlerResponseSimple) {
                 void (async () => {
                   try {
@@ -262,7 +281,7 @@ export default function DonatePage() {
         setIsSubmitting(false)
       }
     },
-    [campaign, donateAmount, razorpay],
+    [campaignId, campaignMeta, donateAmount, razorpay],
   )
 
   if (!slug) {
