@@ -54,7 +54,7 @@ app.get('/health', (c) => c.json({ status: 'ok', timestamp: new Date().toISOStri
 app.onError((err, c) => {
   console.error('Unhandled error:', err)
   return c.json(
-    { success: false, message: err.message || 'Internal Server Error' },
+    { success: false, message: 'Internal Server Error' },
     500,
   )
 })

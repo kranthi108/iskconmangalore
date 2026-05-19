@@ -73,6 +73,8 @@ app.post('/order', async (c) => {
     c.env.RAZORPAY_KEY_SECRET,
   )
 
+  const addressIsEmpty = !donorAddress || Object.values(donorAddress).every((v) => !v)
+
   await db.insert(donations).values({
     campaignId: campaign.id,
     sevaName,
@@ -80,7 +82,7 @@ app.post('/order', async (c) => {
     donorEmail: donorEmail || null,
     donorPhone,
     donorPan: donorPAN || null,
-    donorAddress: donorAddress || null,
+    donorAddress: addressIsEmpty ? null : donorAddress,
     amount,
     currency: 'INR',
     razorpayOrderId: order.id,
