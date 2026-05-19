@@ -24,7 +24,12 @@ app.route('/api/webhook', webhook)
 app.use(
   '/api/*',
   cors({
-    origin: ['http://localhost:5173', 'https://iskconmangalore.org', 'https://www.iskconmangalore.org'],
+    origin: [
+      'http://localhost:5173',
+      'https://iskconmangalore.org',
+      'https://www.iskconmangalore.org',
+      'https://iskconmangalore.pages.dev',
+    ],
     allowMethods: ['GET', 'POST', 'OPTIONS'],
     allowHeaders: ['Content-Type'],
   }),
@@ -35,6 +40,14 @@ app.route('/api/festivals', festivals)
 app.route('/api/contact', contact)
 app.route('/api/volunteers', volunteers)
 app.route('/api/donations', donations)
+
+app.get('/', (c) =>
+  c.json({
+    name: 'ISKCON Mangalore API',
+    status: 'ok',
+    endpoints: ['/api/campaigns', '/api/festivals', '/api/contact', '/api/volunteers', '/api/donations'],
+  }),
+)
 
 app.get('/health', (c) => c.json({ status: 'ok', timestamp: new Date().toISOString() }))
 
