@@ -1,6 +1,6 @@
 import {
   pgTable,
-  uuid,
+  serial,
   text,
   varchar,
   integer,
@@ -11,7 +11,7 @@ import {
 } from 'drizzle-orm/pg-core'
 
 export const feedbacks = pgTable('feedbacks', {
-  id: uuid('id').defaultRandom().primaryKey(),
+  id: serial('id').primaryKey(),
   name: varchar('name', { length: 120 }).notNull(),
   email: varchar('email', { length: 255 }).notNull(),
   phone: varchar('phone', { length: 20 }).notNull(),
@@ -21,7 +21,7 @@ export const feedbacks = pgTable('feedbacks', {
 })
 
 export const volunteers = pgTable('volunteers', {
-  id: uuid('id').defaultRandom().primaryKey(),
+  id: serial('id').primaryKey(),
   name: varchar('name', { length: 120 }).notNull(),
   phone: varchar('phone', { length: 20 }).notNull(),
   date: timestamp('date', { withTimezone: true }).notNull(),
@@ -31,7 +31,7 @@ export const volunteers = pgTable('volunteers', {
 })
 
 export const donationCampaigns = pgTable('donation_campaigns', {
-  id: uuid('id').defaultRandom().primaryKey(),
+  id: serial('id').primaryKey(),
   slug: varchar('slug', { length: 255 }).notNull().unique(),
   title: varchar('title', { length: 255 }).notNull(),
   subtitle: varchar('subtitle', { length: 500 }).notNull(),
@@ -54,8 +54,8 @@ export const donationCampaigns = pgTable('donation_campaigns', {
 })
 
 export const donations = pgTable('donations', {
-  id: uuid('id').defaultRandom().primaryKey(),
-  campaignId: uuid('campaign_id').notNull().references(() => donationCampaigns.id),
+  id: serial('id').primaryKey(),
+  campaignId: integer('campaign_id').notNull().references(() => donationCampaigns.id),
   sevaName: varchar('seva_name', { length: 255 }).notNull(),
   donorName: varchar('donor_name', { length: 200 }).notNull(),
   donorEmail: varchar('donor_email', { length: 255 }),
@@ -83,7 +83,7 @@ export const donations = pgTable('donations', {
 })
 
 export const festivals = pgTable('festivals', {
-  id: uuid('id').defaultRandom().primaryKey(),
+  id: serial('id').primaryKey(),
   slug: varchar('slug', { length: 255 }).notNull().unique(),
   title: varchar('title', { length: 255 }).notNull(),
   subtitle: varchar('subtitle', { length: 500 }).notNull(),

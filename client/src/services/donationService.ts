@@ -11,7 +11,7 @@ export interface DonorAddress {
 }
 
 export interface CreateDonationOrderInput {
-  campaignId: string
+  campaignId: number
   amount: number
   donorEmail: string
   donorName: string

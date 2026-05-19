@@ -1,5 +1,5 @@
 export interface DonationCampaign {
-  _id: string;
+  _id: number;
   slug: string;
   title: string;
   subtitle: string;
@@ -33,8 +33,8 @@ export interface DonationCampaign {
 }
 
 export interface Donation {
-  _id: string;
-  campaignId: string;
+  _id: number;
+  campaignId: number;
   donorName: string;
   donorEmail: string;
   donorPhone: string;
@@ -51,7 +51,7 @@ export interface Donation {
 }
 
 export interface Festival {
-  _id: string;
+  _id: number;
   slug: string;
   title: string;
   subtitle: string;

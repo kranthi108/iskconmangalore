@@ -274,9 +274,14 @@ export default function DonatePage() {
             })
         })
       } catch (error) {
-        if (error instanceof ApiHttpError) {
-          console.error('[DonateModal] API error', error.message)
-        }
+        const message =
+          error instanceof ApiHttpError
+            ? error.message
+            : error instanceof Error
+              ? error.message
+              : 'Something went wrong. Please try again.'
+        console.error('[DonateModal] error', message, error)
+        alert(message)
       } finally {
         setIsSubmitting(false)
       }

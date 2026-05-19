@@ -68,7 +68,7 @@ app.post('/order', async (c) => {
     amountPaise,
     'INR',
     receiptNumber,
-    { campaignId: campaign.id, sevaName },
+    { campaignId: String(campaign.id), sevaName },
     c.env.RAZORPAY_KEY_ID,
     c.env.RAZORPAY_KEY_SECRET,
   )
@@ -147,7 +147,11 @@ app.post('/verify', async (c) => {
 
 app.get('/:id/receipt', async (c) => {
   const db = createDb(c.env.DATABASE_URL)
-  const id = decodeURIComponent(c.req.param('id'))
+  const id = Number(c.req.param('id'))
+
+  if (!Number.isInteger(id) || id < 1) {
+    return errorResponse(c, 'Invalid donation ID', 400)
+  }
 
   const rows = await db.select().from(donations).where(eq(donations.id, id))
 

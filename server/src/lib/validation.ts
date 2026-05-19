@@ -47,7 +47,7 @@ const donorAddressSchema = z
   .optional()
 
 export const createOrderSchema = z.object({
-  campaignId: z.string().uuid('Invalid campaign ID'),
+  campaignId: z.number().int().positive('Invalid campaign ID'),
   amount: z.number().positive('Amount must be greater than 0'),
   donorName: z.string().trim().min(2, 'Name must be at least 2 characters'),
   donorEmail: z.string().email('Enter a valid email').or(z.literal('')).optional(),
