@@ -308,7 +308,7 @@ export default function MarathonJapaPage() {
     if (loading) return
     setLoading(true)
     try {
-      const data = await getMarathonLeaderboard(p, 15)
+      const data = await getMarathonLeaderboard(p, 5)
       setLeaderboard((prev) => append ? [...prev, ...data.leaderboard] : data.leaderboard)
       setHasMore(data.pagination.hasMore)
       setPage(p)
