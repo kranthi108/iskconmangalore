@@ -11,6 +11,7 @@ import DonateModal from '@/components/donations/DonateModal'
 import type { DonateModalFormValues } from '@/components/donations/DonateModal'
 import BlessingsSuccessScreen from '@/components/donations/BlessingsSuccessScreen'
 import type { DonorInfo } from '@/components/donations/BlessingsSuccessScreen'
+import GalleryCarousel from '@/components/gallery/GalleryCarousel'
 import PlaceholderImage from '@/components/placeholders/PlaceholderImage'
 import HeroBanner from '@/components/layout/HeroBanner'
 import Button from '@/components/ui/Button'
@@ -450,29 +451,11 @@ export default function DonatePage() {
         />
       )}
 
-      <section className="bg-maroon py-16 text-cream">
-        <Container size="xl">
-          <SectionHeading
-            alignment="center"
-            title="Photo impressions around this seva"
-            subtitle="Carved steps, shimmering brass, devotees folding hands while harināma tides rise."
-            decorative
-            className="text-cream [&_h2]:text-cream [&_p]:text-gold-50/85"
-          />
-          <div className="grid gap-6 md:grid-cols-3">
-            {('galleryImages' in story ? story.galleryImages : []).slice(0, 3).map((photo, idx) => (
-              <motion.div
-                key={`${slug}-${idx}`}
-                initial={{ opacity: 0, y: 18 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-              >
-                <PlaceholderImage src={photo} alt={`${story.title} impression ${idx + 1}`} aspectRatio="video" showOverlay />
-              </motion.div>
-            ))}
-          </div>
-        </Container>
-      </section>
+      <GalleryCarousel
+        images={'galleryImages' in story ? story.galleryImages : []}
+        title={story.title}
+        slug={slug ?? 'campaign'}
+      />
 
       <section className="bg-peacock-950 py-20 text-white">
         <Container size="lg">

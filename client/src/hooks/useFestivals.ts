@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { getFeaturedFestivals, getFestivals } from '@/services/festivalService'
+import { getFeaturedFestivals, getFestivalBySlug, getFestivals } from '@/services/festivalService'
 
 const festivalsRoot = ['iskcon-festivals'] as const
 
@@ -15,6 +15,15 @@ export function useFeaturedFestivals() {
   return useQuery({
     queryKey: [...festivalsRoot, 'featured'] as const,
     queryFn: () => getFeaturedFestivals(),
+    staleTime: 60_000,
+  })
+}
+
+export function useFestivalBySlug(slug?: string) {
+  return useQuery({
+    queryKey: [...festivalsRoot, 'slug', slug] as const,
+    queryFn: () => getFestivalBySlug(slug!),
+    enabled: !!slug,
     staleTime: 60_000,
   })
 }

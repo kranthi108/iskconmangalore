@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 import { eq } from 'drizzle-orm'
-import { donations, donationCampaigns } from '../db/schema'
+import { donations } from '../db/schema'
 import { createDb } from '../db/client'
 import { verifyWebhookSignature } from '../services/razorpay'
 
@@ -54,26 +54,6 @@ app.post('/razorpay', async (c) => {
               updatedAt: new Date(),
             })
             .where(eq(donations.razorpayOrderId, p.order_id))
-
-          // Increment donor count on the campaign
-          const rows = await db
-            .select({ campaignId: donations.campaignId })
-            .from(donations)
-            .where(eq(donations.razorpayOrderId, p.order_id))
-
-          if (rows.length > 0) {
-            const campaign = await db
-              .select({ donorCount: donationCampaigns.donorCount })
-              .from(donationCampaigns)
-              .where(eq(donationCampaigns.id, rows[0].campaignId))
-
-            if (campaign.length > 0) {
-              await db
-                .update(donationCampaigns)
-                .set({ donorCount: campaign[0].donorCount + 1, updatedAt: new Date() })
-                .where(eq(donationCampaigns.id, rows[0].campaignId))
-            }
-          }
         }
         break
       }
