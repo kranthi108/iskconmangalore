@@ -11,6 +11,7 @@ export interface HeroBannerProps {
   backgroundImage?: string
   height?: 'full' | 'large' | 'medium' | 'small' | 'sm' | 'md' | 'lg' | 'screen'
   overlay?: boolean
+  centered?: boolean
   children?: ReactNode
 }
 
@@ -47,6 +48,7 @@ export default function HeroBanner({
   backgroundImage = HERO_BANNER,
   height = 'medium',
   overlay = true,
+  centered = false,
   children,
 }: HeroBannerProps) {
   const sectionRef = useRef<HTMLElement>(null)
@@ -93,12 +95,12 @@ export default function HeroBanner({
         </>
       ) : null}
 
-      <Container className="relative z-[1] flex min-h-full flex-col justify-center py-14 sm:py-16 lg:py-24">
+      <Container className={cn("relative z-[1] flex min-h-full flex-col justify-center py-14 sm:py-16 lg:py-24", centered && "items-center text-center")}>
         <motion.div
           initial={{ opacity: 0, y: 42 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
-          className="max-w-3xl space-y-4"
+          className={cn("max-w-3xl space-y-4", centered && "flex flex-col items-center")}
         >
           <motion.h1
             initial={{ opacity: 0, y: 28 }}
@@ -123,7 +125,7 @@ export default function HeroBanner({
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.22, duration: 0.45 }}
-              className="flex flex-wrap gap-3 pt-4"
+              className="flex flex-wrap justify-center gap-3 pt-4"
             >
               {children}
             </motion.div>

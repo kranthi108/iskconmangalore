@@ -2,7 +2,8 @@ import { useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
-import { Loader2, Mail, MapPinned, Phone } from 'lucide-react'
+import { ArrowRight, Loader2, Mail, MapPinned, Phone, Sparkles } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import { useForm } from 'react-hook-form'
 import HeroBanner from '@/components/layout/HeroBanner'
@@ -85,6 +86,33 @@ export default function ContactPage() {
         <meta name="description" content="Write the mandir seva desk · volunteer · schedule visits · seek spiritual guidance lovingly." />
       </Helmet>
       <HeroBanner title="Connect With Us" subtitle="Every sincere letter becomes garland incense at Śrī Krishna Balaram’s mirror." backgroundImage={HERO_BANNER} height="medium" />
+
+      <motion.section
+        initial={{ opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="bg-gradient-to-r from-peacock-900 via-maroon to-peacock-900 py-5"
+      >
+        <Container size="lg">
+          <Link
+            to="/harinam"
+            className="group flex flex-col items-center justify-between gap-3 rounded-2xl border border-gold-300/30 bg-white/10 px-6 py-4 backdrop-blur-sm transition hover:bg-white/15 sm:flex-row"
+          >
+            <div className="flex items-center gap-3 text-center sm:text-left">
+              <Sparkles className="h-6 w-6 shrink-0 text-gold-200" />
+              <div>
+                <p className="font-heading text-lg font-semibold text-cream">
+                  Participate in Harinam Japa Yagna for Janmashtami
+                </p>
+                <p className="text-sm text-gold-200/80">Chant, submit rounds, and join the global yagna</p>
+              </div>
+            </div>
+            <span className="flex items-center gap-1 whitespace-nowrap rounded-full bg-gold-500 px-5 py-2 text-sm font-bold text-maroon transition group-hover:bg-gold-400">
+              Join Now <ArrowRight className="h-4 w-4" />
+            </span>
+          </Link>
+        </Container>
+      </motion.section>
 
       <section className="bg-gradient-to-b from-white via-cream to-peacock-50 py-20 md:py-24">
         <Container size="xl" className="grid gap-12 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.9fr)]">

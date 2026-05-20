@@ -8,6 +8,7 @@ import {
   timestamp,
   jsonb,
   real,
+  date,
 } from 'drizzle-orm/pg-core'
 
 export const feedbacks = pgTable('feedbacks', {
@@ -97,6 +98,17 @@ export const festivals = pgTable('festivals', {
   active: boolean('active').notNull().default(true),
   featured: boolean('featured').notNull().default(false),
   sortOrder: integer('sort_order').notNull().default(0),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+})
+
+export const harinamEntries = pgTable('harinam_entries', {
+  id: serial('id').primaryKey(),
+  devoteName: varchar('devote_name', { length: 200 }).notNull(),
+  city: varchar('city', { length: 150 }).notNull(),
+  rounds: integer('rounds').notNull(),
+  chantedOn: date('chanted_on').notNull(),
+  status: varchar('status', { length: 20 }).notNull().default('submitted'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 })

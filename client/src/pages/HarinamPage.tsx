@@ -1,0 +1,501 @@
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { BookOpen, ChevronDown, Loader2, MapPin, Send, Sparkles, Trophy, Users, X } from 'lucide-react'
+import { Helmet } from 'react-helmet-async'
+import namjapBg from '@/assets/namjap.jpeg'
+import HeroBanner from '@/components/layout/HeroBanner'
+import Button from '@/components/ui/Button'
+import Container from '@/components/ui/Container'
+import SectionHeading from '@/components/ui/SectionHeading'
+import { cn } from '@/utils/cn'
+import {
+  getHarinamStats,
+  getLeaderboard,
+  searchDevoteNames,
+  submitHarinam,
+  type HarinamStats,
+  type LeaderboardEntry,
+  type DevoteSuggestion,
+} from '@/services/harinamService'
+
+function AnimatedCounter({ value, label, icon: Icon }: { value: number; label: string; icon: React.ElementType }) {
+  const [displayed, setDisplayed] = useState(0)
+  const ref = useRef<HTMLDivElement>(null)
+  const started = useRef(false)
+
+  useEffect(() => {
+    if (!ref.current || started.current) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !started.current) {
+          started.current = true
+          const duration = 2000
+          const start = performance.now()
+          function tick(now: number) {
+            const elapsed = now - start
+            const progress = Math.min(elapsed / duration, 1)
+            const eased = 1 - Math.pow(1 - progress, 3)
+            setDisplayed(Math.round(eased * value))
+            if (progress < 1) requestAnimationFrame(tick)
+          }
+          requestAnimationFrame(tick)
+        }
+      },
+      { threshold: 0.3 },
+    )
+    observer.observe(ref.current)
+    return () => observer.disconnect()
+  }, [value])
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="flex flex-col items-center gap-3 rounded-3xl border border-white/20 bg-white/10 px-8 py-8 backdrop-blur-sm"
+    >
+      <Icon className="h-8 w-8 text-gold-200" />
+      <span className="font-heading text-5xl font-bold tabular-nums text-cream sm:text-6xl">
+        {displayed.toLocaleString('en-IN')}
+      </span>
+      <span className="whitespace-nowrap text-sm uppercase tracking-[0.3em] text-gold-200/80">{label}</span>
+    </motion.div>
+  )
+}
+
+function SubmitModal({ open, onClose, onSuccess }: { open: boolean; onClose: () => void; onSuccess: () => void }) {
+  const [devoteName, setDevoteName] = useState('')
+  const [city, setCity] = useState('')
+  const [rounds, setRounds] = useState('')
+  const [chantedOn, setChantedOn] = useState(() => new Date().toISOString().slice(0, 10))
+  const [suggestions, setSuggestions] = useState<DevoteSuggestion[]>([])
+  const [showSuggestions, setShowSuggestions] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [result, setResult] = useState<{ success: boolean; message: string } | null>(null)
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>()
+
+  function handleNameChange(val: string) {
+    setDevoteName(val)
+    setResult(null)
+    clearTimeout(debounceRef.current)
+    if (val.length >= 2) {
+      debounceRef.current = setTimeout(async () => {
+        try {
+          const data = await searchDevoteNames(val)
+          setSuggestions(data)
+          setShowSuggestions(data.length > 0)
+        } catch {
+          setSuggestions([])
+        }
+      }, 300)
+    } else {
+      setSuggestions([])
+      setShowSuggestions(false)
+    }
+  }
+
+  function selectSuggestion(s: DevoteSuggestion) {
+    setDevoteName(s.devoteName)
+    setCity(s.city)
+    setShowSuggestions(false)
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    if (!devoteName.trim() || !city.trim() || !rounds || !chantedOn) return
+
+    setSubmitting(true)
+    setResult(null)
+    try {
+      await submitHarinam({
+        devoteName: devoteName.trim(),
+        city: city.trim(),
+        rounds: Number(rounds),
+        chantedOn,
+      })
+      setResult({ success: true, message: 'Hare Krishna! Your japa entry has been submitted for approval.' })
+      setDevoteName('')
+      setCity('')
+      setRounds('')
+      setChantedOn(new Date().toISOString().slice(0, 10))
+      onSuccess()
+    } catch (err) {
+      setResult({ success: false, message: err instanceof Error ? err.message : 'Submission failed. Please try again.' })
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  if (!open) return null
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-[120] flex items-center justify-center bg-black/60 px-4 backdrop-blur-sm"
+        onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
+      >
+        <motion.div
+          initial={{ opacity: 0, scale: 0.92, y: 24 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.92, y: 24 }}
+          className="relative w-full max-w-lg overflow-hidden rounded-3xl border border-gold-200/30 bg-cream shadow-2xl"
+        >
+          <div className="bg-gradient-to-r from-maroon to-peacock-900 px-6 py-5 text-cream">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <BookOpen className="h-6 w-6 text-gold-200" />
+                <h2 className="font-heading text-xl font-semibold">Submit Japa Rounds</h2>
+              </div>
+              <button type="button" onClick={onClose} className="rounded-full p-1.5 text-white/70 hover:bg-white/10 hover:text-white">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-5 p-6">
+            <div className="relative">
+              <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-peacock-800">Devotee Name</label>
+              <input
+                type="text"
+                value={devoteName}
+                onChange={(e) => handleNameChange(e.target.value)}
+                onFocus={() => { if (suggestions.length > 0) setShowSuggestions(true) }}
+                onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                placeholder="e.g. Madhava Das"
+                required
+                className="w-full rounded-xl border border-peacock-200 bg-white px-4 py-3 text-peacock-950 outline-none transition focus:border-maroon focus:ring-2 focus:ring-maroon/20"
+              />
+              {showSuggestions && (
+                <ul className="absolute left-0 right-0 z-10 mt-1 max-h-48 overflow-y-auto rounded-xl border border-peacock-200 bg-white shadow-lg">
+                  {suggestions.map((s) => (
+                    <li key={`${s.devoteName}-${s.city}`}>
+                      <button
+                        type="button"
+                        onMouseDown={() => selectSuggestion(s)}
+                        className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm hover:bg-peacock-50"
+                      >
+                        <span className="font-semibold text-peacock-900">{s.devoteName}</span>
+                        <span className="flex items-center gap-1 text-xs text-peacock-600">
+                          <MapPin className="h-3 w-3" /> {s.city}
+                        </span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+
+            <div>
+              <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-peacock-800">City</label>
+              <input
+                type="text"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                placeholder="e.g. Mangalore"
+                required
+                className="w-full rounded-xl border border-peacock-200 bg-white px-4 py-3 text-peacock-950 outline-none transition focus:border-maroon focus:ring-2 focus:ring-maroon/20"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-peacock-800">Rounds Chanted</label>
+                <input
+                  type="number"
+                  min={1}
+                  max={192}
+                  value={rounds}
+                  onChange={(e) => setRounds(e.target.value)}
+                  placeholder="16"
+                  required
+                  className="w-full rounded-xl border border-peacock-200 bg-white px-4 py-3 text-peacock-950 outline-none transition focus:border-maroon focus:ring-2 focus:ring-maroon/20"
+                />
+              </div>
+              <div>
+                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-peacock-800">Date</label>
+                <input
+                  type="date"
+                  value={chantedOn}
+                  onChange={(e) => setChantedOn(e.target.value)}
+                  max={new Date().toISOString().slice(0, 10)}
+                  required
+                  className="w-full rounded-xl border border-peacock-200 bg-white px-4 py-3 text-peacock-950 outline-none transition focus:border-maroon focus:ring-2 focus:ring-maroon/20"
+                />
+              </div>
+            </div>
+
+            {result && (
+              <motion.div
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={cn(
+                  'rounded-xl px-4 py-3 text-sm font-medium',
+                  result.success ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800',
+                )}
+              >
+                {result.message}
+              </motion.div>
+            )}
+
+            <Button
+              type="submit"
+              variant="maroon"
+              size="lg"
+              className="w-full"
+              leftIcon={submitting ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
+              disabled={submitting}
+            >
+              {submitting ? 'Submitting...' : 'Submit Japa Entry'}
+            </Button>
+          </form>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  )
+}
+
+export default function HarinamPage() {
+  const [stats, setStats] = useState<HarinamStats>({ totalRounds: 0, totalDevotees: 0 })
+  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([])
+  const [page, setPage] = useState(1)
+  const [hasMore, setHasMore] = useState(true)
+  const [loading, setLoading] = useState(false)
+  const [modalOpen, setModalOpen] = useState(false)
+  const sentinelRef = useRef<HTMLDivElement>(null)
+
+  const fetchStats = useCallback(async () => {
+    try {
+      const data = await getHarinamStats()
+      setStats(data)
+    } catch { /* ignore */ }
+  }, [])
+
+  const fetchLeaderboard = useCallback(async (p: number, append = false) => {
+    if (loading) return
+    setLoading(true)
+    try {
+      const data = await getLeaderboard(p, 15)
+      setLeaderboard((prev) => append ? [...prev, ...data.leaderboard] : data.leaderboard)
+      setHasMore(data.pagination.hasMore)
+      setPage(p)
+    } catch { /* ignore */ }
+    setLoading(false)
+  }, [loading])
+
+  useEffect(() => {
+    fetchStats()
+    fetchLeaderboard(1)
+  }, [])
+
+  useEffect(() => {
+    if (!sentinelRef.current || !hasMore) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && hasMore && !loading) {
+          fetchLeaderboard(page + 1, true)
+        }
+      },
+      { rootMargin: '200px' },
+    )
+    observer.observe(sentinelRef.current)
+    return () => observer.disconnect()
+  }, [hasMore, loading, page])
+
+  const topThree = useMemo(() => leaderboard.slice(0, 3), [leaderboard])
+  const rest = useMemo(() => leaderboard.slice(3), [leaderboard])
+
+  function handleSubmitSuccess() {
+    fetchStats()
+  }
+
+  return (
+    <>
+      <Helmet>
+        <title>Harinam Japa Yagna - Sri Krishna Janmashtami - ISKCON Mangalore</title>
+        <meta name="description" content="Join thousands of devotees in the Harinam Japa Yagna for Sri Krishna Janmashtami. Chant, submit your rounds, and see the global leaderboard." />
+      </Helmet>
+
+      <HeroBanner
+        title="Harinam Japa Yagna"
+        subtitle="Unite in chanting the Holy Names for Sri Krishna Janmashtami 2026"
+        backgroundImage={namjapBg}
+        height="large"
+        centered
+      >
+        <div className="mt-4 flex w-full flex-col items-center gap-6">
+          <div className="grid w-full max-w-md grid-cols-2 gap-4 sm:gap-6">
+            <AnimatedCounter value={stats.totalRounds} label="Rounds Chanted" icon={Sparkles} />
+            <AnimatedCounter value={stats.totalDevotees} label="Devotees Joined" icon={Users} />
+          </div>
+          <Button
+            type="button"
+            variant="secondary"
+            size="xl"
+            leftIcon={<BookOpen className="h-5 w-5" />}
+            onClick={() => setModalOpen(true)}
+          >
+            Submit Your Japa Rounds
+          </Button>
+        </div>
+      </HeroBanner>
+
+      <section className="bg-gradient-to-b from-cream to-white py-16">
+        <Container size="lg">
+          <SectionHeading
+            title="Leaderboard of Devotion"
+            subtitle="Top chanters offering their hearts through the Maha-mantra"
+            decorative
+          />
+
+          {topThree.length > 0 && (
+            <div className="mt-10 grid gap-4 sm:grid-cols-3">
+              {topThree.map((entry, idx) => {
+                const medals = ['bg-gradient-to-br from-gold-400 to-gold-200', 'bg-gradient-to-br from-gray-300 to-gray-100', 'bg-gradient-to-br from-amber-600 to-amber-400']
+                const ranks = ['1st', '2nd', '3rd']
+                return (
+                  <motion.div
+                    key={entry.devoteName}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: idx * 0.1 }}
+                    className={cn(
+                      'relative overflow-hidden rounded-2xl border p-6 text-center shadow-md',
+                      idx === 0 ? 'border-gold-300 bg-gradient-to-b from-gold-50 to-cream sm:order-2 sm:-mt-4 sm:scale-105' : 'border-peacock-100 bg-white',
+                      idx === 1 && 'sm:order-1',
+                      idx === 2 && 'sm:order-3',
+                    )}
+                  >
+                    <div className={cn('mx-auto flex h-12 w-12 items-center justify-center rounded-full text-lg font-bold text-white shadow-md', medals[idx])}>
+                      {ranks[idx]}
+                    </div>
+                    <h3 className="mt-4 font-heading text-xl font-semibold text-maroon">{entry.devoteName}</h3>
+                    <p className="mt-1 flex items-center justify-center gap-1 text-sm text-peacock-700">
+                      <MapPin className="h-3.5 w-3.5" /> {entry.city}
+                    </p>
+                    <p className="mt-3 font-heading text-3xl font-bold text-peacock-900">
+                      {entry.totalRounds.toLocaleString('en-IN')}
+                    </p>
+                    <p className="text-xs uppercase tracking-wider text-peacock-600">rounds</p>
+                  </motion.div>
+                )
+              })}
+            </div>
+          )}
+
+          {rest.length > 0 && (
+            <div className="mt-10 overflow-hidden rounded-2xl border border-peacock-100 bg-white shadow-sm">
+              <table className="w-full text-left text-sm">
+                <thead>
+                  <tr className="border-b border-peacock-100 bg-peacock-50/50 text-xs uppercase tracking-wider text-peacock-700">
+                    <th className="px-5 py-3.5 font-semibold">Rank</th>
+                    <th className="px-5 py-3.5 font-semibold">Devotee</th>
+                    <th className="hidden px-5 py-3.5 font-semibold sm:table-cell">City</th>
+                    <th className="px-5 py-3.5 text-right font-semibold">Rounds</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rest.map((entry) => (
+                    <motion.tr
+                      key={entry.devoteName}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="border-b border-peacock-50 transition-colors hover:bg-peacock-50/40"
+                    >
+                      <td className="px-5 py-3.5">
+                        <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-peacock-100 text-xs font-bold text-peacock-800">
+                          {entry.rank}
+                        </span>
+                      </td>
+                      <td className="px-5 py-3.5">
+                        <span className="font-semibold text-peacock-900">{entry.devoteName}</span>
+                        <span className="ml-2 text-xs text-peacock-500 sm:hidden">({entry.city})</span>
+                      </td>
+                      <td className="hidden px-5 py-3.5 text-peacock-600 sm:table-cell">{entry.city}</td>
+                      <td className="px-5 py-3.5 text-right font-bold text-maroon">{entry.totalRounds.toLocaleString('en-IN')}</td>
+                    </motion.tr>
+                  ))}
+                </tbody>
+              </table>
+
+              <div ref={sentinelRef} className="flex items-center justify-center py-6">
+                {loading && <Loader2 className="h-6 w-6 animate-spin text-peacock-400" />}
+                {!hasMore && leaderboard.length > 0 && (
+                  <p className="text-sm text-peacock-500">Hare Krishna! All devotees displayed.</p>
+                )}
+              </div>
+            </div>
+          )}
+
+          {leaderboard.length === 0 && !loading && (
+            <div className="mt-12 rounded-2xl border border-dashed border-peacock-200 bg-peacock-50/30 p-12 text-center">
+              <Trophy className="mx-auto h-12 w-12 text-peacock-300" />
+              <h3 className="mt-4 font-heading text-xl text-peacock-800">Be the first to chant!</h3>
+              <p className="mt-2 text-peacock-600">No approved entries yet. Submit your japa rounds and inspire others.</p>
+              <Button type="button" variant="maroon" size="lg" className="mt-6" onClick={() => setModalOpen(true)}>
+                Submit Japa Rounds
+              </Button>
+            </div>
+          )}
+        </Container>
+      </section>
+
+      <section className="bg-gradient-to-br from-peacock-900 via-maroon to-peacock-900 py-16 text-cream">
+        <Container size="md" className="text-center">
+          <SectionHeading
+            alignment="center"
+            title="How it works"
+            decorative
+            className="text-cream [&_h2]:text-cream [&_p]:text-gold-100/85"
+          />
+          <div className="mt-10 grid gap-6 sm:grid-cols-3">
+            {[
+              { step: '1', title: 'Chant', desc: 'Complete your daily japa rounds of the Hare Krishna Maha-mantra.' },
+              { step: '2', title: 'Submit', desc: 'Enter your name, city, and number of rounds chanted for the day.' },
+              { step: '3', title: 'Inspire', desc: 'Once approved, your rounds add to the collective yagna counter.' },
+            ].map((item) => (
+              <motion.div
+                key={item.step}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="rounded-2xl border border-white/15 bg-white/10 p-6 backdrop-blur-sm"
+              >
+                <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-gold-400 font-bold text-maroon shadow">
+                  {item.step}
+                </div>
+                <h3 className="mt-4 font-heading text-lg font-semibold text-gold-200">{item.title}</h3>
+                <p className="mt-2 text-sm text-white/80">{item.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      <section className="bg-cream py-12 text-center">
+        <Container size="sm">
+          <p className="font-heading text-xl italic text-maroon">
+            "Hare Krishna Hare Krishna Krishna Krishna Hare Hare<br />
+            Hare Rama Hare Rama Rama Rama Hare Hare"
+          </p>
+          <p className="mt-4 text-sm text-peacock-700">This sixteen-word mantra is especially recommended for the present age.</p>
+          <Button
+            type="button"
+            variant="maroon"
+            size="xl"
+            className="mt-8"
+            leftIcon={<BookOpen className="h-5 w-5" />}
+            onClick={() => setModalOpen(true)}
+          >
+            Submit Your Japa Rounds
+          </Button>
+        </Container>
+      </section>
+
+      <SubmitModal open={modalOpen} onClose={() => setModalOpen(false)} onSuccess={handleSubmitSuccess} />
+    </>
+  )
+}
