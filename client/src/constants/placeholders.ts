@@ -43,34 +43,21 @@ export const SEVA_THUMBNAILS = {
   templeConstruction: ph(640, 400, P.gold, P.maroon, 'Temple Expansion'),
 } as const
 
-/** Twelve gallery placeholders with varied aspect ratios */
+/** Gallery images — real photos from captured glories, placeholders for the rest */
 export const GALLERY_IMAGES: readonly GalleryImage[] = [
-  { id: 'g1', alt: 'Mangala Aarti darshan', category: 'Daily Darshan', width: 1200, height: 900 },
-  { id: 'g2', alt: 'Gaura Nitai altar', category: 'Temple', width: 800, height: 1200 },
-  { id: 'g3', alt: 'Janmashtami abhishekam', category: 'Festivals', width: 1600, height: 900 },
-  { id: 'g4', alt: 'Kirtan procession', category: 'Events', width: 900, height: 600 },
-  { id: 'g5', alt: 'Prasadam distribution', category: 'Community', width: 1000, height: 667 },
-  { id: 'g6', alt: 'Morning shringar darshan', category: 'Daily Darshan', width: 768, height: 1024 },
-  { id: 'g7', alt: 'Ratha Yatra cart', category: 'Festivals', width: 1400, height: 700 },
-  { id: 'g8', alt: 'Temple gopuram sunrise', category: 'Temple', width: 1350, height: 900 },
-  { id: 'g9', alt: 'Children program', category: 'Community', width: 960, height: 640 },
-  { id: 'g10', alt: 'Lecture hall', category: 'Events', width: 1100, height: 618 },
-  { id: 'g11', alt: 'Kartik deepotsava lamps', category: 'Festivals', width: 1280, height: 720 },
-  { id: 'g12', alt: 'Book table - spiritual literature', category: 'Community', width: 1024, height: 1024 },
-].map(({ id, alt, category, width, height }) => ({
-  id,
-  alt,
-  category,
-  width,
-  height,
-  src: ph(
-    width,
-    height,
-    id.charCodeAt(1) % 2 === 0 ? P.peacock : P.maroon,
-    id.charCodeAt(1) % 2 === 0 ? P.gold : P.cream,
-    alt,
-  ),
-}))
+  { id: 'g1', alt: 'Mangala Aarti darshan', category: 'Daily Darshan', width: 1200, height: 900, src: '/gallery/morning-shringar-darshan.jpg' },
+  { id: 'g2', alt: 'Gaura Nitai altar', category: 'Temple', width: 800, height: 1200, src: '/gallery/celebrationhall.jpg' },
+  { id: 'g3', alt: 'Janmashtami abhishekam', category: 'Festivals', width: 1600, height: 900, src: '/gallery/janmashtami-abhishekam.jpg' },
+  { id: 'g4', alt: 'Kirtan procession', category: 'Events', width: 900, height: 600, src: '/gallery/ashraya.jpg' },
+  { id: 'g5', alt: 'Prasadam distribution', category: 'Community', width: 1000, height: 667, src: '/gallery/prasadam-distribution.jpg' },
+  { id: 'g6', alt: 'Morning shringar darshan', category: 'Daily Darshan', width: 768, height: 1024, src: '/gallery/morning-shringar-darshan.jpg' },
+  { id: 'g7', alt: 'Sri Krishna Janmashtami', category: 'Festivals', width: 1400, height: 700, src: '/gallery/sri-krishna-janmashtami.jpg' },
+  { id: 'g8', alt: 'Bhumi Puja ceremony', category: 'Temple', width: 1350, height: 900, src: '/gallery/bhumipuja.jpg' },
+  { id: 'g9', alt: 'Celebration hall', category: 'Community', width: 960, height: 640, src: '/gallery/celebrationhall.jpg' },
+  { id: 'g10', alt: 'Ashraya ceremony', category: 'Events', width: 1100, height: 618, src: '/gallery/ashraya.jpg' },
+  { id: 'g11', alt: 'Sri Krishna Janmashtami celebration', category: 'Festivals', width: 1280, height: 720, src: '/gallery/sri-krishna-janmashtami.jpg' },
+  { id: 'g12', alt: 'Prasadam seva', category: 'Community', width: 1024, height: 1024, src: '/gallery/prasadam-distribution.jpg' },
+]
 
 export const LIVESTREAM_PREVIEW = ph(
   1280,
