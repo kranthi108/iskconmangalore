@@ -131,7 +131,7 @@ export default function Navbar() {
               const isExternal = item.href.startsWith('http')
               if (isExternal) {
                 return (
-                  <a key={item.href} href={item.href} target="_blank" rel="noreferrer" className="relative px-3 py-2 text-sm font-semibold text-peacock-900 transition-colors hover:text-maroon-light">
+                  <a key={item.href} href={item.href} className="relative px-3 py-2 text-sm font-semibold text-peacock-900 transition-colors hover:text-maroon-light">
                     {item.label}
                   </a>
                 )
@@ -248,8 +248,6 @@ export default function Navbar() {
                     <a
                       key={item.href}
                       href={item.href}
-                      target="_blank"
-                      rel="noreferrer"
                       className="flex items-center justify-between rounded-2xl border border-maroon/10 bg-white/90 px-4 py-3 text-left font-semibold text-maroon shadow-sm hover:border-maroon/40 hover:text-maroon-light"
                       onClick={() => toggleMobileMenu(false)}
                     >
