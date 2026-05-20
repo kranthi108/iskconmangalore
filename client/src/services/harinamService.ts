@@ -3,14 +3,16 @@ import { api, readApiData } from '@/services/api'
 export interface HarinamStats {
   totalRounds: number
   totalDevotees: number
+  todayRounds: number
+  todayDevotees: number
+  deadline: string
 }
 
 export interface LeaderboardEntry {
-  rank: number
   devoteName: string
   city: string
   totalRounds: number
-  totalEntries: number
+  todayRounds: number
   lastChanted: string
 }
 
@@ -21,11 +23,13 @@ export interface LeaderboardResponse {
 
 export interface DevoteSuggestion {
   devoteName: string
+  phone: string
   city: string
 }
 
 export interface HarinamSubmitInput {
   devoteName: string
+  phone: string
   city: string
   rounds: number
   chantedOn: string
@@ -43,6 +47,6 @@ export async function searchDevoteNames(q: string): Promise<DevoteSuggestion[]> 
   return readApiData(api.get(`/harinam/names?q=${encodeURIComponent(q)}`))
 }
 
-export async function submitHarinam(data: HarinamSubmitInput): Promise<{ id: number; status: string }> {
+export async function submitHarinam(data: HarinamSubmitInput): Promise<{ id: number }> {
   return readApiData(api.post('/harinam/submit', data))
 }

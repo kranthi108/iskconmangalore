@@ -105,10 +105,9 @@ export const festivals = pgTable('festivals', {
 export const harinamEntries = pgTable('harinam_entries', {
   id: serial('id').primaryKey(),
   devoteName: varchar('devote_name', { length: 200 }).notNull(),
+  phone: varchar('phone', { length: 20 }).notNull(),
   city: varchar('city', { length: 150 }).notNull(),
   rounds: integer('rounds').notNull(),
   chantedOn: date('chanted_on').notNull(),
-  status: varchar('status', { length: 20 }).notNull().default('submitted'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 })

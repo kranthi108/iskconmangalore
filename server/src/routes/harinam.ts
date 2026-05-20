@@ -1,5 +1,5 @@
 import { Hono } from 'hono'
-import { eq, sql, desc, ilike } from 'drizzle-orm'
+import { sql, desc, ilike } from 'drizzle-orm'
 import { harinamEntries } from '../db/schema'
 import { createDb } from '../db/client'
 import { successResponse, errorResponse } from '../lib/response'
@@ -9,8 +9,11 @@ type Env = { Bindings: { DATABASE_URL: string } }
 
 const app = new Hono<Env>()
 
+const YAGNA_DEADLINE = '2026-08-15T23:59:59+05:30'
+
 const submitSchema = z.object({
   devoteName: z.string().min(2, 'Name must be at least 2 characters').max(200),
+  phone: z.string().min(10, 'Phone must be at least 10 digits').max(20),
   city: z.string().min(2, 'City must be at least 2 characters').max(150),
   rounds: z.number().int().min(1, 'At least 1 round').max(192, 'Maximum 192 rounds'),
   chantedOn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be YYYY-MM-DD'),
@@ -18,18 +21,29 @@ const submitSchema = z.object({
 
 app.get('/stats', async (c) => {
   const db = createDb(c.env.DATABASE_URL)
+  const today = new Date().toISOString().slice(0, 10)
 
-  const result = await db
+  const [totals] = await db
     .select({
       totalRounds: sql<number>`coalesce(sum(${harinamEntries.rounds}), 0)`,
-      totalDevotees: sql<number>`count(distinct ${harinamEntries.devoteName})`,
+      totalDevotees: sql<number>`count(distinct ${harinamEntries.phone})`,
     })
     .from(harinamEntries)
-    .where(eq(harinamEntries.status, 'approved'))
+
+  const [todayStats] = await db
+    .select({
+      todayRounds: sql<number>`coalesce(sum(${harinamEntries.rounds}), 0)`,
+      todayDevotees: sql<number>`count(distinct ${harinamEntries.phone})`,
+    })
+    .from(harinamEntries)
+    .where(sql`${harinamEntries.chantedOn} = ${today}`)
 
   return successResponse(c, {
-    totalRounds: Number(result[0].totalRounds),
-    totalDevotees: Number(result[0].totalDevotees),
+    totalRounds: Number(totals.totalRounds),
+    totalDevotees: Number(totals.totalDevotees),
+    todayRounds: Number(todayStats.todayRounds),
+    todayDevotees: Number(todayStats.todayDevotees),
+    deadline: YAGNA_DEADLINE,
   })
 })
 
@@ -38,36 +52,35 @@ app.get('/leaderboard', async (c) => {
   const page = Number(c.req.query('page') ?? '1')
   const limit = Math.min(Number(c.req.query('limit') ?? '15'), 50)
   const offset = (page - 1) * limit
+  const today = new Date().toISOString().slice(0, 10)
 
   const rows = await db
     .select({
       devoteName: harinamEntries.devoteName,
+      phone: harinamEntries.phone,
       city: harinamEntries.city,
       totalRounds: sql<number>`sum(${harinamEntries.rounds})`,
-      totalEntries: sql<number>`count(*)`,
+      todayRounds: sql<number>`coalesce(sum(case when ${harinamEntries.chantedOn} = ${today} then ${harinamEntries.rounds} else 0 end), 0)`,
       lastChanted: sql<string>`max(${harinamEntries.chantedOn})`,
     })
     .from(harinamEntries)
-    .where(eq(harinamEntries.status, 'approved'))
-    .groupBy(harinamEntries.devoteName, harinamEntries.city)
+    .groupBy(harinamEntries.phone, harinamEntries.devoteName, harinamEntries.city)
     .orderBy(desc(sql`sum(${harinamEntries.rounds})`))
     .limit(limit)
     .offset(offset)
 
-  const countResult = await db
-    .select({ count: sql<number>`count(distinct ${harinamEntries.devoteName})` })
+  const [countResult] = await db
+    .select({ count: sql<number>`count(distinct ${harinamEntries.phone})` })
     .from(harinamEntries)
-    .where(eq(harinamEntries.status, 'approved'))
 
-  const total = Number(countResult[0].count)
+  const total = Number(countResult.count)
 
   return successResponse(c, {
-    leaderboard: rows.map((r, idx) => ({
-      rank: offset + idx + 1,
+    leaderboard: rows.map((r) => ({
       devoteName: r.devoteName,
       city: r.city,
       totalRounds: Number(r.totalRounds),
-      totalEntries: Number(r.totalEntries),
+      todayRounds: Number(r.todayRounds),
       lastChanted: r.lastChanted,
     })),
     pagination: { page, limit, total, hasMore: offset + limit < total },
@@ -78,12 +91,14 @@ app.get('/names', async (c) => {
   const db = createDb(c.env.DATABASE_URL)
   const q = c.req.query('q') ?? ''
 
-  if (q.length < 2) {
-    return successResponse(c, [])
-  }
+  if (q.length < 2) return successResponse(c, [])
 
   const rows = await db
-    .selectDistinct({ devoteName: harinamEntries.devoteName, city: harinamEntries.city })
+    .selectDistinct({
+      devoteName: harinamEntries.devoteName,
+      phone: harinamEntries.phone,
+      city: harinamEntries.city,
+    })
     .from(harinamEntries)
     .where(ilike(harinamEntries.devoteName, `%${q}%`))
     .limit(10)
@@ -93,6 +108,10 @@ app.get('/names', async (c) => {
 
 app.post('/submit', async (c) => {
   const db = createDb(c.env.DATABASE_URL)
+
+  if (new Date() > new Date(YAGNA_DEADLINE)) {
+    return errorResponse(c, 'The Harinam Japa Yagna has concluded. Thank you for your devotion!', 400)
+  }
 
   let body: unknown
   try {
@@ -106,20 +125,20 @@ app.post('/submit', async (c) => {
     return errorResponse(c, parsed.error.errors[0].message, 400)
   }
 
-  const { devoteName, city, rounds, chantedOn } = parsed.data
+  const { devoteName, phone, city, rounds, chantedOn } = parsed.data
 
   const [entry] = await db
     .insert(harinamEntries)
     .values({
       devoteName: devoteName.trim(),
+      phone: phone.trim(),
       city: city.trim(),
       rounds,
       chantedOn,
-      status: 'submitted',
     })
-    .returning({ id: harinamEntries.id, status: harinamEntries.status })
+    .returning({ id: harinamEntries.id })
 
-  return successResponse(c, { id: entry.id, status: entry.status }, 'Hare Krishna! Your japa entry has been submitted for approval.', 201)
+  return successResponse(c, { id: entry.id }, 'Hare Krishna! Your japa rounds have been recorded.', 201)
 })
 
 export default app

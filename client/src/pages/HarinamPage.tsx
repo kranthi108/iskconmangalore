@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { BookOpen, ChevronDown, Loader2, MapPin, Send, Sparkles, Trophy, Users, X } from 'lucide-react'
+import { BookOpen, Calendar, Clock, Loader2, MapPin, Phone, Send, Sparkles, Trophy, Users, X } from 'lucide-react'
 import { Helmet } from 'react-helmet-async'
 import namjapBg from '@/assets/namjap.jpeg'
 import HeroBanner from '@/components/layout/HeroBanner'
@@ -18,27 +18,17 @@ import {
   type DevoteSuggestion,
 } from '@/services/harinamService'
 
-function AnimatedCounter({ value, label, icon: Icon }: { value: number; label: string; icon: React.ElementType }) {
-  const [displayed, setDisplayed] = useState(0)
-  const ref = useRef<HTMLDivElement>(null)
-  const isVisible = useRef(false)
-  const prevValue = useRef(0)
+const DEFAULT_STATS: HarinamStats = { totalRounds: 0, totalDevotees: 0, todayRounds: 0, todayDevotees: 0, deadline: '2026-08-15T23:59:59+05:30' }
 
-  useEffect(() => {
-    if (!ref.current) return
-    const observer = new IntersectionObserver(
-      ([entry]) => { isVisible.current = entry.isIntersecting },
-      { threshold: 0.3 },
-    )
-    observer.observe(ref.current)
-    return () => observer.disconnect()
-  }, [])
+function AnimatedCounter({ value, label }: { value: number; label: string }) {
+  const [displayed, setDisplayed] = useState(0)
+  const prevValue = useRef(0)
 
   useEffect(() => {
     if (value === prevValue.current) return
     const from = prevValue.current
     prevValue.current = value
-    const duration = 2000
+    const duration = 1500
     const start = performance.now()
     function tick(now: number) {
       const elapsed = now - start
@@ -51,23 +41,60 @@ function AnimatedCounter({ value, label, icon: Icon }: { value: number; label: s
   }, [value])
 
   return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="flex flex-col items-center gap-3 rounded-3xl border border-white/20 bg-white/10 px-8 py-8 backdrop-blur-sm"
-    >
-      <Icon className="h-8 w-8 text-gold-200" />
-      <span className="font-heading text-5xl font-bold tabular-nums text-cream sm:text-6xl">
+    <div className="flex flex-col items-center">
+      <span className="font-heading text-4xl font-bold tabular-nums text-cream sm:text-5xl">
         {displayed.toLocaleString('en-IN')}
       </span>
-      <span className="whitespace-nowrap text-sm uppercase tracking-[0.3em] text-gold-200/80">{label}</span>
-    </motion.div>
+      <span className="whitespace-nowrap text-[10px] uppercase tracking-[0.25em] text-gold-200/80">{label}</span>
+    </div>
   )
 }
 
-function SubmitModal({ open, onClose, onSuccess }: { open: boolean; onClose: () => void; onSuccess: () => void }) {
+function CountdownTimer({ deadline }: { deadline: string }) {
+  const [now, setNow] = useState(Date.now())
+
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 1000)
+    return () => clearInterval(id)
+  }, [])
+
+  const target = new Date(deadline).getTime()
+  const diff = Math.max(0, target - now)
+  const totalSec = Math.floor(diff / 1000)
+  const days = Math.floor(totalSec / 86400)
+  const hrs = Math.floor((totalSec % 86400) / 3600)
+  const mins = Math.floor((totalSec % 3600) / 60)
+  const secs = totalSec % 60
+
+  if (diff <= 0) {
+    return <span className="text-sm font-semibold text-gold-200">Yagna Concluded</span>
+  }
+
+  const pad = (n: number) => String(n).padStart(2, '0')
+
+  if (days > 0) {
+    return (
+      <div className="flex items-center gap-2 text-cream">
+        <Clock className="h-4 w-4 text-gold-200" />
+        <span className="font-heading text-lg font-bold tabular-nums">{days}</span>
+        <span className="text-xs text-gold-200/80">{days === 1 ? 'day' : 'days'} left</span>
+      </div>
+    )
+  }
+
+  return (
+    <div className="flex items-center gap-1.5 text-cream">
+      <Clock className="h-4 w-4 text-gold-200" />
+      <span className="font-heading text-lg font-bold tabular-nums">
+        {pad(hrs)}:{pad(mins)}:{pad(secs)}
+      </span>
+    </div>
+  )
+}
+
+function SubmitModal({ open, onClose, onSuccess, expired }: { open: boolean; onClose: () => void; onSuccess: () => void; expired: boolean }) {
   const [devoteName, setDevoteName] = useState('')
+  const [phone, setPhone] = useState('')
   const [city, setCity] = useState('')
   const [rounds, setRounds] = useState('')
   const [chantedOn, setChantedOn] = useState(() => new Date().toISOString().slice(0, 10))
@@ -99,26 +126,26 @@ function SubmitModal({ open, onClose, onSuccess }: { open: boolean; onClose: () 
 
   function selectSuggestion(s: DevoteSuggestion) {
     setDevoteName(s.devoteName)
+    setPhone(s.phone)
     setCity(s.city)
     setShowSuggestions(false)
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!devoteName.trim() || !city.trim() || !rounds || !chantedOn) return
+    if (!devoteName.trim() || !phone.trim() || !city.trim() || !rounds || !chantedOn) return
 
     setSubmitting(true)
     setResult(null)
     try {
       await submitHarinam({
         devoteName: devoteName.trim(),
+        phone: phone.trim(),
         city: city.trim(),
         rounds: Number(rounds),
         chantedOn,
       })
-      setResult({ success: true, message: 'Hare Krishna! Your japa entry has been submitted for approval.' })
-      setDevoteName('')
-      setCity('')
+      setResult({ success: true, message: 'Hare Krishna! Your japa rounds have been recorded.' })
       setRounds('')
       setChantedOn(new Date().toISOString().slice(0, 10))
       onSuccess()
@@ -158,102 +185,127 @@ function SubmitModal({ open, onClose, onSuccess }: { open: boolean; onClose: () 
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5 p-6">
-            <div className="relative">
-              <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-peacock-800">Devotee Name</label>
-              <input
-                type="text"
-                value={devoteName}
-                onChange={(e) => handleNameChange(e.target.value)}
-                onFocus={() => { if (suggestions.length > 0) setShowSuggestions(true) }}
-                onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-                placeholder="e.g. Madhava Das"
-                required
-                className="w-full rounded-xl border border-peacock-200 bg-white px-4 py-3 text-peacock-950 outline-none transition focus:border-maroon focus:ring-2 focus:ring-maroon/20"
-              />
-              {showSuggestions && (
-                <ul className="absolute left-0 right-0 z-10 mt-1 max-h-48 overflow-y-auto rounded-xl border border-peacock-200 bg-white shadow-lg">
-                  {suggestions.map((s) => (
-                    <li key={`${s.devoteName}-${s.city}`}>
-                      <button
-                        type="button"
-                        onMouseDown={() => selectSuggestion(s)}
-                        className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm hover:bg-peacock-50"
-                      >
-                        <span className="font-semibold text-peacock-900">{s.devoteName}</span>
-                        <span className="flex items-center gap-1 text-xs text-peacock-600">
-                          <MapPin className="h-3 w-3" /> {s.city}
-                        </span>
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              )}
+          {expired ? (
+            <div className="p-8 text-center">
+              <Calendar className="mx-auto h-12 w-12 text-peacock-300" />
+              <h3 className="mt-4 font-heading text-xl text-maroon">Yagna Concluded</h3>
+              <p className="mt-2 text-sm text-peacock-600">The Harinam Japa Yagna has concluded. Thank you for your devotion!</p>
             </div>
-
-            <div>
-              <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-peacock-800">City</label>
-              <input
-                type="text"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-                placeholder="e.g. Mangalore"
-                required
-                className="w-full rounded-xl border border-peacock-200 bg-white px-4 py-3 text-peacock-950 outline-none transition focus:border-maroon focus:ring-2 focus:ring-maroon/20"
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-peacock-800">Rounds Chanted</label>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-5 p-6">
+              <div className="relative">
+                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-peacock-800">Devotee Name</label>
                 <input
-                  type="number"
-                  min={1}
-                  max={192}
-                  value={rounds}
-                  onChange={(e) => setRounds(e.target.value)}
-                  placeholder="16"
+                  type="text"
+                  value={devoteName}
+                  onChange={(e) => handleNameChange(e.target.value)}
+                  onFocus={() => { if (suggestions.length > 0) setShowSuggestions(true) }}
+                  onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                  placeholder="e.g. Madhava Das"
                   required
                   className="w-full rounded-xl border border-peacock-200 bg-white px-4 py-3 text-peacock-950 outline-none transition focus:border-maroon focus:ring-2 focus:ring-maroon/20"
                 />
-              </div>
-              <div>
-                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-peacock-800">Date</label>
-                <input
-                  type="date"
-                  value={chantedOn}
-                  onChange={(e) => setChantedOn(e.target.value)}
-                  max={new Date().toISOString().slice(0, 10)}
-                  required
-                  className="w-full rounded-xl border border-peacock-200 bg-white px-4 py-3 text-peacock-950 outline-none transition focus:border-maroon focus:ring-2 focus:ring-maroon/20"
-                />
-              </div>
-            </div>
-
-            {result && (
-              <motion.div
-                initial={{ opacity: 0, y: -8 }}
-                animate={{ opacity: 1, y: 0 }}
-                className={cn(
-                  'rounded-xl px-4 py-3 text-sm font-medium',
-                  result.success ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800',
+                {showSuggestions && (
+                  <ul className="absolute left-0 right-0 z-10 mt-1 max-h-48 overflow-y-auto rounded-xl border border-peacock-200 bg-white shadow-lg">
+                    {suggestions.map((s) => (
+                      <li key={`${s.devoteName}-${s.phone}`}>
+                        <button
+                          type="button"
+                          onMouseDown={() => selectSuggestion(s)}
+                          className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm hover:bg-peacock-50"
+                        >
+                          <span className="font-semibold text-peacock-900">{s.devoteName}</span>
+                          <span className="flex items-center gap-1 text-xs text-peacock-600">
+                            <MapPin className="h-3 w-3" /> {s.city}
+                          </span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
                 )}
-              >
-                {result.message}
-              </motion.div>
-            )}
+              </div>
 
-            <Button
-              type="submit"
-              variant="maroon"
-              size="lg"
-              className="w-full"
-              leftIcon={submitting ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
-              disabled={submitting}
-            >
-              {submitting ? 'Submitting...' : 'Submit Japa Entry'}
-            </Button>
-          </form>
+              <div>
+                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-peacock-800">Phone Number</label>
+                <div className="relative">
+                  <Phone className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-peacock-400" />
+                  <input
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="e.g. 9876543210"
+                    required
+                    minLength={10}
+                    maxLength={20}
+                    className="w-full rounded-xl border border-peacock-200 bg-white py-3 pl-11 pr-4 text-peacock-950 outline-none transition focus:border-maroon focus:ring-2 focus:ring-maroon/20"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-peacock-800">City</label>
+                <input
+                  type="text"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  placeholder="e.g. Mangalore"
+                  required
+                  className="w-full rounded-xl border border-peacock-200 bg-white px-4 py-3 text-peacock-950 outline-none transition focus:border-maroon focus:ring-2 focus:ring-maroon/20"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-peacock-800">Rounds Chanted</label>
+                  <input
+                    type="number"
+                    min={1}
+                    max={192}
+                    value={rounds}
+                    onChange={(e) => setRounds(e.target.value)}
+                    placeholder="16"
+                    required
+                    className="w-full rounded-xl border border-peacock-200 bg-white px-4 py-3 text-peacock-950 outline-none transition focus:border-maroon focus:ring-2 focus:ring-maroon/20"
+                  />
+                </div>
+                <div>
+                  <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-peacock-800">Date</label>
+                  <input
+                    type="date"
+                    value={chantedOn}
+                    onChange={(e) => setChantedOn(e.target.value)}
+                    max={new Date().toISOString().slice(0, 10)}
+                    required
+                    className="w-full rounded-xl border border-peacock-200 bg-white px-4 py-3 text-peacock-950 outline-none transition focus:border-maroon focus:ring-2 focus:ring-maroon/20"
+                  />
+                </div>
+              </div>
+
+              {result && (
+                <motion.div
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className={cn(
+                    'rounded-xl px-4 py-3 text-sm font-medium',
+                    result.success ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800',
+                  )}
+                >
+                  {result.message}
+                </motion.div>
+              )}
+
+              <Button
+                type="submit"
+                variant="maroon"
+                size="lg"
+                className="w-full"
+                leftIcon={submitting ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
+                disabled={submitting}
+              >
+                {submitting ? 'Submitting...' : 'Submit Japa Entry'}
+              </Button>
+            </form>
+          )}
         </motion.div>
       </motion.div>
     </AnimatePresence>
@@ -261,13 +313,15 @@ function SubmitModal({ open, onClose, onSuccess }: { open: boolean; onClose: () 
 }
 
 export default function HarinamPage() {
-  const [stats, setStats] = useState<HarinamStats>({ totalRounds: 0, totalDevotees: 0 })
+  const [stats, setStats] = useState<HarinamStats>(DEFAULT_STATS)
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([])
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(true)
   const [loading, setLoading] = useState(false)
   const [modalOpen, setModalOpen] = useState(false)
   const sentinelRef = useRef<HTMLDivElement>(null)
+
+  const expired = useMemo(() => Date.now() > new Date(stats.deadline).getTime(), [stats.deadline])
 
   const fetchStats = useCallback(async () => {
     try {
@@ -307,11 +361,9 @@ export default function HarinamPage() {
     return () => observer.disconnect()
   }, [hasMore, loading, page])
 
-  const topThree = useMemo(() => leaderboard.slice(0, 3), [leaderboard])
-  const rest = useMemo(() => leaderboard.slice(3), [leaderboard])
-
   function handleSubmitSuccess() {
     fetchStats()
+    fetchLeaderboard(1)
   }
 
   return (
@@ -328,20 +380,45 @@ export default function HarinamPage() {
         height="large"
         centered
       >
-        <div className="mt-4 flex w-full flex-col items-center gap-6">
-          <div className="grid w-full max-w-md grid-cols-2 gap-4 sm:gap-6">
-            <AnimatedCounter value={stats.totalRounds} label="Rounds Chanted" icon={Sparkles} />
-            <AnimatedCounter value={stats.totalDevotees} label="Devotees Joined" icon={Users} />
+        <div className="relative mt-4 flex w-full flex-col items-center gap-5">
+          {/* Countdown — top right */}
+          <div className="absolute -top-12 right-0 rounded-xl border border-white/20 bg-white/10 px-4 py-2 backdrop-blur-sm sm:-top-14">
+            <CountdownTimer deadline={stats.deadline} />
           </div>
-          <Button
-            type="button"
-            variant="secondary"
-            size="xl"
-            leftIcon={<BookOpen className="h-5 w-5" />}
-            onClick={() => setModalOpen(true)}
-          >
-            Submit Your Japa Rounds
-          </Button>
+
+          {/* Main stat blocks */}
+          <div className="grid w-full max-w-lg grid-cols-2 gap-4">
+            <div className="flex flex-col items-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-6 py-6 backdrop-blur-sm">
+              <Sparkles className="h-6 w-6 text-gold-200" />
+              <AnimatedCounter value={stats.totalRounds} label="Total Rounds" />
+              <div className="mt-1 rounded-full border border-white/15 bg-white/10 px-3 py-1">
+                <span className="text-xs font-semibold tabular-nums text-gold-200">
+                  Today: {stats.todayRounds.toLocaleString('en-IN')}
+                </span>
+              </div>
+            </div>
+            <div className="flex flex-col items-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-6 py-6 backdrop-blur-sm">
+              <Users className="h-6 w-6 text-gold-200" />
+              <AnimatedCounter value={stats.totalDevotees} label="Devotees Joined" />
+              <div className="mt-1 rounded-full border border-white/15 bg-white/10 px-3 py-1">
+                <span className="text-xs font-semibold tabular-nums text-gold-200">
+                  Today: {stats.todayDevotees.toLocaleString('en-IN')}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {!expired && (
+            <Button
+              type="button"
+              variant="secondary"
+              size="xl"
+              leftIcon={<BookOpen className="h-5 w-5" />}
+              onClick={() => setModalOpen(true)}
+            >
+              Submit Your Japa Rounds
+            </Button>
+          )}
         </div>
       </HeroBanner>
 
@@ -353,72 +430,51 @@ export default function HarinamPage() {
             decorative
           />
 
-          {topThree.length > 0 && (
-            <div className="mt-10 grid gap-4 sm:grid-cols-3">
-              {topThree.map((entry, idx) => {
-                const medals = ['bg-gradient-to-br from-gold-400 to-gold-200', 'bg-gradient-to-br from-gray-300 to-gray-100', 'bg-gradient-to-br from-amber-600 to-amber-400']
-                const ranks = ['1st', '2nd', '3rd']
-                return (
-                  <motion.div
-                    key={entry.devoteName}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: idx * 0.1 }}
-                    className={cn(
-                      'relative overflow-hidden rounded-2xl border p-6 text-center shadow-md',
-                      idx === 0 ? 'border-gold-300 bg-gradient-to-b from-gold-50 to-cream sm:order-2 sm:-mt-4 sm:scale-105' : 'border-peacock-100 bg-white',
-                      idx === 1 && 'sm:order-1',
-                      idx === 2 && 'sm:order-3',
-                    )}
-                  >
-                    <div className={cn('mx-auto flex h-12 w-12 items-center justify-center rounded-full text-lg font-bold text-white shadow-md', medals[idx])}>
-                      {ranks[idx]}
-                    </div>
-                    <h3 className="mt-4 font-heading text-xl font-semibold text-maroon">{entry.devoteName}</h3>
-                    <p className="mt-1 flex items-center justify-center gap-1 text-sm text-peacock-700">
-                      <MapPin className="h-3.5 w-3.5" /> {entry.city}
-                    </p>
-                    <p className="mt-3 font-heading text-3xl font-bold text-peacock-900">
-                      {entry.totalRounds.toLocaleString('en-IN')}
-                    </p>
-                    <p className="text-xs uppercase tracking-wider text-peacock-600">rounds</p>
-                  </motion.div>
-                )
-              })}
-            </div>
-          )}
-
-          {rest.length > 0 && (
+          {leaderboard.length > 0 && (
             <div className="mt-10 overflow-hidden rounded-2xl border border-peacock-100 bg-white shadow-sm">
               <table className="w-full text-left text-sm">
                 <thead>
                   <tr className="border-b border-peacock-100 bg-peacock-50/50 text-xs uppercase tracking-wider text-peacock-700">
-                    <th className="px-5 py-3.5 font-semibold">Rank</th>
                     <th className="px-5 py-3.5 font-semibold">Devotee</th>
                     <th className="hidden px-5 py-3.5 font-semibold sm:table-cell">City</th>
-                    <th className="px-5 py-3.5 text-right font-semibold">Rounds</th>
+                    <th className="px-5 py-3.5 text-right font-semibold">Today</th>
+                    <th className="px-5 py-3.5 text-right font-semibold">Total</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {rest.map((entry) => (
+                  {leaderboard.map((entry, idx) => (
                     <motion.tr
-                      key={entry.devoteName}
+                      key={`${entry.devoteName}-${idx}`}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      className="border-b border-peacock-50 transition-colors hover:bg-peacock-50/40"
+                      className={cn(
+                        'border-b border-peacock-50 transition-colors hover:bg-peacock-50/40',
+                        idx < 3 && 'bg-gold-50/40',
+                      )}
                     >
                       <td className="px-5 py-3.5">
-                        <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-peacock-100 text-xs font-bold text-peacock-800">
-                          {entry.rank}
-                        </span>
-                      </td>
-                      <td className="px-5 py-3.5">
-                        <span className="font-semibold text-peacock-900">{entry.devoteName}</span>
-                        <span className="ml-2 text-xs text-peacock-500 sm:hidden">({entry.city})</span>
+                        <div className="flex items-center gap-3">
+                          {idx < 3 && (
+                            <span className={cn(
+                              'inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white',
+                              idx === 0 && 'bg-gradient-to-br from-gold-400 to-gold-200',
+                              idx === 1 && 'bg-gradient-to-br from-gray-400 to-gray-200',
+                              idx === 2 && 'bg-gradient-to-br from-amber-600 to-amber-400',
+                            )}>
+                              {idx + 1}
+                            </span>
+                          )}
+                          <div>
+                            <span className="font-semibold text-peacock-900">{entry.devoteName}</span>
+                            <span className="ml-2 text-xs text-peacock-500 sm:hidden">{entry.city}</span>
+                          </div>
+                        </div>
                       </td>
                       <td className="hidden px-5 py-3.5 text-peacock-600 sm:table-cell">{entry.city}</td>
-                      <td className="px-5 py-3.5 text-right font-bold text-maroon">{entry.totalRounds.toLocaleString('en-IN')}</td>
+                      <td className="px-5 py-3.5 text-right tabular-nums text-peacock-700">
+                        {entry.todayRounds > 0 ? entry.todayRounds.toLocaleString('en-IN') : '—'}
+                      </td>
+                      <td className="px-5 py-3.5 text-right font-bold tabular-nums text-maroon">{entry.totalRounds.toLocaleString('en-IN')}</td>
                     </motion.tr>
                   ))}
                 </tbody>
@@ -437,10 +493,12 @@ export default function HarinamPage() {
             <div className="mt-12 rounded-2xl border border-dashed border-peacock-200 bg-peacock-50/30 p-12 text-center">
               <Trophy className="mx-auto h-12 w-12 text-peacock-300" />
               <h3 className="mt-4 font-heading text-xl text-peacock-800">Be the first to chant!</h3>
-              <p className="mt-2 text-peacock-600">No approved entries yet. Submit your japa rounds and inspire others.</p>
-              <Button type="button" variant="maroon" size="lg" className="mt-6" onClick={() => setModalOpen(true)}>
-                Submit Japa Rounds
-              </Button>
+              <p className="mt-2 text-peacock-600">No entries yet. Submit your japa rounds and inspire others.</p>
+              {!expired && (
+                <Button type="button" variant="maroon" size="lg" className="mt-6" onClick={() => setModalOpen(true)}>
+                  Submit Japa Rounds
+                </Button>
+              )}
             </div>
           )}
         </Container>
@@ -457,8 +515,8 @@ export default function HarinamPage() {
           <div className="mt-10 grid gap-6 sm:grid-cols-3">
             {[
               { step: '1', title: 'Chant', desc: 'Complete your daily japa rounds of the Hare Krishna Maha-mantra.' },
-              { step: '2', title: 'Submit', desc: 'Enter your name, city, and number of rounds chanted for the day.' },
-              { step: '3', title: 'Inspire', desc: 'Once approved, your rounds add to the collective yagna counter.' },
+              { step: '2', title: 'Submit', desc: 'Enter your name, phone, city, and number of rounds chanted.' },
+              { step: '3', title: 'Inspire', desc: 'Your rounds instantly add to the collective yagna counter.' },
             ].map((item) => (
               <motion.div
                 key={item.step}
@@ -485,20 +543,22 @@ export default function HarinamPage() {
             Hare Rama Hare Rama Rama Rama Hare Hare"
           </p>
           <p className="mt-4 text-sm text-peacock-700">This sixteen-word mantra is especially recommended for the present age.</p>
-          <Button
-            type="button"
-            variant="maroon"
-            size="xl"
-            className="mt-8"
-            leftIcon={<BookOpen className="h-5 w-5" />}
-            onClick={() => setModalOpen(true)}
-          >
-            Submit Your Japa Rounds
-          </Button>
+          {!expired && (
+            <Button
+              type="button"
+              variant="maroon"
+              size="xl"
+              className="mt-8"
+              leftIcon={<BookOpen className="h-5 w-5" />}
+              onClick={() => setModalOpen(true)}
+            >
+              Submit Your Japa Rounds
+            </Button>
+          )}
         </Container>
       </section>
 
-      <SubmitModal open={modalOpen} onClose={() => setModalOpen(false)} onSuccess={handleSubmitSuccess} />
+      <SubmitModal open={modalOpen} onClose={() => setModalOpen(false)} onSuccess={handleSubmitSuccess} expired={expired} />
     </>
   )
 }
