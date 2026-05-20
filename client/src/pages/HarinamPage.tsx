@@ -41,8 +41,8 @@ function AnimatedCounter({ value, label }: { value: number; label: string }) {
   }, [value])
 
   return (
-    <div className="flex flex-col items-center">
-      <span className="font-heading text-4xl font-bold tabular-nums text-cream sm:text-5xl">
+    <div className="flex flex-col items-center gap-1">
+      <span className="-mt-1 font-heading text-4xl font-bold tabular-nums leading-none text-cream sm:text-5xl">
         {displayed.toLocaleString('en-IN')}
       </span>
       <span className="whitespace-nowrap text-[10px] uppercase tracking-[0.25em] text-gold-200/80">{label}</span>
