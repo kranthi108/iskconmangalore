@@ -67,7 +67,7 @@ export default function FestivalCard({ festival, className }: FestivalCardProps)
               <CountdownTimer targetDate={festival.date} title="Counting down" variant="light" />
             </div>
           ) : null}
-          <div className="mt-auto flex flex-wrap gap-3">
+          <div className="mt-auto flex flex-wrap justify-center gap-3">
             <Link
               to={`/festivals/${festival.slug}`}
               className={cn(

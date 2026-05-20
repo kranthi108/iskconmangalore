@@ -24,6 +24,23 @@ const heightClass: Record<NonNullable<HeroBannerProps['height']>, string> = {
   full: 'min-h-[100svh]',
   screen: 'min-h-[70vh]',
 }
+
+function extractYouTubeId(url: string): string | null {
+  const patterns = [
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
+    /youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})/,
+  ]
+  for (const re of patterns) {
+    const m = url.match(re)
+    if (m) return m[1]
+  }
+  return null
+}
+
+function isYouTubeUrl(url: string): boolean {
+  return /youtube\.com|youtu\.be/.test(url)
+}
+
 export default function HeroBanner({
   title,
   subtitle,
@@ -42,17 +59,31 @@ export default function HeroBanner({
   const parallaxPixels = useTransform(scrollYProgress, [0, 1], [0, -48])
   const smoothedPixels = useSpring(parallaxPixels, { stiffness: 120, damping: 22 })
 
+  const ytId = backgroundImage ? (isYouTubeUrl(backgroundImage) ? extractYouTubeId(backgroundImage) : null) : null
+
   return (
     <section ref={sectionRef} className={cn('relative isolate overflow-hidden', heightClass[height])}>
       <motion.div style={{ y: smoothedPixels }} className="absolute inset-0 will-change-transform">
-        <PlaceholderImage
-          src={backgroundImage}
-          alt={`${title} hero backdrop`}
-          aspectRatio="none"
-          className="size-full min-h-full rounded-none ring-0"
-          loading="eager"
-          showOverlay={false}
-        />
+        {ytId ? (
+          <div className="pointer-events-none absolute inset-0 overflow-hidden">
+            <iframe
+              src={`https://www.youtube.com/embed/${ytId}?autoplay=1&mute=1&loop=1&playlist=${ytId}&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&disablekb=1&fs=0&iv_load_policy=3`}
+              title={`${title} background video`}
+              allow="autoplay; encrypted-media"
+              className="absolute left-1/2 top-1/2 aspect-video h-full min-w-full -translate-x-1/2 -translate-y-1/2 scale-[1.2] border-0"
+              tabIndex={-1}
+            />
+          </div>
+        ) : (
+          <PlaceholderImage
+            src={backgroundImage}
+            alt={`${title} hero backdrop`}
+            aspectRatio="none"
+            className="size-full min-h-full rounded-none ring-0"
+            loading="eager"
+            showOverlay={false}
+          />
+        )}
       </motion.div>
 
       {overlay ? (

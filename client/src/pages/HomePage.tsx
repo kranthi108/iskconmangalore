@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { motion } from 'framer-motion'
 import type { LucideIcon } from 'lucide-react'
 import {
@@ -28,6 +29,8 @@ import Card from '@/components/ui/Card'
 import Container from '@/components/ui/Container'
 import SectionHeading from '@/components/ui/SectionHeading'
 import { FEATURED_CAMPAIGNS, FEATURED_FESTIVALS, DARSHAN_TIMINGS } from '@/constants/data'
+import { useCampaigns } from '@/hooks/useCampaigns'
+import { useFestivals } from '@/hooks/useFestivals'
 import { GALLERY_IMAGES, LIVESTREAM_PREVIEW } from '@/constants/placeholders'
 import krishnaBalaramBg from '@/assets/krishna_balaram.JPG'
 import templeExterior from '@/assets/side_view.png'
@@ -48,10 +51,42 @@ function resolveTimingIcon(iconName: string): LucideIcon {
 }
 
 export default function HomePage() {
+  const festivalsQuery = useFestivals(false)
+  const campaignsQuery = useCampaigns(false)
+
+  const festivalList = useMemo(() => {
+    if (festivalsQuery.data && festivalsQuery.data.length > 0) return festivalsQuery.data
+    return FEATURED_FESTIVALS.map((f) => ({
+      ...f,
+      _id: 0 as number,
+      galleryImages: [] as string[],
+      active: true,
+    }))
+  }, [festivalsQuery.data])
+
+  const campaignList = useMemo(() => {
+    if (campaignsQuery.data && campaignsQuery.data.length > 0) {
+      return campaignsQuery.data.map((c) => ({
+        slug: c.slug,
+        title: c.title,
+        subtitle: c.subtitle,
+        category: c.category,
+        description: c.description,
+        suggestedAmounts: [...c.suggestedAmounts],
+        bannerImage: c.bannerImage,
+        donorCount: c.donorCount,
+      }))
+    }
+    return [...FEATURED_CAMPAIGNS]
+  }, [campaignsQuery.data])
+
   const now = Date.now()
-  const upcomingFestivals = FEATURED_FESTIVALS
-    .filter((f) => new Date(f.date).getTime() > now)
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+  const upcomingFestivals = useMemo(() =>
+    festivalList
+      .filter((f) => new Date(f.date).getTime() > now)
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()),
+  [festivalList, now])
+
   const previewGallery = GALLERY_IMAGES.slice(0, 6)
 
   return (
@@ -222,7 +257,7 @@ export default function HomePage() {
             decorative
           />
           <div className="grid gap-6 md:grid-cols-3">
-            {FEATURED_CAMPAIGNS.map((campaign) => (
+            {campaignList.map((campaign) => (
               <DonationCard key={campaign.slug} campaign={campaign} />
             ))}
           </div>
