@@ -379,14 +379,13 @@ export default function HarinamPage() {
         backgroundImage={namjapBg}
         height="large"
         centered
-      >
-        <div className="relative mt-4 flex w-full flex-col items-center gap-5">
-          {/* Countdown — top right */}
-          <div className="absolute -top-12 right-0 rounded-xl border border-white/20 bg-white/10 px-4 py-2 backdrop-blur-sm sm:-top-14">
+        topRight={
+          <div className="rounded-xl border border-white/20 bg-white/10 px-4 py-2 backdrop-blur-sm">
             <CountdownTimer deadline={stats.deadline} />
           </div>
-
-          {/* Main stat blocks */}
+        }
+      >
+        <div className="mt-4 flex w-full flex-col items-center gap-5">
           <div className="grid w-full max-w-lg grid-cols-2 gap-4">
             <div className="flex flex-col items-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-6 py-6 backdrop-blur-sm">
               <Sparkles className="h-6 w-6 text-gold-200" />

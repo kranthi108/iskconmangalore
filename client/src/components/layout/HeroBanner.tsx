@@ -12,6 +12,7 @@ export interface HeroBannerProps {
   height?: 'full' | 'large' | 'medium' | 'small' | 'sm' | 'md' | 'lg' | 'screen'
   overlay?: boolean
   centered?: boolean
+  topRight?: ReactNode
   children?: ReactNode
 }
 
@@ -49,6 +50,7 @@ export default function HeroBanner({
   height = 'medium',
   overlay = true,
   centered = false,
+  topRight,
   children,
 }: HeroBannerProps) {
   const sectionRef = useRef<HTMLElement>(null)
@@ -93,6 +95,12 @@ export default function HeroBanner({
           <div className="absolute inset-0 bg-gradient-to-t from-transparent via-maroon/60 to-peacock-950/90" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(212,175,55,0.18),transparent_45%)]" />
         </>
+      ) : null}
+
+      {topRight ? (
+        <div className="absolute right-4 top-4 z-[2] sm:right-6 sm:top-6 lg:right-10 lg:top-8">
+          {topRight}
+        </div>
       ) : null}
 
       <Container className={cn("relative z-[1] flex min-h-full flex-col justify-center py-14 sm:py-16 lg:py-24", centered && "items-center text-center")}>
