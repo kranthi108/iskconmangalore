@@ -21,30 +21,33 @@ import {
 function AnimatedCounter({ value, label, icon: Icon }: { value: number; label: string; icon: React.ElementType }) {
   const [displayed, setDisplayed] = useState(0)
   const ref = useRef<HTMLDivElement>(null)
-  const started = useRef(false)
+  const isVisible = useRef(false)
+  const prevValue = useRef(0)
 
   useEffect(() => {
-    if (!ref.current || started.current) return
+    if (!ref.current) return
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !started.current) {
-          started.current = true
-          const duration = 2000
-          const start = performance.now()
-          function tick(now: number) {
-            const elapsed = now - start
-            const progress = Math.min(elapsed / duration, 1)
-            const eased = 1 - Math.pow(1 - progress, 3)
-            setDisplayed(Math.round(eased * value))
-            if (progress < 1) requestAnimationFrame(tick)
-          }
-          requestAnimationFrame(tick)
-        }
-      },
+      ([entry]) => { isVisible.current = entry.isIntersecting },
       { threshold: 0.3 },
     )
     observer.observe(ref.current)
     return () => observer.disconnect()
+  }, [])
+
+  useEffect(() => {
+    if (value === prevValue.current) return
+    const from = prevValue.current
+    prevValue.current = value
+    const duration = 2000
+    const start = performance.now()
+    function tick(now: number) {
+      const elapsed = now - start
+      const progress = Math.min(elapsed / duration, 1)
+      const eased = 1 - Math.pow(1 - progress, 3)
+      setDisplayed(Math.round(from + (value - from) * eased))
+      if (progress < 1) requestAnimationFrame(tick)
+    }
+    requestAnimationFrame(tick)
   }, [value])
 
   return (
