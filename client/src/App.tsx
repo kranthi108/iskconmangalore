@@ -23,6 +23,7 @@ const AboutPage = lazy(() => import('@/pages/AboutPage'))
 const HarinamPage = lazy(() => import('@/pages/HarinamPage'))
 const MarathonJapaPage = lazy(() => import('@/pages/MarathonJapaPage'))
 const OurAcharyaPage = lazy(() => import('@/pages/OurAcharyaPage'))
+const OurSampradayaPage = lazy(() => import('@/pages/OurSampradayaPage'))
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
 
 function RouteFallback() {
@@ -61,6 +62,7 @@ export default function App() {
               <Route path="/harinam" element={<HarinamPage />} />
               <Route path="/marathon-japa" element={<MarathonJapaPage />} />
               <Route path="/our-acharya" element={<OurAcharyaPage />} />
+              <Route path="/our-sampradaya" element={<OurSampradayaPage />} />
               <Route path="/resources" element={<ResourcesPage />} />
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/about" element={<AboutPage />} />

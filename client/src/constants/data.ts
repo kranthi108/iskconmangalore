@@ -322,6 +322,13 @@ export const SPIRITUAL_RESOURCES = [
     href: '/our-acharya',
   },
   {
+    title: 'Our Sampradaya',
+    description:
+      'The Brahma-Madhva-Gaudiya Sampradaya — the bona fide disciplic succession through which the timeless knowledge of Krishna consciousness descends from the Supreme Lord.',
+    coverImage: BLOG_THUMBNAILS[2],
+    href: '/our-sampradaya',
+  },
+  {
     title: 'Bhagavad Gita As It Is',
     description: 'Srila Prabhupada’s crown-jewel commentary arranged for earnest daily study circles.',
     coverImage: BLOG_THUMBNAILS[2],
@@ -348,5 +355,4 @@ export const SPIRITUAL_RESOURCES = [
     coverImage: BLOG_THUMBNAILS[3],
     href: '/resources/bhajan-collection',
   },
-  
 ] as const
