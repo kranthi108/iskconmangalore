@@ -7,6 +7,7 @@ import volunteers from './routes/volunteers'
 import donations from './routes/donations'
 import webhook from './routes/webhook'
 import harinam from './routes/harinam'
+import marathonJapa from './routes/marathonJapa'
 
 type Env = {
   Bindings: {
@@ -42,6 +43,7 @@ app.route('/api/contact', contact)
 app.route('/api/volunteers', volunteers)
 app.route('/api/donations', donations)
 app.route('/api/harinam', harinam)
+app.route('/api/marathon-japa', marathonJapa)
 
 app.get('/', (c) =>
   c.json({

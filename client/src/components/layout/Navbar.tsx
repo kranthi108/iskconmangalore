@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion'
-import { ChevronRight, Heart, Menu, X } from 'lucide-react'
-import { useEffect, useState } from 'react'
-import { Link, NavLink, useNavigate } from 'react-router-dom'
+import { ChevronDown, ChevronRight, Heart, Menu, X } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom'
 import Button from '@/components/ui/Button'
 import Container from '@/components/ui/Container'
 import { NAV_LINKS } from '@/constants/data'
@@ -9,10 +9,72 @@ import logo from '@/assets/logo.png'
 import { useUiStore } from '@/store/uiStore'
 import { cn } from '@/utils/cn'
 
+function DesktopDropdown({ label, children }: { label: string; children: readonly { label: string; href: string }[] }) {
+  const [open, setOpen] = useState(false)
+  const timeout = useRef<ReturnType<typeof setTimeout>>()
+  const location = useLocation()
+  const isChildActive = children.some((c) => location.pathname === c.href)
+
+  function enter() { clearTimeout(timeout.current); setOpen(true) }
+  function leave() { timeout.current = setTimeout(() => setOpen(false), 150) }
+
+  return (
+    <div className="relative" onMouseEnter={enter} onMouseLeave={leave}>
+      <NavLink
+        to={children[0].href}
+        className="relative px-3 py-2 text-sm font-semibold"
+        onClick={(e) => { e.preventDefault(); setOpen((v) => !v) }}
+        tabIndex={0}
+      >
+        {() => (
+          <span className={cn('relative pb-2 transition-colors', isChildActive ? 'text-maroon-light' : 'text-peacock-900 hover:text-maroon-light')}>
+            {label}
+            <ChevronDown className={cn('ml-0.5 inline h-3.5 w-3.5 transition-transform', open && 'rotate-180')} />
+            {isChildActive && (
+              <motion.span
+                layoutId="desktop-nav-indicator"
+                className="absolute inset-x-2 -bottom-1 h-[3px] rounded-full bg-gradient-to-r from-gold-500 via-gold-300 to-gold-500 shadow-sm"
+              />
+            )}
+          </span>
+        )}
+      </NavLink>
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 8 }}
+            transition={{ duration: 0.15 }}
+            className="absolute left-0 top-full z-50 min-w-[220px] rounded-xl border border-peacock-100 bg-white py-2 shadow-xl"
+          >
+            {children.map((child) => (
+              <NavLink
+                key={child.href}
+                to={child.href}
+                onClick={() => setOpen(false)}
+                className={({ isActive }) =>
+                  cn(
+                    'block px-4 py-2.5 text-sm font-medium transition-colors',
+                    isActive ? 'bg-peacock-50 text-maroon' : 'text-peacock-900 hover:bg-peacock-50/60 hover:text-maroon-light',
+                  )
+                }
+              >
+                {child.label}
+              </NavLink>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
+
 export default function Navbar() {
   const navigate = useNavigate()
   const { isMobileMenuOpen, toggleMobileMenu } = useUiStore()
   const [isScrolled, setIsScrolled] = useState(false)
+  const [mobileExpanded, setMobileExpanded] = useState<string | null>(null)
 
   useEffect(() => {
     const listener = () => setIsScrolled(window.scrollY > 12)
@@ -62,17 +124,20 @@ export default function Navbar() {
           </Link>
 
           <nav className="hidden items-center gap-1 lg:flex" aria-label="Primary">
-            {NAV_LINKS.map(({ href, label }) => {
-              const isExternal = href.startsWith('http')
+            {NAV_LINKS.map((item) => {
+              if (item.children) {
+                return <DesktopDropdown key={item.label} label={item.label} children={item.children} />
+              }
+              const isExternal = item.href.startsWith('http')
               if (isExternal) {
                 return (
-                  <a key={href} href={href} target="_blank" rel="noreferrer" className="relative px-3 py-2 text-sm font-semibold text-peacock-900 transition-colors hover:text-maroon-light">
-                    {label}
+                  <a key={item.href} href={item.href} target="_blank" rel="noreferrer" className="relative px-3 py-2 text-sm font-semibold text-peacock-900 transition-colors hover:text-maroon-light">
+                    {item.label}
                   </a>
                 )
               }
               return (
-                <NavLink key={href} to={href} end={href === '/'} className="relative px-3 py-2 text-sm font-semibold">
+                <NavLink key={item.href} to={item.href} end={item.href === '/'} className="relative px-3 py-2 text-sm font-semibold">
                   {({ isActive }) => (
                     <span
                       className={cn(
@@ -80,7 +145,7 @@ export default function Navbar() {
                         isActive ? 'text-maroon-light' : 'hover:text-maroon-light',
                       )}
                     >
-                      {label}
+                      {item.label}
                       {isActive ? (
                         <motion.span
                           layoutId="desktop-nav-indicator"
@@ -136,31 +201,71 @@ export default function Navbar() {
             transition={{ type: 'spring', stiffness: 360, damping: 34 }}
           >
             <nav className="flex flex-col gap-3 overflow-y-auto" aria-label="Mobile primary">
-              {NAV_LINKS.map(({ href, label }) => {
-                const isExternal = href.startsWith('http')
+              {NAV_LINKS.map((item) => {
+                if (item.children) {
+                  const isExpanded = mobileExpanded === item.label
+                  return (
+                    <div key={item.label}>
+                      <button
+                        type="button"
+                        className="flex w-full items-center justify-between rounded-2xl border border-maroon/10 bg-white/90 px-4 py-3 text-left font-semibold text-maroon shadow-sm hover:border-maroon/40 hover:text-maroon-light"
+                        onClick={() => setMobileExpanded(isExpanded ? null : item.label)}
+                      >
+                        {item.label}
+                        <ChevronDown className={cn('h-5 w-5 text-peacock-700 transition-transform', isExpanded && 'rotate-180')} />
+                      </button>
+                      <AnimatePresence>
+                        {isExpanded && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                            className="overflow-hidden"
+                          >
+                            <div className="mt-1 ml-4 flex flex-col gap-1">
+                              {item.children.map((child) => (
+                                <button
+                                  key={child.href}
+                                  type="button"
+                                  className="flex items-center justify-between rounded-xl border border-maroon/5 bg-white/70 px-4 py-2.5 text-left text-sm font-medium text-peacock-900 hover:bg-peacock-50 hover:text-maroon"
+                                  onClick={() => handleNavigate(child.href)}
+                                >
+                                  {child.label}
+                                  <ChevronRight className="h-4 w-4 text-peacock-500" aria-hidden />
+                                </button>
+                              ))}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  )
+                }
+                const isExternal = item.href.startsWith('http')
                 if (isExternal) {
                   return (
                     <a
-                      key={href}
-                      href={href}
+                      key={item.href}
+                      href={item.href}
                       target="_blank"
                       rel="noreferrer"
                       className="flex items-center justify-between rounded-2xl border border-maroon/10 bg-white/90 px-4 py-3 text-left font-semibold text-maroon shadow-sm hover:border-maroon/40 hover:text-maroon-light"
                       onClick={() => toggleMobileMenu(false)}
                     >
-                      {label}
+                      {item.label}
                       <ChevronRight className="h-5 w-5 text-peacock-700" aria-hidden />
                     </a>
                   )
                 }
                 return (
                   <button
-                    key={href}
+                    key={item.href}
                     type="button"
                     className="flex items-center justify-between rounded-2xl border border-maroon/10 bg-white/90 px-4 py-3 text-left font-semibold text-maroon shadow-sm hover:border-maroon/40 hover:text-maroon-light"
-                    onClick={() => handleNavigate(href)}
+                    onClick={() => handleNavigate(item.href)}
                   >
-                    {label}
+                    {item.label}
                     <ChevronRight className="h-5 w-5 text-peacock-700" aria-hidden />
                   </button>
                 )

@@ -9,16 +9,16 @@ import Container from '@/components/ui/Container'
 import SectionHeading from '@/components/ui/SectionHeading'
 import { cn } from '@/utils/cn'
 import {
-  getHarinamStats,
-  getLeaderboard,
-  searchDevoteNames,
-  submitHarinam,
-  type HarinamStats,
-  type LeaderboardEntry,
-  type DevoteSuggestion,
-} from '@/services/harinamService'
+  getMarathonStats,
+  getMarathonLeaderboard,
+  searchMarathonNames,
+  submitMarathonJapa,
+  type MarathonStats,
+  type MarathonLeaderboardEntry,
+  type MarathonDevoteSuggestion,
+} from '@/services/marathonJapaService'
 
-const DEFAULT_STATS: HarinamStats = { totalRounds: 0, totalDevotees: 0, todayRounds: 0, todayDevotees: 0, deadline: '2026-08-15T23:59:59+05:30' }
+const DEFAULT_STATS: MarathonStats = { totalRounds: 0, totalDevotees: 0, deadline: '2026-08-15T23:59:59+05:30' }
 
 function AnimatedCounter({ value, label }: { value: number; label: string }) {
   const [displayed, setDisplayed] = useState(0)
@@ -50,7 +50,7 @@ function AnimatedCounter({ value, label }: { value: number; label: string }) {
   )
 }
 
-function CountdownTimer({ deadline }: { deadline: string }) {
+function MarathonCountdown({ deadline }: { deadline: string }) {
   const [now, setNow] = useState(Date.now())
 
   useEffect(() => {
@@ -61,26 +61,15 @@ function CountdownTimer({ deadline }: { deadline: string }) {
   const target = new Date(deadline).getTime()
   const diff = Math.max(0, target - now)
   const totalSec = Math.floor(diff / 1000)
-  const days = Math.floor(totalSec / 86400)
-  const hrs = Math.floor((totalSec % 86400) / 3600)
+  const hrs = Math.floor(totalSec / 3600)
   const mins = Math.floor((totalSec % 3600) / 60)
   const secs = totalSec % 60
 
   if (diff <= 0) {
-    return <span className="text-sm font-semibold text-gold-200">Yagna Concluded</span>
+    return <span className="text-sm font-semibold text-gold-200">Marathon Concluded</span>
   }
 
   const pad = (n: number) => String(n).padStart(2, '0')
-
-  if (days > 0) {
-    return (
-      <div className="flex items-center gap-2 text-cream">
-        <Clock className="h-4 w-4 text-gold-200" />
-        <span className="font-heading text-lg font-bold tabular-nums">{days}</span>
-        <span className="text-xs text-gold-200/80">{days === 1 ? 'day' : 'days'} left</span>
-      </div>
-    )
-  }
 
   return (
     <div className="flex items-center gap-1.5 text-cream">
@@ -88,6 +77,7 @@ function CountdownTimer({ deadline }: { deadline: string }) {
       <span className="font-heading text-lg font-bold tabular-nums">
         {pad(hrs)}:{pad(mins)}:{pad(secs)}
       </span>
+      <span className="text-xs text-gold-200/80">remaining</span>
     </div>
   )
 }
@@ -97,8 +87,7 @@ function SubmitModal({ open, onClose, onSuccess, expired }: { open: boolean; onC
   const [phone, setPhone] = useState('')
   const [city, setCity] = useState('')
   const [rounds, setRounds] = useState('')
-  const [chantedOn, setChantedOn] = useState(() => new Date().toISOString().slice(0, 10))
-  const [suggestions, setSuggestions] = useState<DevoteSuggestion[]>([])
+  const [suggestions, setSuggestions] = useState<MarathonDevoteSuggestion[]>([])
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [result, setResult] = useState<{ success: boolean; message: string } | null>(null)
@@ -111,7 +100,7 @@ function SubmitModal({ open, onClose, onSuccess, expired }: { open: boolean; onC
     if (val.length >= 2) {
       debounceRef.current = setTimeout(async () => {
         try {
-          const data = await searchDevoteNames(val)
+          const data = await searchMarathonNames(val)
           setSuggestions(data)
           setShowSuggestions(data.length > 0)
         } catch {
@@ -124,7 +113,7 @@ function SubmitModal({ open, onClose, onSuccess, expired }: { open: boolean; onC
     }
   }
 
-  function selectSuggestion(s: DevoteSuggestion) {
+  function selectSuggestion(s: MarathonDevoteSuggestion) {
     setDevoteName(s.devoteName)
     setPhone(s.phone)
     setCity(s.city)
@@ -133,21 +122,19 @@ function SubmitModal({ open, onClose, onSuccess, expired }: { open: boolean; onC
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!devoteName.trim() || !phone.trim() || !city.trim() || !rounds || !chantedOn) return
+    if (!devoteName.trim() || !phone.trim() || !city.trim() || !rounds) return
 
     setSubmitting(true)
     setResult(null)
     try {
-      await submitHarinam({
+      await submitMarathonJapa({
         devoteName: devoteName.trim(),
         phone: phone.trim(),
         city: city.trim(),
         rounds: Number(rounds),
-        chantedOn,
       })
-      setResult({ success: true, message: 'Hare Krishna! Your japa rounds have been recorded.' })
+      setResult({ success: true, message: 'Hare Krishna! Your marathon japa rounds have been recorded.' })
       setRounds('')
-      setChantedOn(new Date().toISOString().slice(0, 10))
       onSuccess()
     } catch (err) {
       setResult({ success: false, message: err instanceof Error ? err.message : 'Submission failed. Please try again.' })
@@ -177,7 +164,7 @@ function SubmitModal({ open, onClose, onSuccess, expired }: { open: boolean; onC
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <BookOpen className="h-6 w-6 text-gold-200" />
-                <h2 className="font-heading text-xl font-semibold">Submit Japa Rounds</h2>
+                <h2 className="font-heading text-xl font-semibold">Submit Marathon Rounds</h2>
               </div>
               <button type="button" onClick={onClose} className="rounded-full p-1.5 text-white/70 hover:bg-white/10 hover:text-white">
                 <X className="h-5 w-5" />
@@ -188,8 +175,8 @@ function SubmitModal({ open, onClose, onSuccess, expired }: { open: boolean; onC
           {expired ? (
             <div className="p-8 text-center">
               <Calendar className="mx-auto h-12 w-12 text-peacock-300" />
-              <h3 className="mt-4 font-heading text-xl text-maroon">Yagna Concluded</h3>
-              <p className="mt-2 text-sm text-peacock-600">The Harinam Japa Yagna has concluded. Thank you for your devotion!</p>
+              <h3 className="mt-4 font-heading text-xl text-maroon">Marathon Concluded</h3>
+              <p className="mt-2 text-sm text-peacock-600">The Marathon Japa Yagna has concluded. Thank you for your devotion!</p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-5 p-6">
@@ -254,31 +241,18 @@ function SubmitModal({ open, onClose, onSuccess, expired }: { open: boolean; onC
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-peacock-800">Rounds Chanted</label>
-                  <input
-                    type="number"
-                    min={1}
-                    max={192}
-                    value={rounds}
-                    onChange={(e) => setRounds(e.target.value)}
-                    placeholder="16"
-                    required
-                    className="w-full rounded-xl border border-peacock-200 bg-white px-4 py-3 text-peacock-950 outline-none transition focus:border-maroon focus:ring-2 focus:ring-maroon/20"
-                  />
-                </div>
-                <div>
-                  <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-peacock-800">Date</label>
-                  <input
-                    type="date"
-                    value={chantedOn}
-                    onChange={(e) => setChantedOn(e.target.value)}
-                    max={new Date().toISOString().slice(0, 10)}
-                    required
-                    className="w-full rounded-xl border border-peacock-200 bg-white px-4 py-3 text-peacock-950 outline-none transition focus:border-maroon focus:ring-2 focus:ring-maroon/20"
-                  />
-                </div>
+              <div>
+                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-peacock-800">Rounds Chanted</label>
+                <input
+                  type="number"
+                  min={1}
+                  max={192}
+                  value={rounds}
+                  onChange={(e) => setRounds(e.target.value)}
+                  placeholder="16"
+                  required
+                  className="w-full rounded-xl border border-peacock-200 bg-white px-4 py-3 text-peacock-950 outline-none transition focus:border-maroon focus:ring-2 focus:ring-maroon/20"
+                />
               </div>
 
               {result && (
@@ -302,7 +276,7 @@ function SubmitModal({ open, onClose, onSuccess, expired }: { open: boolean; onC
                 leftIcon={submitting ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
                 disabled={submitting}
               >
-                {submitting ? 'Submitting...' : 'Submit Japa Entry'}
+                {submitting ? 'Submitting...' : 'Submit Rounds'}
               </Button>
             </form>
           )}
@@ -312,9 +286,9 @@ function SubmitModal({ open, onClose, onSuccess, expired }: { open: boolean; onC
   )
 }
 
-export default function HarinamPage() {
-  const [stats, setStats] = useState<HarinamStats>(DEFAULT_STATS)
-  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([])
+export default function MarathonJapaPage() {
+  const [stats, setStats] = useState<MarathonStats>(DEFAULT_STATS)
+  const [leaderboard, setLeaderboard] = useState<MarathonLeaderboardEntry[]>([])
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(true)
   const [loading, setLoading] = useState(false)
@@ -325,7 +299,7 @@ export default function HarinamPage() {
 
   const fetchStats = useCallback(async () => {
     try {
-      const data = await getHarinamStats()
+      const data = await getMarathonStats()
       setStats(data)
     } catch { /* ignore */ }
   }, [])
@@ -334,7 +308,7 @@ export default function HarinamPage() {
     if (loading) return
     setLoading(true)
     try {
-      const data = await getLeaderboard(p, 15)
+      const data = await getMarathonLeaderboard(p, 15)
       setLeaderboard((prev) => append ? [...prev, ...data.leaderboard] : data.leaderboard)
       setHasMore(data.pagination.hasMore)
       setPage(p)
@@ -369,19 +343,19 @@ export default function HarinamPage() {
   return (
     <>
       <Helmet>
-        <title>Harinam Japa Yagna - Sri Krishna Janmashtami - ISKCON Mangalore</title>
-        <meta name="description" content="Join thousands of devotees in the Harinam Japa Yagna for Sri Krishna Janmashtami. Chant, submit your rounds, and see the global leaderboard." />
+        <title>Marathon Japa Yagna - ISKCON Mangalore</title>
+        <meta name="description" content="Join the Marathon Japa Yagna — chant as many rounds as you can in a single day and see the live leaderboard." />
       </Helmet>
 
       <HeroBanner
-        title="Harinam Japa Yagna"
-        subtitle="Unite in chanting the Holy Names for Sri Krishna Janmashtami 2026"
+        title="Marathon Japa Yagna"
+        subtitle="Chant as many rounds as you can — every round counts!"
         backgroundImage={namjapBg}
         height="large"
         centered
         topRight={
           <div className="rounded-xl border border-white/20 bg-white/10 px-4 py-2 backdrop-blur-sm">
-            <CountdownTimer deadline={stats.deadline} />
+            <MarathonCountdown deadline={stats.deadline} />
           </div>
         }
       >
@@ -390,20 +364,10 @@ export default function HarinamPage() {
             <div className="flex flex-col items-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-6 py-6 backdrop-blur-sm">
               <Sparkles className="h-6 w-6 text-gold-200" />
               <AnimatedCounter value={stats.totalRounds} label="Total Rounds" />
-              <div className="mt-1 rounded-full border border-white/15 bg-white/10 px-3 py-1">
-                <span className="text-xs font-semibold tabular-nums text-gold-200">
-                  Today: {stats.todayRounds.toLocaleString('en-IN')}
-                </span>
-              </div>
             </div>
             <div className="flex flex-col items-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-6 py-6 backdrop-blur-sm">
               <Users className="h-6 w-6 text-gold-200" />
               <AnimatedCounter value={stats.totalDevotees} label="Devotees Joined" />
-              <div className="mt-1 rounded-full border border-white/15 bg-white/10 px-3 py-1">
-                <span className="text-xs font-semibold tabular-nums text-gold-200">
-                  Today: {stats.todayDevotees.toLocaleString('en-IN')}
-                </span>
-              </div>
             </div>
           </div>
 
@@ -415,7 +379,7 @@ export default function HarinamPage() {
               leftIcon={<BookOpen className="h-5 w-5" />}
               onClick={() => setModalOpen(true)}
             >
-              Submit Your Japa Rounds
+              Submit Your Rounds
             </Button>
           )}
         </div>
@@ -431,7 +395,6 @@ export default function HarinamPage() {
 
           {leaderboard.length > 0 && (
             <>
-              {/* Top 3 podium cards */}
               <div className="mt-10 grid gap-4 sm:grid-cols-3">
                 {leaderboard.slice(0, 3).map((entry, idx) => {
                   const medals = ['bg-gradient-to-br from-gold-400 to-gold-200', 'bg-gradient-to-br from-gray-300 to-gray-100', 'bg-gradient-to-br from-amber-600 to-amber-400']
@@ -460,16 +423,12 @@ export default function HarinamPage() {
                       <p className="mt-3 font-heading text-3xl font-bold text-peacock-900">
                         {entry.totalRounds.toLocaleString('en-IN')}
                       </p>
-                      <p className="text-xs uppercase tracking-wider text-peacock-600">total rounds</p>
-                      {entry.todayRounds > 0 && (
-                        <p className="mt-1 text-xs font-semibold text-maroon/70">Today: {entry.todayRounds.toLocaleString('en-IN')}</p>
-                      )}
+                      <p className="text-xs uppercase tracking-wider text-peacock-600">rounds</p>
                     </motion.div>
                   )
                 })}
               </div>
 
-              {/* Remaining devotees table */}
               {leaderboard.length > 3 && (
                 <div className="mt-10 overflow-hidden rounded-2xl border border-peacock-100 bg-white shadow-sm">
                   <table className="w-full text-left text-sm">
@@ -478,8 +437,7 @@ export default function HarinamPage() {
                         <th className="w-14 px-4 py-3.5 text-center font-semibold">#</th>
                         <th className="px-5 py-3.5 font-semibold">Devotee</th>
                         <th className="hidden px-5 py-3.5 font-semibold sm:table-cell">City</th>
-                        <th className="px-5 py-3.5 text-right font-semibold">Today</th>
-                        <th className="px-5 py-3.5 text-right font-semibold">Total</th>
+                        <th className="px-5 py-3.5 text-right font-semibold">Rounds</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -500,9 +458,6 @@ export default function HarinamPage() {
                             <span className="ml-2 text-xs text-peacock-500 sm:hidden">{entry.city}</span>
                           </td>
                           <td className="hidden px-5 py-3.5 text-peacock-600 sm:table-cell">{entry.city}</td>
-                          <td className="px-5 py-3.5 text-right tabular-nums text-peacock-700">
-                            {entry.todayRounds > 0 ? entry.todayRounds.toLocaleString('en-IN') : '—'}
-                          </td>
                           <td className="px-5 py-3.5 text-right font-bold tabular-nums text-maroon">{entry.totalRounds.toLocaleString('en-IN')}</td>
                         </motion.tr>
                       ))}
@@ -527,7 +482,7 @@ export default function HarinamPage() {
               <p className="mt-2 text-peacock-600">No entries yet. Submit your japa rounds and inspire others.</p>
               {!expired && (
                 <Button type="button" variant="maroon" size="lg" className="mt-6" onClick={() => setModalOpen(true)}>
-                  Submit Japa Rounds
+                  Submit Rounds
                 </Button>
               )}
             </div>
@@ -545,9 +500,9 @@ export default function HarinamPage() {
           />
           <div className="mt-10 grid gap-6 sm:grid-cols-3">
             {[
-              { step: '1', title: 'Chant', desc: 'Complete your daily japa rounds of the Hare Krishna Maha-mantra.' },
-              { step: '2', title: 'Submit', desc: 'Enter your name, phone, city, and number of rounds chanted.' },
-              { step: '3', title: 'Inspire', desc: 'Your rounds instantly add to the collective yagna counter.' },
+              { step: '1', title: 'Chant', desc: 'Chant as many rounds of the Hare Krishna Maha-mantra as you can today.' },
+              { step: '2', title: 'Submit', desc: 'Enter your name, phone, city, and total rounds chanted.' },
+              { step: '3', title: 'Compete', desc: 'Your rounds are instantly counted. See your rank on the live leaderboard.' },
             ].map((item) => (
               <motion.div
                 key={item.step}
@@ -583,7 +538,7 @@ export default function HarinamPage() {
               leftIcon={<BookOpen className="h-5 w-5" />}
               onClick={() => setModalOpen(true)}
             >
-              Submit Your Japa Rounds
+              Submit Your Rounds
             </Button>
           )}
         </Container>

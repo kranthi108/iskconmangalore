@@ -15,12 +15,23 @@ export const GALLERY_CATEGORIES = [
   'Community',
 ] as const
 
-export const NAV_LINKS = [
+export type NavItem =
+  | { label: string; href: string; children?: undefined }
+  | { label: string; href?: undefined; children: readonly { label: string; href: string }[] }
+
+export const NAV_LINKS: readonly NavItem[] = [
   { label: 'Home', href: '/' },
   { label: 'Festivals', href: '/festivals' },
   { label: 'Gallery', href: '/gallery' },
   { label: 'Live Darshan', href: '/live-darshan' },
-  { label: 'Resources', href: '/resources' },
+  {
+    label: 'About Us',
+    children: [
+      { label: 'Resources', href: '/resources' },
+      { label: 'Current Japa Yagna', href: '/harinam' },
+      { label: 'Marathon Japa Yagna', href: '/marathon-japa' },
+    ],
+  },
   { label: 'Projects', href: 'https://projects.iskconmangalore.org/' },
   { label: 'Contact', href: '/contact' },
 ] as const

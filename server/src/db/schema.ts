@@ -111,3 +111,12 @@ export const harinamEntries = pgTable('harinam_entries', {
   chantedOn: date('chanted_on').notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 })
+
+export const marathonJapaEntries = pgTable('marathon_japa_entries', {
+  id: serial('id').primaryKey(),
+  devoteName: varchar('devote_name', { length: 200 }).notNull(),
+  phone: varchar('phone', { length: 20 }).notNull(),
+  city: varchar('city', { length: 150 }).notNull(),
+  rounds: integer('rounds').notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+})
