@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { CirclePlay } from 'lucide-react'
 import { Helmet } from 'react-helmet-async'
+import { Link } from 'react-router-dom'
 import HeroBanner from '@/components/layout/HeroBanner'
 import PlaceholderImage from '@/components/placeholders/PlaceholderImage'
 import { buttonVariants } from '@/components/ui/buttonVariants'
@@ -22,21 +23,23 @@ export default function ResourcesPage() {
 
       <section className="bg-gradient-to-b from-white via-gold-50 to-white py-20">
         <Container size="xl">
-          <div className="grid gap-12 md:grid-cols-2">
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {SPIRITUAL_RESOURCES.map((resource) => (
               <motion.article key={resource.title} layout className="group" initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-                <Card glow className="flex h-full flex-col gap-4 border border-maroon/20 bg-white">
-                  <div className="overflow-hidden rounded-2xl">
-                    <PlaceholderImage src={resource.coverImage} alt={resource.title} aspectRatio="video" className="max-h-56" />
-                  </div>
-                  <div className="space-y-2">
-                    <h3 className="font-heading text-2xl text-maroon">{resource.title}</h3>
-                    <p className="text-sm text-peacock-900/80">{resource.description}</p>
-                  </div>
-                  <button type="button" className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'mt-auto')} disabled aria-disabled title="Printed copies stewarded at bookstore">
-                    Request PDF seva link
-                  </button>
-                </Card>
+                <Link to={resource.href} className="block h-full">
+                  <Card glow className="flex h-full flex-col gap-4 border border-maroon/20 bg-white transition-shadow hover:shadow-xl">
+                    <div className="overflow-hidden rounded-2xl">
+                      <PlaceholderImage src={resource.coverImage} alt={resource.title} aspectRatio="video" className="max-h-44 transition-transform duration-300 group-hover:scale-105" />
+                    </div>
+                    <div className="space-y-2">
+                      <h3 className="font-heading text-xl text-maroon">{resource.title}</h3>
+                      <p className="line-clamp-3 text-sm text-peacock-900/80">{resource.description}</p>
+                    </div>
+                    <span className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'mt-auto')}>
+                      Read more
+                    </span>
+                  </Card>
+                </Link>
               </motion.article>
             ))}
           </div>

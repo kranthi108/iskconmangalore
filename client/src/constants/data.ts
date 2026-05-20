@@ -315,6 +315,13 @@ export const BHAJAN_LIST = [
 
 export const SPIRITUAL_RESOURCES = [
   {
+    title: 'Our Ācārya — Srila Prabhupada',
+    description:
+      'The life and legacy of His Divine Grace A. C. Bhaktivedanta Swami Prabhupada — Founder-Ācārya of ISKCON who brought Krishna consciousness to the Western world.',
+    coverImage: BLOG_THUMBNAILS[1],
+    href: '/our-acharya',
+  },
+  {
     title: 'Bhagavad Gita As It Is',
     description: 'Srila Prabhupada’s crown-jewel commentary arranged for earnest daily study circles.',
     coverImage: BLOG_THUMBNAILS[2],
@@ -341,4 +348,5 @@ export const SPIRITUAL_RESOURCES = [
     coverImage: BLOG_THUMBNAILS[3],
     href: '/resources/bhajan-collection',
   },
+  
 ] as const
