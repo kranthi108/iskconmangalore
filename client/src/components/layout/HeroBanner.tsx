@@ -6,7 +6,7 @@ import { HERO_BANNER } from '@/constants/placeholders'
 import { cn } from '@/utils/cn'
 
 export interface HeroBannerProps {
-  title: string
+  title: ReactNode
   subtitle?: string
   backgroundImage?: string
   height?: 'full' | 'large' | 'medium' | 'small' | 'sm' | 'md' | 'lg' | 'screen'

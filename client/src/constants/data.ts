@@ -28,7 +28,7 @@ export const NAV_LINKS: readonly NavItem[] = [
     label: 'About Us',
     children: [
       { label: 'Resources', href: '/resources' },
-      { label: 'Current Japa Yagna', href: '/harinam' },
+      { label: 'Ongoing Japa Yagna', href: '/harinam' },
       { label: 'Marathon Japa Yagna', href: '/marathon-japa' },
     ],
   },
