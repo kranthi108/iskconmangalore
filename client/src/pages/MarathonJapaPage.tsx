@@ -348,7 +348,7 @@ export default function MarathonJapaPage() {
       </Helmet>
 
       <HeroBanner
-        title={<><span className="block font-heading text-5xl font-bold tabular-nums text-gold-200 sm:text-7xl">{(stats.totalRounds * 256).toLocaleString('en-IN')}</span><span className="block text-lg font-normal tracking-wide text-gold-200/80 sm:text-xl">Holy Names Chanted</span>Marathon Japa Yagna</>}
+        title={<><span className="block font-heading text-5xl font-bold tabular-nums text-gold-200 sm:text-7xl">{(stats.totalRounds * 1728).toLocaleString('en-IN')}</span><span className="block text-lg font-normal tracking-wide text-gold-200/80 sm:text-xl">Holy Names Chanted</span>Marathon Japa Yagna</>}
         subtitle="Chant as many rounds as you can — every round counts!"
         backgroundImage={namjapBg}
         height="large"

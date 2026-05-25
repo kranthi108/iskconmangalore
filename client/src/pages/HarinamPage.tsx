@@ -374,7 +374,7 @@ export default function HarinamPage() {
       </Helmet>
 
       <HeroBanner
-        title={<><span className="block font-heading text-5xl font-bold tabular-nums text-gold-200 sm:text-7xl">{(stats.totalRounds * 256).toLocaleString('en-IN')}</span><span className="block text-lg font-normal tracking-wide text-gold-200/80 sm:text-xl">Holy Names Chanted</span>Harinam Japa Yagna</>}
+        title={<><span className="block font-heading text-5xl font-bold tabular-nums text-gold-200 sm:text-7xl">{(stats.totalRounds * 1728).toLocaleString('en-IN')}</span><span className="block text-lg font-normal tracking-wide text-gold-200/80 sm:text-xl">Holy Names Chanted</span>Sahasra koti Harinam Japa Yagna</>}
         subtitle="Unite in chanting the Holy Names for Sri Krishna Janmashtami 2026"
         backgroundImage={namjapBg}
         height="large"
