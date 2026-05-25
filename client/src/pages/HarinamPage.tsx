@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { BookOpen, Calendar, Clock, Loader2, MapPin, Phone, Search, Send, Sparkles, Trophy, Users, X } from 'lucide-react'
+import { BookOpen, Calendar, CalendarDays, Clock, Download, Loader2, MapPin, Phone, Search, Send, Sparkles, Trophy, Users, X } from 'lucide-react'
+import * as XLSX from 'xlsx'
 import { Helmet } from 'react-helmet-async'
-import namjapBg from '@/assets/namjap.jpeg'
+import namjapBg from '@/assets/namjap.jpg'
 import HeroBanner from '@/components/layout/HeroBanner'
 import Button from '@/components/ui/Button'
 import Container from '@/components/ui/Container'
 import SectionHeading from '@/components/ui/SectionHeading'
+import Toast, { type ToastData } from '@/components/ui/Toast'
 import { cn } from '@/utils/cn'
 import {
   getHarinamStats,
@@ -92,7 +94,7 @@ function CountdownTimer({ deadline }: { deadline: string }) {
   )
 }
 
-function SubmitModal({ open, onClose, onSuccess, expired }: { open: boolean; onClose: () => void; onSuccess: () => void; expired: boolean }) {
+function SubmitModal({ open, onClose, onSuccess, expired }: { open: boolean; onClose: () => void; onSuccess: (msg: string) => void; expired: boolean }) {
   const [devoteName, setDevoteName] = useState('')
   const [phone, setPhone] = useState('')
   const [city, setCity] = useState('')
@@ -101,12 +103,19 @@ function SubmitModal({ open, onClose, onSuccess, expired }: { open: boolean; onC
   const [suggestions, setSuggestions] = useState<DevoteSuggestion[]>([])
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [submitting, setSubmitting] = useState(false)
-  const [result, setResult] = useState<{ success: boolean; message: string } | null>(null)
-  const debounceRef = useRef<ReturnType<typeof setTimeout>>()
+  const [error, setError] = useState<string | null>(null)
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined)
+
+  useEffect(() => {
+    if (!open) return
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [open, onClose])
 
   function handleNameChange(val: string) {
     setDevoteName(val)
-    setResult(null)
+    setError(null)
     clearTimeout(debounceRef.current)
     if (val.length >= 2) {
       debounceRef.current = setTimeout(async () => {
@@ -136,7 +145,7 @@ function SubmitModal({ open, onClose, onSuccess, expired }: { open: boolean; onC
     if (!devoteName.trim() || !phone.trim() || !city.trim() || !rounds || !chantedOn) return
 
     setSubmitting(true)
-    setResult(null)
+    setError(null)
     try {
       await submitHarinam({
         devoteName: devoteName.trim(),
@@ -145,12 +154,12 @@ function SubmitModal({ open, onClose, onSuccess, expired }: { open: boolean; onC
         rounds: Number(rounds),
         chantedOn,
       })
-      setResult({ success: true, message: 'Hare Krishna! Your japa rounds have been recorded.' })
       setRounds('')
       setChantedOn(new Date().toISOString().slice(0, 10))
-      onSuccess()
+      onClose()
+      onSuccess('Hare Krishna! Your japa rounds have been recorded.')
     } catch (err) {
-      setResult({ success: false, message: err instanceof Error ? err.message : 'Submission failed. Please try again.' })
+      setError(err instanceof Error ? err.message : 'Submission failed. Please try again.')
     } finally {
       setSubmitting(false)
     }
@@ -281,16 +290,13 @@ function SubmitModal({ open, onClose, onSuccess, expired }: { open: boolean; onC
                 </div>
               </div>
 
-              {result && (
+              {error && (
                 <motion.div
                   initial={{ opacity: 0, y: -8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className={cn(
-                    'rounded-xl px-4 py-3 text-sm font-medium',
-                    result.success ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800',
-                  )}
+                  className="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-800"
                 >
-                  {result.message}
+                  {error}
                 </motion.div>
               )}
 
@@ -320,15 +326,35 @@ export default function HarinamPage() {
   const [loading, setLoading] = useState(false)
   const [modalOpen, setModalOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [todayOnly, setTodayOnly] = useState(false)
   const sentinelRef = useRef<HTMLDivElement>(null)
 
   const filteredLeaderboard = useMemo(() => {
-    if (!searchQuery.trim()) return leaderboard
-    const q = searchQuery.trim().toLowerCase()
-    return leaderboard.filter(
-      (e) => e.devoteName.toLowerCase().includes(q) || e.city.toLowerCase().includes(q),
-    )
-  }, [leaderboard, searchQuery])
+    let list = leaderboard
+    if (todayOnly) list = list.filter((e) => e.todayRounds > 0)
+    if (searchQuery.trim()) {
+      const q = searchQuery.trim().toLowerCase()
+      list = list.filter(
+        (e) => e.devoteName.toLowerCase().includes(q) || e.city.toLowerCase().includes(q),
+      )
+    }
+    return list
+  }, [leaderboard, searchQuery, todayOnly])
+
+  const downloadExcel = useCallback(() => {
+    const data = (searchQuery.trim() || todayOnly) ? filteredLeaderboard : leaderboard
+    const rows = data.map((e, i) => ({
+      '#': i + 1,
+      'Devotee': e.devoteName,
+      'City': e.city,
+      'Today Rounds': e.todayRounds,
+      'Total Rounds': e.totalRounds,
+    }))
+    const ws = XLSX.utils.json_to_sheet(rows)
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, ws, 'Leaderboard')
+    XLSX.writeFile(wb, 'harinam-leaderboard.xlsx')
+  }, [leaderboard, filteredLeaderboard, searchQuery, todayOnly])
 
   const expired = useMemo(() => Date.now() > new Date(stats.deadline).getTime(), [stats.deadline])
 
@@ -370,13 +396,17 @@ export default function HarinamPage() {
     return () => observer.disconnect()
   }, [hasMore, loading, page])
 
-  function handleSubmitSuccess() {
+  const [toast, setToast] = useState<ToastData | null>(null)
+
+  function handleSubmitSuccess(message: string) {
     fetchStats()
     fetchLeaderboard(1)
+    setToast({ message, type: 'success' })
   }
 
   return (
     <>
+      {toast && <Toast {...toast} onDismiss={() => setToast(null)} />}
       <Helmet>
         <title>Harinam Japa Yagna - Sri Krishna Janmashtami - ISKCON Mangalore</title>
         <meta name="description" content="Join thousands of devotees in the Harinam Japa Yagna for Sri Krishna Janmashtami. Chant, submit your rounds, and see the global leaderboard." />
@@ -481,15 +511,38 @@ export default function HarinamPage() {
               {/* Search + remaining devotees table */}
               {leaderboard.length > 3 && (
                 <>
-                  <div className="relative mt-10">
-                    <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-peacock-400" />
-                    <input
-                      type="text"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Search by name or city…"
-                      className="w-full rounded-xl border border-peacock-200 bg-white py-2.5 pl-11 pr-4 text-sm text-peacock-900 placeholder:text-peacock-400 focus:border-peacock-400 focus:outline-none focus:ring-2 focus:ring-peacock-200"
-                    />
+                  <div className="mt-10 flex items-center gap-3">
+                    <div className="relative flex-1">
+                      <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-peacock-400" />
+                      <input
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder="Search by name or city…"
+                        className="w-full rounded-xl border border-peacock-200 bg-white py-2.5 pl-11 pr-4 text-sm text-peacock-900 placeholder:text-peacock-400 focus:border-peacock-400 focus:outline-none focus:ring-2 focus:ring-peacock-200"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setTodayOnly((v) => !v)}
+                      className={cn(
+                        'inline-flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-peacock-200',
+                        todayOnly
+                          ? 'border-peacock-500 bg-peacock-600 text-white hover:bg-peacock-700'
+                          : 'border-peacock-200 bg-white text-peacock-700 hover:bg-peacock-50',
+                      )}
+                    >
+                      <CalendarDays className="h-4 w-4" />
+                      <span className="hidden sm:inline">Today</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={downloadExcel}
+                      className="inline-flex items-center gap-2 rounded-xl border border-peacock-200 bg-white px-4 py-2.5 text-sm font-medium text-peacock-700 transition-colors hover:bg-peacock-50 focus:outline-none focus:ring-2 focus:ring-peacock-200"
+                    >
+                      <Download className="h-4 w-4" />
+                      <span className="hidden sm:inline">Export</span>
+                    </button>
                   </div>
 
                   <div className="mt-3 rounded-2xl border border-peacock-100 bg-white shadow-sm">
@@ -507,7 +560,7 @@ export default function HarinamPage() {
                     <div className="max-h-[480px] overflow-y-auto">
                       <table className="w-full text-left text-sm">
                         <tbody>
-                          {(searchQuery.trim() ? filteredLeaderboard : leaderboard.slice(3)).map((entry, idx) => (
+                          {((searchQuery.trim() || todayOnly) ? filteredLeaderboard : leaderboard.slice(3)).map((entry, idx) => (
                             <motion.tr
                               key={`${entry.devoteName}-${idx}`}
                               initial={{ opacity: 0 }}
@@ -516,7 +569,7 @@ export default function HarinamPage() {
                             >
                               <td className="px-4 py-3.5 text-center">
                                 <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-peacock-100 text-xs font-bold text-peacock-800">
-                                  {searchQuery.trim() ? idx + 1 : idx + 4}
+                                  {(searchQuery.trim() || todayOnly) ? idx + 1 : idx + 4}
                                 </span>
                               </td>
                               <td className="px-5 py-3.5">
@@ -530,10 +583,10 @@ export default function HarinamPage() {
                               <td className="px-5 py-3.5 text-right font-bold tabular-nums text-maroon">{entry.totalRounds.toLocaleString('en-IN')}</td>
                             </motion.tr>
                           ))}
-                          {searchQuery.trim() && filteredLeaderboard.length === 0 && (
+                          {(searchQuery.trim() || todayOnly) && filteredLeaderboard.length === 0 && (
                             <tr>
                               <td colSpan={5} className="px-5 py-8 text-center text-sm text-peacock-500">
-                                No devotees found matching "{searchQuery}"
+                                {todayOnly ? 'No submissions today yet.' : `No devotees found matching "${searchQuery}"`}
                               </td>
                             </tr>
                           )}

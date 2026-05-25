@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { BookOpen, Calendar, Clock, Loader2, MapPin, Phone, Search, Send, Sparkles, Trophy, Users, X } from 'lucide-react'
+import { BookOpen, Calendar, Clock, Download, Loader2, MapPin, Phone, Search, Send, Sparkles, Trophy, Users, X } from 'lucide-react'
+import * as XLSX from 'xlsx'
 import { Helmet } from 'react-helmet-async'
-import namjapBg from '@/assets/namjap.jpeg'
+import namjapBg from '@/assets/namjap.jpg'
 import HeroBanner from '@/components/layout/HeroBanner'
 import Button from '@/components/ui/Button'
 import Container from '@/components/ui/Container'
 import SectionHeading from '@/components/ui/SectionHeading'
+import Toast, { type ToastData } from '@/components/ui/Toast'
 import { cn } from '@/utils/cn'
 import {
   getMarathonStats,
@@ -82,7 +84,7 @@ function MarathonCountdown({ deadline }: { deadline: string }) {
   )
 }
 
-function SubmitModal({ open, onClose, onSuccess, expired }: { open: boolean; onClose: () => void; onSuccess: () => void; expired: boolean }) {
+function SubmitModal({ open, onClose, onSuccess, expired }: { open: boolean; onClose: () => void; onSuccess: (msg: string) => void; expired: boolean }) {
   const [devoteName, setDevoteName] = useState('')
   const [phone, setPhone] = useState('')
   const [city, setCity] = useState('')
@@ -90,12 +92,19 @@ function SubmitModal({ open, onClose, onSuccess, expired }: { open: boolean; onC
   const [suggestions, setSuggestions] = useState<MarathonDevoteSuggestion[]>([])
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [submitting, setSubmitting] = useState(false)
-  const [result, setResult] = useState<{ success: boolean; message: string } | null>(null)
-  const debounceRef = useRef<ReturnType<typeof setTimeout>>()
+  const [error, setError] = useState<string | null>(null)
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined)
+
+  useEffect(() => {
+    if (!open) return
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [open, onClose])
 
   function handleNameChange(val: string) {
     setDevoteName(val)
-    setResult(null)
+    setError(null)
     clearTimeout(debounceRef.current)
     if (val.length >= 2) {
       debounceRef.current = setTimeout(async () => {
@@ -125,7 +134,7 @@ function SubmitModal({ open, onClose, onSuccess, expired }: { open: boolean; onC
     if (!devoteName.trim() || !phone.trim() || !city.trim() || !rounds) return
 
     setSubmitting(true)
-    setResult(null)
+    setError(null)
     try {
       await submitMarathonJapa({
         devoteName: devoteName.trim(),
@@ -133,11 +142,11 @@ function SubmitModal({ open, onClose, onSuccess, expired }: { open: boolean; onC
         city: city.trim(),
         rounds: Number(rounds),
       })
-      setResult({ success: true, message: 'Hare Krishna! Your marathon japa rounds have been recorded.' })
       setRounds('')
-      onSuccess()
+      onClose()
+      onSuccess('Hare Krishna! Your marathon japa rounds have been recorded.')
     } catch (err) {
-      setResult({ success: false, message: err instanceof Error ? err.message : 'Submission failed. Please try again.' })
+      setError(err instanceof Error ? err.message : 'Submission failed. Please try again.')
     } finally {
       setSubmitting(false)
     }
@@ -255,16 +264,13 @@ function SubmitModal({ open, onClose, onSuccess, expired }: { open: boolean; onC
                 />
               </div>
 
-              {result && (
+              {error && (
                 <motion.div
                   initial={{ opacity: 0, y: -8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className={cn(
-                    'rounded-xl px-4 py-3 text-sm font-medium',
-                    result.success ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800',
-                  )}
+                  className="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-800"
                 >
-                  {result.message}
+                  {error}
                 </motion.div>
               )}
 
@@ -303,6 +309,20 @@ export default function MarathonJapaPage() {
       (e) => e.devoteName.toLowerCase().includes(q) || e.city.toLowerCase().includes(q),
     )
   }, [leaderboard, searchQuery])
+
+  const downloadExcel = useCallback(() => {
+    const data = searchQuery.trim() ? filteredLeaderboard : leaderboard
+    const rows = data.map((e, i) => ({
+      '#': i + 1,
+      'Devotee': e.devoteName,
+      'City': e.city,
+      'Rounds': e.totalRounds,
+    }))
+    const ws = XLSX.utils.json_to_sheet(rows)
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, ws, 'Leaderboard')
+    XLSX.writeFile(wb, 'marathon-japa-leaderboard.xlsx')
+  }, [leaderboard, filteredLeaderboard, searchQuery])
 
   const expired = useMemo(() => Date.now() > new Date(stats.deadline).getTime(), [stats.deadline])
 
@@ -344,13 +364,17 @@ export default function MarathonJapaPage() {
     return () => observer.disconnect()
   }, [hasMore, loading, page])
 
-  function handleSubmitSuccess() {
+  const [toast, setToast] = useState<ToastData | null>(null)
+
+  function handleSubmitSuccess(message: string) {
     fetchStats()
     fetchLeaderboard(1)
+    setToast({ message, type: 'success' })
   }
 
   return (
     <>
+      {toast && <Toast {...toast} onDismiss={() => setToast(null)} />}
       <Helmet>
         <title>Marathon Japa Yagna - ISKCON Mangalore</title>
         <meta name="description" content="Join the Marathon Japa Yagna — chant as many rounds as you can in a single day and see the live leaderboard." />
@@ -440,15 +464,25 @@ export default function MarathonJapaPage() {
 
               {leaderboard.length > 3 && (
                 <>
-                  <div className="relative mt-10">
-                    <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-peacock-400" />
-                    <input
-                      type="text"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Search by name or city…"
-                      className="w-full rounded-xl border border-peacock-200 bg-white py-2.5 pl-11 pr-4 text-sm text-peacock-900 placeholder:text-peacock-400 focus:border-peacock-400 focus:outline-none focus:ring-2 focus:ring-peacock-200"
-                    />
+                  <div className="mt-10 flex items-center gap-3">
+                    <div className="relative flex-1">
+                      <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-peacock-400" />
+                      <input
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder="Search by name or city…"
+                        className="w-full rounded-xl border border-peacock-200 bg-white py-2.5 pl-11 pr-4 text-sm text-peacock-900 placeholder:text-peacock-400 focus:border-peacock-400 focus:outline-none focus:ring-2 focus:ring-peacock-200"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={downloadExcel}
+                      className="inline-flex items-center gap-2 rounded-xl border border-peacock-200 bg-white px-4 py-2.5 text-sm font-medium text-peacock-700 transition-colors hover:bg-peacock-50 focus:outline-none focus:ring-2 focus:ring-peacock-200"
+                    >
+                      <Download className="h-4 w-4" />
+                      <span className="hidden sm:inline">Export</span>
+                    </button>
                   </div>
 
                   <div className="mt-3 rounded-2xl border border-peacock-100 bg-white shadow-sm">
