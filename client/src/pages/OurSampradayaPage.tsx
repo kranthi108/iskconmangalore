@@ -3,7 +3,8 @@ import { Helmet } from 'react-helmet-async'
 import HeroBanner from '@/components/layout/HeroBanner'
 import Container from '@/components/ui/Container'
 import SectionHeading from '@/components/ui/SectionHeading'
-import { HERO_BANNER } from '@/constants/placeholders'
+import sampradayaBanner from '@/assets/banners/sampradaya.jpg'
+import prabhupadImg from '@/assets/banners/prabhupad.jpg'
 
 const fade = { initial: { opacity: 0, y: 18 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true } as const }
 
@@ -18,7 +19,7 @@ export default function OurSampradayaPage() {
       <HeroBanner
         title="Brahma-Madhva-Gaudiya Sampradaya"
         subtitle="The bona fide disciplic succession of Krishna consciousness"
-        backgroundImage={HERO_BANNER}
+        backgroundImage={sampradayaBanner}
         height="medium"
       />
 
@@ -75,6 +76,33 @@ export default function OurSampradayaPage() {
                 <p className="mt-3 text-sm leading-relaxed text-peacock-900/85">{s.description}</p>
               </motion.div>
             ))}
+          </div>
+        </Container>
+      </section>
+
+      <section className="bg-gradient-to-b from-white to-cream py-20">
+        <Container size="lg">
+          <SectionHeading decorative title="Srila Prabhupada — The Current Link" />
+
+          <div className="mt-12 grid items-center gap-10 md:grid-cols-[280px_1fr]">
+            <motion.div {...fade}>
+              <img
+                src={prabhupadImg}
+                alt="His Divine Grace A. C. Bhaktivedanta Swami Prabhupada"
+                className="w-full rounded-2xl border-4 border-gold-200/50 object-cover shadow-xl"
+              />
+            </motion.div>
+            <div className="space-y-5">
+              <motion.p {...fade} className="text-base leading-relaxed text-peacock-900/85">
+                His Divine Grace A. C. Bhaktivedanta Swami Prabhupada is the 32nd acharya in the Brahma-Madhva-Gaudiya Sampradaya, directly representing the disciplic succession from Lord Krishna Himself through Brahma, Narada, Vyasa, Madhvacharya, and Sri Chaitanya Mahaprabhu. He is the Founder-Acharya of the International Society for Krishna Consciousness (ISKCON).
+              </motion.p>
+              <motion.p {...fade} className="text-base leading-relaxed text-peacock-900/85">
+                Srila Prabhupada single-handedly brought the teachings of this sampradaya to the Western world. At the age of sixty-nine, he journeyed to America with nothing more than a trunk of books and forty rupees. Within eleven years, he circled the globe fourteen times, established 108 temples, initiated over 10,000 disciples, and translated over 80 volumes of Vedic literature — making the ancient wisdom of the Brahma-Madhva-Gaudiya Sampradaya accessible to all humanity.
+              </motion.p>
+              <motion.p {...fade} className="text-base leading-relaxed text-peacock-900/85">
+                Without Srila Prabhupada, the unbroken chain of disciplic succession would remain unknown to most of the world. He is not merely a link in the parampara — he is the compassionate ambassador who carried Vrindavan's mercy to every continent.
+              </motion.p>
+            </div>
           </div>
         </Container>
       </section>

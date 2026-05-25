@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet-async'
 import HeroBanner from '@/components/layout/HeroBanner'
 import Container from '@/components/ui/Container'
 import SectionHeading from '@/components/ui/SectionHeading'
-import { HERO_BANNER } from '@/constants/placeholders'
+import acharyaBanner from '@/assets/banners/acharya.png'
 
 const fade = { initial: { opacity: 0, y: 18 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true } as const }
 
@@ -18,7 +18,7 @@ export default function OurAcharyaPage() {
       <HeroBanner
         title="His Divine Grace A. C. Bhaktivedanta Swami Prabhupāda"
         subtitle="Founder-Ācārya of the International Society for Krishna Consciousness"
-        backgroundImage={HERO_BANNER}
+        backgroundImage={acharyaBanner}
         height="medium"
       />
 

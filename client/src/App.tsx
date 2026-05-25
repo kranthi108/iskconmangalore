@@ -24,6 +24,11 @@ const HarinamPage = lazy(() => import('@/pages/HarinamPage'))
 const MarathonJapaPage = lazy(() => import('@/pages/MarathonJapaPage'))
 const OurAcharyaPage = lazy(() => import('@/pages/OurAcharyaPage'))
 const OurSampradayaPage = lazy(() => import('@/pages/OurSampradayaPage'))
+const ManagementCouncilPage = lazy(() => import('@/pages/ManagementCouncilPage'))
+const BhagavadGitaPage = lazy(() => import('@/pages/BhagavadGitaPage'))
+const BhagavatamPage = lazy(() => import('@/pages/BhagavatamPage'))
+const EkadasiPage = lazy(() => import('@/pages/EkadasiPage'))
+const EkadasiDetailPage = lazy(() => import('@/pages/EkadasiDetailPage'))
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
 
 function RouteFallback() {
@@ -63,7 +68,12 @@ export default function App() {
               <Route path="/marathon-japa" element={<MarathonJapaPage />} />
               <Route path="/our-acharya" element={<OurAcharyaPage />} />
               <Route path="/our-sampradaya" element={<OurSampradayaPage />} />
+              <Route path="/management-council" element={<ManagementCouncilPage />} />
               <Route path="/resources" element={<ResourcesPage />} />
+              <Route path="/resources/bhagavad-gita-as-it-is" element={<BhagavadGitaPage />} />
+              <Route path="/resources/bhagavatam" element={<BhagavatamPage />} />
+              <Route path="/resources/ekadasi" element={<EkadasiPage />} />
+              <Route path="/resources/ekadasi/:slug" element={<EkadasiDetailPage />} />
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="*" element={<NotFoundPage />} />
