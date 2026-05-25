@@ -12,7 +12,11 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/api': 'http://localhost:8787',
+      '/api': {
+        target: 'https://iskcon-mangalore-api.iskconmangalore.workers.dev',
+        changeOrigin: true,
+        secure: true,
+      },
     },
   },
 })
