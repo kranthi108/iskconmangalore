@@ -1,10 +1,14 @@
 import type { DarshanTiming, DonationCampaign, Festival } from '@/types'
 import {
-  BLOG_THUMBNAILS,
   FESTIVAL_BANNERS,
   SEVA_THUMBNAILS,
   SPIRITUAL_LECTURE,
 } from '@/constants/placeholders'
+import acharyaBanner from '@/assets/banners/acharya.png'
+import sampradayaBanner from '@/assets/banners/sampradaya.jpg'
+import gitaBanner from '@/assets/banners/gita.jpg'
+import bhagavatamBanner from '@/assets/banners/bhagavatam.jpg'
+import ekadasiBanner from '@/assets/banners/mohiniekadasi.png'
 
 export const GALLERY_CATEGORIES = [
   'All',
@@ -15,21 +19,42 @@ export const GALLERY_CATEGORIES = [
   'Community',
 ] as const
 
-export type NavItem =
+export type NavChild =
   | { label: string; href: string; children?: undefined }
   | { label: string; href?: undefined; children: readonly { label: string; href: string }[] }
 
+export type NavItem =
+  | { label: string; href: string; children?: undefined }
+  | { label: string; href?: undefined; children: readonly NavChild[] }
+
 export const NAV_LINKS: readonly NavItem[] = [
   { label: 'Home', href: '/' },
-  { label: 'Festivals', href: '/festivals' },
-  { label: 'Gallery', href: '/gallery' },
-  { label: 'Live Darshan', href: '/live-darshan' },
+  {
+    label: 'Festivals',
+    children: [
+      { label: 'Festivals', href: '/festivals' },
+      { label: 'Ekadasi', href: '/resources/ekadasi' },
+    ],
+  },
+  {
+    label: 'Gallery',
+    children: [
+      { label: 'Gallery', href: '/gallery' },
+      { label: 'Live Darshan', href: '/live-darshan' },
+    ],
+  },
   {
     label: 'About Us',
     children: [
       { label: 'Resources', href: '/resources' },
       { label: 'Ongoing Japa Yagna', href: '/harinam' },
       { label: 'Marathon Japa Yagna', href: '/marathon-japa' },
+      {
+        label: 'Governance',
+        children: [
+          { label: 'Management Council', href: '/management-council' },
+        ],
+      },
     ],
   },
   { label: 'Projects', href: 'https://projects.iskconmangalore.org/' },
@@ -318,28 +343,35 @@ export const SPIRITUAL_RESOURCES = [
     title: 'Our Ācārya — Srila Prabhupada',
     description:
       'The life and legacy of His Divine Grace A. C. Bhaktivedanta Swami Prabhupada — Founder-Ācārya of ISKCON who brought Krishna consciousness to the Western world.',
-    coverImage: BLOG_THUMBNAILS[1],
+    coverImage: acharyaBanner,
     href: '/our-acharya',
   },
   {
     title: 'Our Sampradaya',
     description:
       'The Brahma-Madhva-Gaudiya Sampradaya — the bona fide disciplic succession through which the timeless knowledge of Krishna consciousness descends from the Supreme Lord.',
-    coverImage: BLOG_THUMBNAILS[2],
+    coverImage: sampradayaBanner,
     href: '/our-sampradaya',
   },
   {
     title: 'Bhagavad Gita As It Is',
     description: 'Srila Prabhupada’s crown-jewel commentary arranged for earnest daily study circles.',
-    coverImage: BLOG_THUMBNAILS[2],
+    coverImage: gitaBanner,
     href: '/resources/bhagavad-gita-as-it-is',
   },
   {
     title: 'Srimad Bhagavatam',
     description:
-      'Mature devotees relish the nectar of the Bhagavatam through weekly canto discussions and Sunday feasts anchored in Hari-katha.',
-    coverImage: BLOG_THUMBNAILS[0],
+      'The ripened fruit of the Vedic tree — 18,000 verses of transcendental knowledge compiled by Srila Vyasadeva and illuminated by Srila Prabhupada.',
+    coverImage: bhagavatamBanner,
     href: '/resources/bhagavatam',
+  },
+  {
+    title: 'Ekadasi',
+    description:
+      'The sacred fasting days dedicated to Lord Vishnu — observe, purify, and advance in devotional service.',
+    coverImage: ekadasiBanner,
+    href: '/resources/ekadasi',
   },
   {
     title: 'Srila Prabhupada Lectures Archive',
@@ -347,12 +379,5 @@ export const SPIRITUAL_RESOURCES = [
       'Access curated excerpts from Vyasa-Puja compilations spanning Los Angeles mornings to Mayapur Vyasa puja moods.',
     coverImage: SPIRITUAL_LECTURE,
     href: '/resources/prabhupada-lectures',
-  },
-  {
-    title: 'Bhajan Anthology Companion',
-    description:
-      'Follow along bilingual lyrics ideal for newcomers leading home programs or deepening japa accompaniment.',
-    coverImage: BLOG_THUMBNAILS[3],
-    href: '/resources/bhajan-collection',
   },
 ] as const

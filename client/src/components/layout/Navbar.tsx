@@ -4,55 +4,42 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom'
 import Button from '@/components/ui/Button'
 import Container from '@/components/ui/Container'
-import { NAV_LINKS } from '@/constants/data'
+import { NAV_LINKS, type NavChild } from '@/constants/data'
 import logo from '@/assets/logo.png'
 import { useUiStore } from '@/store/uiStore'
 import { cn } from '@/utils/cn'
 
-function DesktopDropdown({ label, children }: { label: string; children: readonly { label: string; href: string }[] }) {
+function DesktopSubMenu({ item, onClose }: { item: NavChild & { children: readonly { label: string; href: string }[] }; onClose: () => void }) {
   const [open, setOpen] = useState(false)
-  const timeout = useRef<ReturnType<typeof setTimeout>>()
-  const location = useLocation()
-  const isChildActive = children.some((c) => location.pathname === c.href)
+  const timeout = useRef<ReturnType<typeof setTimeout>>(undefined)
 
   function enter() { clearTimeout(timeout.current); setOpen(true) }
   function leave() { timeout.current = setTimeout(() => setOpen(false), 150) }
 
   return (
     <div className="relative" onMouseEnter={enter} onMouseLeave={leave}>
-      <NavLink
-        to={children[0].href}
-        className="relative px-3 py-2 text-sm font-semibold"
-        onClick={(e) => { e.preventDefault(); setOpen((v) => !v) }}
-        tabIndex={0}
+      <button
+        type="button"
+        className="flex w-full items-center justify-between px-4 py-2.5 text-sm font-medium text-peacock-900 transition-colors hover:bg-peacock-50/60 hover:text-maroon-light"
+        onClick={() => setOpen((v) => !v)}
       >
-        {() => (
-          <span className={cn('relative pb-2 transition-colors', isChildActive ? 'text-maroon-light' : 'text-peacock-900 hover:text-maroon-light')}>
-            {label}
-            <ChevronDown className={cn('ml-0.5 inline h-3.5 w-3.5 transition-transform', open && 'rotate-180')} />
-            {isChildActive && (
-              <motion.span
-                layoutId="desktop-nav-indicator"
-                className="absolute inset-x-2 -bottom-1 h-[3px] rounded-full bg-gradient-to-r from-gold-500 via-gold-300 to-gold-500 shadow-sm"
-              />
-            )}
-          </span>
-        )}
-      </NavLink>
+        {item.label}
+        <ChevronRight className="h-3.5 w-3.5" />
+      </button>
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 8 }}
-            transition={{ duration: 0.15 }}
-            className="absolute left-0 top-full z-50 min-w-[220px] rounded-xl border border-peacock-100 bg-white py-2 shadow-xl"
+            initial={{ opacity: 0, x: 8 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 8 }}
+            transition={{ duration: 0.12 }}
+            className="absolute left-full top-0 z-50 min-w-[200px] rounded-xl border border-peacock-100 bg-white py-2 shadow-xl"
           >
-            {children.map((child) => (
+            {item.children.map((sub) => (
               <NavLink
-                key={child.href}
-                to={child.href}
-                onClick={() => setOpen(false)}
+                key={sub.href}
+                to={sub.href}
+                onClick={() => { setOpen(false); onClose() }}
                 className={({ isActive }) =>
                   cn(
                     'block px-4 py-2.5 text-sm font-medium transition-colors',
@@ -60,9 +47,79 @@ function DesktopDropdown({ label, children }: { label: string; children: readonl
                   )
                 }
               >
-                {child.label}
+                {sub.label}
               </NavLink>
             ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
+
+function DesktopDropdown({ label, children }: { label: string; children: readonly NavChild[] }) {
+  const [open, setOpen] = useState(false)
+  const timeout = useRef<ReturnType<typeof setTimeout>>(undefined)
+  const location = useLocation()
+
+  function allHrefs(items: readonly NavChild[]): string[] {
+    return items.flatMap((c) => c.href ? [c.href] : c.children ? allHrefs(c.children) : [])
+  }
+  const isChildActive = allHrefs(children).some((h) => location.pathname === h)
+
+  function enter() { clearTimeout(timeout.current); setOpen(true) }
+  function leave() { timeout.current = setTimeout(() => setOpen(false), 150) }
+
+  return (
+    <div className="relative" onMouseEnter={enter} onMouseLeave={leave}>
+      <button
+        type="button"
+        className="relative px-3 py-2 text-sm font-semibold"
+        onClick={() => setOpen((v) => !v)}
+        tabIndex={0}
+      >
+        <span className={cn('transition-colors', isChildActive ? 'text-maroon-light' : 'text-peacock-900 hover:text-maroon-light')}>
+          <span className="relative pb-2">
+            {label}
+            {isChildActive && (
+              <motion.span
+                layoutId="desktop-nav-indicator"
+                className="absolute inset-x-0 -bottom-1 h-[3px] rounded-full bg-gradient-to-r from-gold-500 via-gold-300 to-gold-500 shadow-sm"
+              />
+            )}
+          </span>
+          <ChevronDown className={cn('ml-0.5 inline h-3 w-3 align-middle transition-transform', open && 'rotate-180')} />
+        </span>
+      </button>
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 8 }}
+            transition={{ duration: 0.15 }}
+            className="absolute left-0 top-full z-50 min-w-[200px] rounded-xl border border-peacock-100 bg-white py-2 shadow-xl"
+          >
+            {children.map((child) => {
+              if (child.children) {
+                return <DesktopSubMenu key={child.label} item={child} onClose={() => setOpen(false)} />
+              }
+              return (
+                <NavLink
+                  key={child.href}
+                  to={child.href}
+                  onClick={() => setOpen(false)}
+                  className={({ isActive }) =>
+                    cn(
+                      'block px-4 py-2.5 text-sm font-medium transition-colors',
+                      isActive ? 'bg-peacock-50 text-maroon' : 'text-peacock-900 hover:bg-peacock-50/60 hover:text-maroon-light',
+                    )
+                  }
+                >
+                  {child.label}
+                </NavLink>
+              )
+            })}
           </motion.div>
         )}
       </AnimatePresence>
@@ -123,7 +180,7 @@ export default function Navbar() {
             </span>
           </Link>
 
-          <nav className="hidden items-center gap-1 lg:flex" aria-label="Primary">
+          <nav className="hidden items-center gap-0.5 xl:gap-2 lg:flex" aria-label="Primary">
             {NAV_LINKS.map((item) => {
               if (item.children) {
                 return <DesktopDropdown key={item.label} label={item.label} children={item.children} />
@@ -224,17 +281,59 @@ export default function Navbar() {
                             className="overflow-hidden"
                           >
                             <div className="mt-1 ml-4 flex flex-col gap-1">
-                              {item.children.map((child) => (
-                                <button
-                                  key={child.href}
-                                  type="button"
-                                  className="flex items-center justify-between rounded-xl border border-maroon/5 bg-white/70 px-4 py-2.5 text-left text-sm font-medium text-peacock-900 hover:bg-peacock-50 hover:text-maroon"
-                                  onClick={() => handleNavigate(child.href)}
-                                >
-                                  {child.label}
-                                  <ChevronRight className="h-4 w-4 text-peacock-500" aria-hidden />
-                                </button>
-                              ))}
+                              {item.children.map((child) => {
+                                if (child.children) {
+                                  const isSubExpanded = mobileExpanded === `${item.label}/${child.label}`
+                                  return (
+                                    <div key={child.label}>
+                                      <button
+                                        type="button"
+                                        className="flex w-full items-center justify-between rounded-xl border border-maroon/5 bg-white/70 px-4 py-2.5 text-left text-sm font-medium text-peacock-900 hover:bg-peacock-50 hover:text-maroon"
+                                        onClick={() => setMobileExpanded(isSubExpanded ? item.label : `${item.label}/${child.label}`)}
+                                      >
+                                        {child.label}
+                                        <ChevronDown className={cn('h-4 w-4 text-peacock-500 transition-transform', isSubExpanded && 'rotate-180')} aria-hidden />
+                                      </button>
+                                      <AnimatePresence>
+                                        {isSubExpanded && (
+                                          <motion.div
+                                            initial={{ height: 0, opacity: 0 }}
+                                            animate={{ height: 'auto', opacity: 1 }}
+                                            exit={{ height: 0, opacity: 0 }}
+                                            transition={{ duration: 0.2 }}
+                                            className="overflow-hidden"
+                                          >
+                                            <div className="mt-1 ml-4 flex flex-col gap-1">
+                                              {child.children.map((sub) => (
+                                                <button
+                                                  key={sub.href}
+                                                  type="button"
+                                                  className="flex items-center justify-between rounded-xl border border-maroon/5 bg-white/60 px-4 py-2.5 text-left text-sm font-medium text-peacock-900 hover:bg-peacock-50 hover:text-maroon"
+                                                  onClick={() => handleNavigate(sub.href)}
+                                                >
+                                                  {sub.label}
+                                                  <ChevronRight className="h-4 w-4 text-peacock-500" aria-hidden />
+                                                </button>
+                                              ))}
+                                            </div>
+                                          </motion.div>
+                                        )}
+                                      </AnimatePresence>
+                                    </div>
+                                  )
+                                }
+                                return (
+                                  <button
+                                    key={child.href}
+                                    type="button"
+                                    className="flex items-center justify-between rounded-xl border border-maroon/5 bg-white/70 px-4 py-2.5 text-left text-sm font-medium text-peacock-900 hover:bg-peacock-50 hover:text-maroon"
+                                    onClick={() => handleNavigate(child.href)}
+                                  >
+                                    {child.label}
+                                    <ChevronRight className="h-4 w-4 text-peacock-500" aria-hidden />
+                                  </button>
+                                )
+                              })}
                             </div>
                           </motion.div>
                         )}
