@@ -116,7 +116,7 @@ export default function EkadasiPage() {
               <h3 className="font-heading text-lg font-semibold text-maroon">2026 Ekadasi Calendar</h3>
               <p className="mt-1 text-xs text-peacock-600">26 Ekadasis including 2 Adhik Maas</p>
 
-              <div className="mt-4 max-h-[700px] space-y-1.5 overflow-y-auto pr-1">
+              <div className="mt-4 max-h-[480px] space-y-1.5 overflow-y-auto pr-1">
                 {EKADASI_LIST.map((e) => {
                   const isPast = e.date < today
                   const isNext = upcoming?.slug === e.slug
@@ -135,10 +135,10 @@ export default function EkadasiPage() {
                       )}
                     >
                       <div className="min-w-0">
-                        <p className={cn('truncate', isPast && !isNext && 'line-through decoration-peacock-300')}>
+                        <p className={cn('truncate', isPast && !isNext && 'line-through decoration-peacock-500 decoration-2')}>
                           {e.name}
                         </p>
-                        <p className={cn('mt-0.5 text-xs', isPast && !isNext ? 'text-peacock-400' : 'text-peacock-600')}>
+                        <p className={cn('mt-0.5 text-xs', isPast && !isNext ? 'text-peacock-500' : 'text-peacock-600')}>
                           {formatDate(e.date)}
                         </p>
                       </div>
