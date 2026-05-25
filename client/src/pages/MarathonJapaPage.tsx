@@ -486,10 +486,16 @@ export default function MarathonJapaPage() {
                   </div>
 
                   <div className="mt-3 rounded-2xl border border-peacock-100 bg-white shadow-sm">
-                    <table className="w-full text-left text-sm">
+                    <table className="w-full table-fixed text-left text-sm">
+                      <colgroup>
+                        <col className="w-14" />
+                        <col />
+                        <col className="hidden w-[25%] sm:table-column" />
+                        <col className="w-[18%]" />
+                      </colgroup>
                       <thead>
                         <tr className="border-b border-peacock-100 bg-peacock-50/50 text-xs uppercase tracking-wider text-peacock-700">
-                          <th className="w-14 px-4 py-3.5 text-center font-semibold">#</th>
+                          <th className="px-4 py-3.5 text-center font-semibold">#</th>
                           <th className="px-5 py-3.5 font-semibold">Devotee</th>
                           <th className="hidden px-5 py-3.5 font-semibold sm:table-cell">City</th>
                           <th className="px-5 py-3.5 text-right font-semibold">Rounds</th>
@@ -497,7 +503,13 @@ export default function MarathonJapaPage() {
                       </thead>
                     </table>
                     <div className="max-h-[480px] overflow-y-auto">
-                      <table className="w-full text-left text-sm">
+                      <table className="w-full table-fixed text-left text-sm">
+                        <colgroup>
+                          <col className="w-14" />
+                          <col />
+                          <col className="hidden w-[25%] sm:table-column" />
+                          <col className="w-[18%]" />
+                        </colgroup>
                         <tbody>
                           {(searchQuery.trim() ? filteredLeaderboard : leaderboard.slice(3)).map((entry, idx) => (
                             <motion.tr
