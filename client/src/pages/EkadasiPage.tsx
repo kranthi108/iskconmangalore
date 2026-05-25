@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { CalendarDays, ChevronRight, Clock } from 'lucide-react'
 import { Helmet } from 'react-helmet-async'
@@ -29,6 +29,14 @@ function daysUntil(iso: string) {
 export default function EkadasiPage() {
   const upcoming = useMemo(() => getUpcomingEkadasi(), [])
   const today = useMemo(() => new Date().toISOString().slice(0, 10), [])
+  const scrollRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!upcoming || !scrollRef.current) return
+    const container = scrollRef.current
+    const el = container.querySelector<HTMLElement>(`[data-slug="${upcoming.slug}"]`)
+    if (el) container.scrollTop = el.offsetTop - container.offsetTop
+  }, [upcoming])
 
   return (
     <>
@@ -116,7 +124,7 @@ export default function EkadasiPage() {
               <h3 className="font-heading text-lg font-semibold text-maroon">2026 Ekadasi Calendar</h3>
               <p className="mt-1 text-xs text-peacock-600">26 Ekadasis including 2 Adhik Maas</p>
 
-              <div className="mt-4 max-h-[480px] space-y-1.5 overflow-y-auto pr-1">
+              <div ref={scrollRef} className="mt-4 max-h-[480px] space-y-1.5 overflow-y-auto pr-1">
                 {EKADASI_LIST.map((e) => {
                   const isPast = e.date < today
                   const isNext = upcoming?.slug === e.slug
@@ -124,6 +132,7 @@ export default function EkadasiPage() {
                   return (
                     <Link
                       key={e.slug}
+                      data-slug={e.slug}
                       to={`/resources/ekadasi/${e.slug}`}
                       className={cn(
                         'flex items-center justify-between rounded-xl border px-4 py-3 text-sm transition-colors',
