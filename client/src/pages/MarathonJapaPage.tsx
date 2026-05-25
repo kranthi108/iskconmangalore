@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { BookOpen, Calendar, Clock, Loader2, MapPin, Phone, Send, Sparkles, Trophy, Users, X } from 'lucide-react'
+import { BookOpen, Calendar, Clock, Loader2, MapPin, Phone, Search, Send, Sparkles, Trophy, Users, X } from 'lucide-react'
 import { Helmet } from 'react-helmet-async'
 import namjapBg from '@/assets/namjap.jpeg'
 import HeroBanner from '@/components/layout/HeroBanner'
@@ -293,7 +293,16 @@ export default function MarathonJapaPage() {
   const [hasMore, setHasMore] = useState(true)
   const [loading, setLoading] = useState(false)
   const [modalOpen, setModalOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
   const sentinelRef = useRef<HTMLDivElement>(null)
+
+  const filteredLeaderboard = useMemo(() => {
+    if (!searchQuery.trim()) return leaderboard
+    const q = searchQuery.trim().toLowerCase()
+    return leaderboard.filter(
+      (e) => e.devoteName.toLowerCase().includes(q) || e.city.toLowerCase().includes(q),
+    )
+  }, [leaderboard, searchQuery])
 
   const expired = useMemo(() => Date.now() > new Date(stats.deadline).getTime(), [stats.deadline])
 
@@ -430,40 +439,64 @@ export default function MarathonJapaPage() {
               </div>
 
               {leaderboard.length > 3 && (
-                <div className="mt-10 overflow-hidden rounded-2xl border border-peacock-100 bg-white shadow-sm">
-                  <table className="w-full text-left text-sm">
-                    <thead>
-                      <tr className="border-b border-peacock-100 bg-peacock-50/50 text-xs uppercase tracking-wider text-peacock-700">
-                        <th className="w-14 px-4 py-3.5 text-center font-semibold">#</th>
-                        <th className="px-5 py-3.5 font-semibold">Devotee</th>
-                        <th className="hidden px-5 py-3.5 font-semibold sm:table-cell">City</th>
-                        <th className="px-5 py-3.5 text-right font-semibold">Rounds</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {leaderboard.slice(3).map((entry, idx) => (
-                        <motion.tr
-                          key={`${entry.devoteName}-${idx}`}
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          className="border-b border-peacock-50 transition-colors hover:bg-peacock-50/40"
-                        >
-                          <td className="px-4 py-3.5 text-center">
-                            <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-peacock-100 text-xs font-bold text-peacock-800">
-                              {idx + 4}
-                            </span>
-                          </td>
-                          <td className="px-5 py-3.5">
-                            <span className="font-semibold text-peacock-900">{entry.devoteName}</span>
-                            <span className="ml-2 text-xs text-peacock-500 sm:hidden">{entry.city}</span>
-                          </td>
-                          <td className="hidden px-5 py-3.5 text-peacock-600 sm:table-cell">{entry.city}</td>
-                          <td className="px-5 py-3.5 text-right font-bold tabular-nums text-maroon">{entry.totalRounds.toLocaleString('en-IN')}</td>
-                        </motion.tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                <>
+                  <div className="relative mt-10">
+                    <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-peacock-400" />
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="Search by name or city…"
+                      className="w-full rounded-xl border border-peacock-200 bg-white py-2.5 pl-11 pr-4 text-sm text-peacock-900 placeholder:text-peacock-400 focus:border-peacock-400 focus:outline-none focus:ring-2 focus:ring-peacock-200"
+                    />
+                  </div>
+
+                  <div className="mt-3 rounded-2xl border border-peacock-100 bg-white shadow-sm">
+                    <table className="w-full text-left text-sm">
+                      <thead>
+                        <tr className="border-b border-peacock-100 bg-peacock-50/50 text-xs uppercase tracking-wider text-peacock-700">
+                          <th className="w-14 px-4 py-3.5 text-center font-semibold">#</th>
+                          <th className="px-5 py-3.5 font-semibold">Devotee</th>
+                          <th className="hidden px-5 py-3.5 font-semibold sm:table-cell">City</th>
+                          <th className="px-5 py-3.5 text-right font-semibold">Rounds</th>
+                        </tr>
+                      </thead>
+                    </table>
+                    <div className="max-h-[480px] overflow-y-auto">
+                      <table className="w-full text-left text-sm">
+                        <tbody>
+                          {(searchQuery.trim() ? filteredLeaderboard : leaderboard.slice(3)).map((entry, idx) => (
+                            <motion.tr
+                              key={`${entry.devoteName}-${idx}`}
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              className="border-b border-peacock-50 transition-colors hover:bg-peacock-50/40"
+                            >
+                              <td className="px-4 py-3.5 text-center">
+                                <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-peacock-100 text-xs font-bold text-peacock-800">
+                                  {searchQuery.trim() ? idx + 1 : idx + 4}
+                                </span>
+                              </td>
+                              <td className="px-5 py-3.5">
+                                <span className="font-semibold text-peacock-900">{entry.devoteName}</span>
+                                <span className="ml-2 text-xs text-peacock-500 sm:hidden">{entry.city}</span>
+                              </td>
+                              <td className="hidden px-5 py-3.5 text-peacock-600 sm:table-cell">{entry.city}</td>
+                              <td className="px-5 py-3.5 text-right font-bold tabular-nums text-maroon">{entry.totalRounds.toLocaleString('en-IN')}</td>
+                            </motion.tr>
+                          ))}
+                          {searchQuery.trim() && filteredLeaderboard.length === 0 && (
+                            <tr>
+                              <td colSpan={4} className="px-5 py-8 text-center text-sm text-peacock-500">
+                                No devotees found matching "{searchQuery}"
+                              </td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </>
               )}
 
               <div ref={sentinelRef} className="flex items-center justify-center py-6">
