@@ -9,14 +9,26 @@ export interface CountdownTimerProps {
   title?: string
   className?: string
   variant?: CountdownVariant
+  compact?: boolean
 }
 
-function Unit({ label, value, variant }: { label: string; value: number; variant: CountdownVariant }) {
+function Unit({
+  label,
+  value,
+  variant,
+  compact,
+}: {
+  label: string
+  value: number
+  variant: CountdownVariant
+  compact?: boolean
+}) {
   const isDark = variant === 'dark'
   return (
     <div
       className={cn(
-        'flex min-w-[4.25rem] flex-col items-center rounded-2xl border px-3 py-3 text-center sm:min-w-[5rem] sm:px-4 sm:py-4',
+        'flex flex-1 flex-col items-center rounded-xl border text-center',
+        compact ? 'px-1.5 py-1.5' : 'min-w-[4.25rem] rounded-2xl px-3 py-3 sm:min-w-[5rem] sm:px-4 sm:py-4',
         isDark
           ? 'border-white/20 bg-white/10 shadow-inner backdrop-blur-md'
           : 'border-maroon/30 bg-white shadow-md',
@@ -24,7 +36,8 @@ function Unit({ label, value, variant }: { label: string; value: number; variant
     >
       <span
         className={cn(
-          'font-heading text-2xl font-bold sm:text-3xl md:text-4xl',
+          'font-heading font-bold',
+          compact ? 'text-lg leading-tight' : 'text-2xl sm:text-3xl md:text-4xl',
           isDark ? 'text-cream' : 'text-maroon',
         )}
       >
@@ -32,7 +45,8 @@ function Unit({ label, value, variant }: { label: string; value: number; variant
       </span>
       <span
         className={cn(
-          'mt-1 text-[0.65rem] font-bold uppercase tracking-widest sm:text-xs',
+          'font-bold uppercase tracking-widest',
+          compact ? 'mt-0.5 text-[0.5rem]' : 'mt-1 text-[0.65rem] sm:text-xs',
           isDark ? 'text-gold-200/90' : 'text-peacock-600',
         )}
       >
@@ -42,7 +56,13 @@ function Unit({ label, value, variant }: { label: string; value: number; variant
   )
 }
 
-export default function CountdownTimer({ targetDate, title, className, variant = 'dark' }: CountdownTimerProps) {
+export default function CountdownTimer({
+  targetDate,
+  title,
+  className,
+  variant = 'dark',
+  compact = false,
+}: CountdownTimerProps) {
   const { days, hours, minutes, seconds } = useCountdown(targetDate, { freezeAtZero: true })
   const isDark = variant === 'dark'
 
@@ -53,7 +73,8 @@ export default function CountdownTimer({ targetDate, title, className, variant =
       viewport={{ once: true, amount: 0.4 }}
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       className={cn(
-        'rounded-3xl border p-6 shadow-2xl sm:p-8',
+        'rounded-3xl border shadow-2xl',
+        compact ? 'p-3' : 'p-6 sm:p-8',
         isDark
           ? 'border-gold-400/30 bg-gradient-to-br from-peacock-900/95 via-maroon/95 to-peacock-900/95 text-cream'
           : 'border-maroon/25 bg-gradient-to-br from-saffron/10 via-white to-gold-100 text-peacock-950',
@@ -63,18 +84,24 @@ export default function CountdownTimer({ targetDate, title, className, variant =
       {title ? (
         <h3
           className={cn(
-            'mb-6 text-center font-heading text-xl font-semibold sm:text-2xl',
+            'text-center font-heading font-semibold',
+            compact ? 'mb-2 text-sm' : 'mb-6 text-xl sm:text-2xl',
             isDark ? 'text-gold-200' : 'text-maroon',
           )}
         >
           {title}
         </h3>
       ) : null}
-      <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 md:gap-5">
-        <Unit label="Days" value={days} variant={variant} />
-        <Unit label="Hours" value={hours} variant={variant} />
-        <Unit label="Minutes" value={minutes} variant={variant} />
-        <Unit label="Seconds" value={seconds} variant={variant} />
+      <div
+        className={cn(
+          'flex items-center justify-center',
+          compact ? 'gap-1.5' : 'flex-wrap gap-3 sm:gap-4 md:gap-5',
+        )}
+      >
+        <Unit label="Days" value={days} variant={variant} compact={compact} />
+        <Unit label="Hours" value={hours} variant={variant} compact={compact} />
+        <Unit label="Minutes" value={minutes} variant={variant} compact={compact} />
+        <Unit label="Seconds" value={seconds} variant={variant} compact={compact} />
       </div>
     </motion.div>
   )

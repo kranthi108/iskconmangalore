@@ -44,10 +44,10 @@ function AnimatedCounter({ value, label }: { value: number; label: string }) {
 
   return (
     <div className="flex flex-col items-center gap-1">
-      <span className="-mt-1 font-heading text-4xl font-bold tabular-nums leading-none text-cream sm:text-5xl">
+      <span className="-mt-1 font-heading text-4xl font-bold tabular-nums leading-none text-white sm:text-5xl">
         {displayed.toLocaleString('en-IN')}
       </span>
-      <span className="whitespace-nowrap text-[10px] uppercase tracking-[0.25em] text-gold-200/80">{label}</span>
+      <span className="whitespace-nowrap text-[10px] uppercase tracking-[0.25em] text-gold-200">{label}</span>
     </div>
   )
 }
@@ -75,11 +75,11 @@ function MarathonCountdown({ deadline }: { deadline: string }) {
 
   return (
     <div className="flex items-center gap-1.5 text-cream">
-      <Clock className="h-4 w-4 text-gold-200" />
-      <span className="font-heading text-lg font-bold tabular-nums">
+      <Clock className="h-4 w-4 shrink-0 text-gold-200" />
+      <span className="text-base font-bold leading-none tabular-nums">
         {pad(hrs)}:{pad(mins)}:{pad(secs)}
       </span>
-      <span className="text-xs text-gold-200/80">remaining</span>
+      <span className="text-xs leading-none text-gold-200/80">remaining</span>
     </div>
   )
 }
@@ -394,12 +394,12 @@ export default function MarathonJapaPage() {
       >
         <div className="mt-4 flex w-full flex-col items-center gap-5">
           <div className="grid w-full max-w-lg grid-cols-2 gap-4">
-            <div className="flex flex-col items-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-6 py-6 backdrop-blur-sm">
-              <Sparkles className="h-6 w-6 text-gold-200" />
+            <div className="flex flex-col items-center gap-2 rounded-2xl border border-white/30 bg-black/55 px-6 py-6 shadow-xl backdrop-blur-md">
+              <Sparkles className="h-6 w-6 text-gold-300" />
               <AnimatedCounter value={stats.totalRounds} label="Total Rounds" />
             </div>
-            <div className="flex flex-col items-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-6 py-6 backdrop-blur-sm">
-              <Users className="h-6 w-6 text-gold-200" />
+            <div className="flex flex-col items-center gap-2 rounded-2xl border border-white/30 bg-black/55 px-6 py-6 shadow-xl backdrop-blur-md">
+              <Users className="h-6 w-6 text-gold-300" />
               <AnimatedCounter value={stats.totalDevotees} label="Devotees Joined" />
             </div>
           </div>

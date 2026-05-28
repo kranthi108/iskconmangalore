@@ -64,7 +64,7 @@ export default function FestivalCard({ festival, className }: FestivalCardProps)
           <p className="line-clamp-3 text-sm leading-relaxed text-peacock-950/85">{excerpt}</p>
           {upcoming ? (
             <div>
-              <CountdownTimer targetDate={festival.date} title="Counting down" variant="light" />
+              <CountdownTimer targetDate={festival.date} title="Counting down" variant="light" compact />
             </div>
           ) : null}
           <div className="mt-auto flex flex-wrap justify-center gap-3">
