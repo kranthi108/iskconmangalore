@@ -10,6 +10,7 @@ import Container from '@/components/ui/Container'
 import SectionHeading from '@/components/ui/SectionHeading'
 import { BHAJAN_LIST, SPIRITUAL_RESOURCES } from '@/constants/data'
 import { HERO_BANNER, SPIRITUAL_LECTURE } from '@/constants/placeholders'
+import aboutusbanner from '@/assets/aboutus.png'
 import { cn } from '@/utils/cn'
 
 export default function ResourcesPage() {
@@ -19,7 +20,7 @@ export default function ResourcesPage() {
         <title>Spiritual Resources · ISKCON Mangalore</title>
         <meta name="description" content="Śāstra companions, ecstatic bhajan companions, Śrīla Prabhupāda lecture palettes — curated lovingly for Mādhuras seekers." />
       </Helmet>
-      <HeroBanner title="Spiritual Resources" subtitle="Carry Vṛndāvan’s bookshelf wherever the coastal tides take you." backgroundImage={HERO_BANNER} height="medium" />
+      <HeroBanner title="Spiritual Resources" subtitle="Carry Vṛndāvan’s bookshelf wherever the coastal tides take you." backgroundImage={aboutusbanner} height="medium" />
 
       <section className="bg-gradient-to-b from-white via-gold-50 to-white py-20">
         <Container size="xl">

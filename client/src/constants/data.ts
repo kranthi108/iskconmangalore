@@ -30,6 +30,20 @@ export type NavItem =
 export const NAV_LINKS: readonly NavItem[] = [
   { label: 'Home', href: '/' },
   {
+      label: 'About Us',
+      children: [
+        { label: 'Resources', href: '/resources' },
+        { label: 'Ongoing Japa Yagna', href: '/harinam' },
+        { label: 'Marathon Japa Yagna', href: '/marathon-japa' },
+        {
+          label: 'Governance',
+          children: [
+            { label: 'Management Council', href: '/management-council' },
+          ],
+        },
+      ],
+    },
+  {
     label: 'Festivals',
     children: [
       { label: 'Festivals', href: '/festivals' },
@@ -43,20 +57,7 @@ export const NAV_LINKS: readonly NavItem[] = [
       { label: 'Live Darshan', href: '/live-darshan' },
     ],
   },
-  {
-    label: 'About Us',
-    children: [
-      { label: 'Resources', href: '/resources' },
-      { label: 'Ongoing Japa Yagna', href: '/harinam' },
-      { label: 'Marathon Japa Yagna', href: '/marathon-japa' },
-      {
-        label: 'Governance',
-        children: [
-          { label: 'Management Council', href: '/management-council' },
-        ],
-      },
-    ],
-  },
+
   { label: 'Projects', href: 'https://projects.iskconmangalore.org/' },
   { label: 'Contact', href: '/contact' },
 ] as const
