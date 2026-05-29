@@ -148,7 +148,7 @@ export default function DonationForm({
                 }
 
                 const donation = await verifyPayment({
-
+                  campaignId: campaign._id,
                   amount,
                   donorEmail: values.donorEmail.trim(),
                   donorName: donorNameResolved,
@@ -316,7 +316,6 @@ export default function DonationForm({
       <AnimatePresence>
         {blessings ? (
           <BlessingsSuccessScreen
-            donorInfo={blessings.name}
             amount={blessings.amount}
             receiptNumber={blessings.receiptNumber}
             campaignTitle={campaignTitle}

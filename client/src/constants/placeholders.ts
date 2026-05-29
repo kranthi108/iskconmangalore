@@ -17,6 +17,14 @@ function ph(width: number, height: number, bg: string, fg: string, text: string)
   return `https://placehold.co/${width}x${height}/${bg}/${fg}?text=${encodeURIComponent(text)}`
 }
 
+export const HERO_BANNER = ph(
+  1920,
+  800,
+  P.peacock,
+  P.gold,
+  'ISKCON Mangalore - Divine Darshan',
+)
+
 export const KRISHNA_DARSHAN = ph(800, 600, P.maroon, P.cream, 'Sri Krishna Darshan')
 
 export const FESTIVAL_BANNERS = {
