@@ -9,7 +9,7 @@ import Card from '@/components/ui/Card'
 import Container from '@/components/ui/Container'
 import SectionHeading from '@/components/ui/SectionHeading'
 import { BHAJAN_LIST, SPIRITUAL_RESOURCES } from '@/constants/data'
-import { HERO_BANNER, SPIRITUAL_LECTURE } from '@/constants/placeholders'
+import { SPIRITUAL_LECTURE } from '@/constants/placeholders'
 import aboutusbanner from '@/assets/aboutus.png'
 import { cn } from '@/utils/cn'
 

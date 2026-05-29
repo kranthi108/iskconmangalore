@@ -63,7 +63,7 @@ export default function Footer() {
           <section>
             <h3 className="font-heading text-lg font-semibold text-gold-300">Sacred corridors</h3>
             <ul className="mt-4 space-y-2">
-              {NAV_LINKS.map(({ href, label }) => (
+              {NAV_LINKS.filter((item): item is { label: string; href: string; children?: undefined } => typeof item.href === 'string').map(({ href, label }) => (
                 <li key={href}>
                   <Link className="text-sm font-semibold text-white/80 transition hover:text-gold-400" to={href}>
                     {label}

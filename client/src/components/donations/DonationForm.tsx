@@ -13,6 +13,7 @@ import { useRazorpay } from '@/hooks/useRazorpay'
 import { ApiHttpError } from '@/services/api'
 import { createOrder, verifyPayment } from '@/services/donationService'
 import type { Donation } from '@/types'
+import type { DonorInfo } from '@/components/donations/BlessingsSuccessScreen'
 import { cn } from '@/utils/cn'
 
 const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]$/
@@ -71,7 +72,7 @@ export default function DonationForm({
   const [submissionPhase, setSubmissionPhase] = useState<'idle' | 'opening' | 'verifying'>('idle')
   const [globalError, setGlobalError] = useState<string | null>(null)
   const nameBeforeAnonymous = useRef('')
-  const [blessings, setBlessings] = useState<{ receiptNumber: string; amount: number } | null>(null)
+  const [blessings, setBlessings] = useState<{ receiptNumber: string; amount: number; donorInfo: DonorInfo } | null>(null)
 
   const {
     register,
@@ -148,20 +149,21 @@ export default function DonationForm({
                 }
 
                 const donation = await verifyPayment({
-                  campaignId: campaign._id,
-                  amount,
-                  donorEmail: values.donorEmail.trim(),
-                  donorName: donorNameResolved,
-                  donorPhone: values.donorPhone.trim(),
-                  isAnonymous: values.isAnonymous,
-                  dedication: values.dedication?.trim() || undefined,
-                  donorPAN: panNormalized,
                   razorpay_order_id: response.razorpay_order_id,
                   razorpay_payment_id: response.razorpay_payment_id,
                   razorpay_signature: response.razorpay_signature,
                 })
 
-                setBlessings({ receiptNumber: donation.receiptNumber, amount })
+                setBlessings({
+                  receiptNumber: donation.receiptNumber,
+                  amount,
+                  donorInfo: {
+                    name: donorNameResolved,
+                    email: values.donorEmail.trim() || undefined,
+                    phone: values.donorPhone.trim(),
+                    pan: panNormalized,
+                  },
+                })
                 onDonationVerified?.(donation)
                 resolvePromise()
               } catch (error: unknown) {
@@ -319,6 +321,7 @@ export default function DonationForm({
             amount={blessings.amount}
             receiptNumber={blessings.receiptNumber}
             campaignTitle={campaignTitle}
+            donorInfo={blessings.donorInfo}
             onClose={() => setBlessings(null)}
           />
         ) : null}
