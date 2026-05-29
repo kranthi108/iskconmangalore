@@ -61,7 +61,7 @@ export default function FestivalsPage() {
                   Open detailed schedule →
                 </Link>
               </div>
-              <CountdownTimer targetDate={headline.date} title="Mercy-wave countdown" />
+              <CountdownTimer targetDate={headline.date} title="Mercy-wave countdown" compact />
             </div>
           </Container>
         </section>

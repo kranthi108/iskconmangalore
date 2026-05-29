@@ -407,7 +407,7 @@ export default function DonatePage() {
             <p className="mt-8 text-peacock-900/85">{story.spiritualImportance}</p>
           </div>
           {countdownTarget ? (
-            <CountdownTimer targetDate={countdownTarget} title="Approaching sankīrtaṇa zenith" />
+            <CountdownTimer targetDate={countdownTarget} title="Approaching sankīrtaṇa zenith" compact />
           ) : (
             <div className="rounded-3xl border border-maroon/20 bg-maroon text-cream shadow-xl">
               <div className="space-y-4 p-8">
