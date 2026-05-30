@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { BookOpen, Calendar, Clock, Download, Loader2, MapPin, Phone, Search, Send, Sparkles, Trophy, Users, X } from 'lucide-react'
+import { Bell, BookOpen, Calendar, Clock, Download, Loader2, MapPin, Phone, Search, Send, Sparkles, Trophy, Users, X } from 'lucide-react'
 import * as XLSX from 'xlsx'
 import { Helmet } from 'react-helmet-async'
 import namjapBg from '@/assets/namjap.jpg'
@@ -19,6 +19,9 @@ import {
   type MarathonLeaderboardEntry,
   type MarathonDevoteSuggestion,
 } from '@/services/marathonJapaService'
+
+// Replace with a different file path if you ever swap the audio clip.
+const BELL_SOUND_SRC = '/sounds/harekrishnamantra-prabhupad.mp3'
 
 const DEFAULT_STATS: MarathonStats = { totalRounds: 0, totalDevotees: 0, deadline: '2026-08-15T23:59:59+05:30' }
 
@@ -364,6 +367,23 @@ export default function MarathonJapaPage() {
     return () => observer.disconnect()
   }, [hasMore, loading, page])
 
+  const [bellPlaying, setBellPlaying] = useState(false)
+  const bellAudioRef = useRef<HTMLAudioElement | null>(null)
+
+  function toggleBell() {
+    if (bellPlaying) {
+      bellAudioRef.current?.pause()
+      if (bellAudioRef.current) bellAudioRef.current.currentTime = 0
+      setBellPlaying(false)
+      return
+    }
+    const audio = new Audio(BELL_SOUND_SRC)
+    bellAudioRef.current = audio
+    audio.play().catch(() => {})
+    setBellPlaying(true)
+    audio.onended = () => setBellPlaying(false)
+  }
+
   const [toast, setToast] = useState<ToastData | null>(null)
 
   function handleSubmitSuccess(message: string) {
@@ -387,8 +407,21 @@ export default function MarathonJapaPage() {
         height="large"
         centered
         topRight={
-          <div className="rounded-xl border border-white/20 bg-white/10 px-4 py-2 backdrop-blur-sm">
-            <MarathonCountdown deadline={stats.deadline} />
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={toggleBell}
+              title={bellPlaying ? 'Stop bell' : 'Play temple bell'}
+              className={cn(
+                'rounded-full p-1.5 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-300',
+                bellPlaying ? 'text-gold-300' : 'text-white/70 hover:text-white',
+              )}
+            >
+              <Bell className={cn('h-5 w-5 shrink-0', bellPlaying && 'animate-[wiggle_0.4s_ease-in-out_infinite]')} />
+            </button>
+            <div className="rounded-xl border border-white/20 bg-white/10 px-4 py-2 backdrop-blur-sm">
+              <MarathonCountdown deadline={stats.deadline} />
+            </div>
           </div>
         }
       >
