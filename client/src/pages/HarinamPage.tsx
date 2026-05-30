@@ -335,19 +335,29 @@ export default function HarinamPage() {
   const [bellPlaying, setBellPlaying] = useState(false)
   const bellAudioRef = useRef<HTMLAudioElement | null>(null)
 
-  function toggleBell() {
-    if (bellPlaying) {
-      bellAudioRef.current?.pause()
-      if (bellAudioRef.current) bellAudioRef.current.currentTime = 0
-      setBellPlaying(false)
-      return
-    }
+  function playBell() {
     const audio = new Audio(BELL_SOUND_SRC)
+    audio.loop = true
     bellAudioRef.current = audio
     audio.play().catch(() => {})
     setBellPlaying(true)
-    audio.onended = () => setBellPlaying(false)
   }
+
+  function stopBell() {
+    bellAudioRef.current?.pause()
+    if (bellAudioRef.current) bellAudioRef.current.currentTime = 0
+    setBellPlaying(false)
+  }
+
+  function toggleBell() {
+    if (bellPlaying) { stopBell(); return }
+    playBell()
+  }
+
+  useEffect(() => {
+    playBell()
+    return () => { stopBell() }
+  }, [])
 
   const filteredLeaderboard = useMemo(() => {
     let list = leaderboard
