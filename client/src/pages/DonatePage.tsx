@@ -305,7 +305,7 @@ export default function DonatePage() {
   )
 
   if (!slug) {
-    const heroImage = FEATURED_CAMPAIGNS[0]?.bannerImage ?? SEVA_THUMBNAILS.annadanam
+    const heroImage = "https://guptvrindavandham.org/media/landingpage/General_Temple_Donation_Banner_Desktop.webp"
     const categories: CategoryFilter[] = ['all', 'festival', 'seva', 'special', 'monthly']
 
     return (
