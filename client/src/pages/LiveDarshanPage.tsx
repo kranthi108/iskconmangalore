@@ -62,7 +62,7 @@ export default function LiveDarshanPage() {
             <PlaceholderVideo posterSrc={LIVESTREAM_PREVIEW} />
             <div className="mt-8 flex flex-wrap gap-4">
               <a
-                href="https://www.youtube.com/@iskconmangalore"
+                href="https://www.youtube.com/@ISKCONMangaloreBhagavatamClass"
                 target="_blank"
                 rel="noreferrer"
                 className={cn(buttonVariants({ variant: 'secondary', size: 'lg' }), 'inline-flex items-center gap-2 no-underline')}

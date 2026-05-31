@@ -127,7 +127,7 @@ export default function FestivalDetailPage() {
           <SectionHeading alignment="center" title="Global darśanas" subtitle="When your city cannot commute, Śrī Krishna Balaram's livestream veil still trembles." decorative className="text-cream [&_h2]:text-cream [&_p]:text-gold-100/82" />
           <PlaceholderVideo posterSrc={festival.livestreamUrl || LIVESTREAM_PREVIEW} className="mt-12" />
           <div className="mt-10 text-center">
-            <a href="https://www.youtube.com/@iskconmangalore" target="_blank" rel="noreferrer" className={cn(buttonVariants({ variant: 'secondary', size: 'lg' }), 'inline-flex no-underline')}>
+            <a href="https://www.youtube.com/@ISKCONMangaloreBhagavatamClass" target="_blank" rel="noreferrer" className={cn(buttonVariants({ variant: 'secondary', size: 'lg' }), 'inline-flex no-underline')}>
               Watch ISKCON Mangalore live
             </a>
           </div>

@@ -286,13 +286,13 @@ export default function HomePage() {
             <p className="text-xs uppercase tracking-[0.35em] text-gold-200">Live Bhoga darśana</p>
             <h2 className="mt-3 font-heading text-3xl font-semibold sm:text-4xl">Join Krishna Balaram's evening ārati from anywhere</h2>
             <p className="mt-5 text-white/82">
-              Sandhya ārati at <span className="font-semibold text-gold-200">6:30 PM</span> IST greets Śrī Śrī Krishna Balaram with hundreds of waving lamps while Harināma pours into the Sabha hall — carry that stream into your altar at home.
+              Sandhya ārati at <span className="font-semibold text-gold-200">6:45 PM</span> IST greets Śrī Śrī Krishna Balaram with hundreds of waving lamps while Harināma pours into the Sabha hall — carry that stream into your altar at home.
             </p>
             <div className="mt-8 flex flex-wrap gap-4">
               <Link to="/live-darshan" className={cn(buttonVariants({ variant: 'secondary', size: 'lg' }), 'no-underline')}>
                 Watch Live
               </Link>
-              <a href="https://www.youtube.com/@iskconmangalore" target="_blank" rel="noreferrer" className={cn(buttonVariants({ variant: 'outline', size: 'lg' }), 'border-white/60 text-white hover:bg-white/10', 'no-underline')}>
+              <a href="https://www.youtube.com/@ISKCONMangaloreBhagavatamClass" target="_blank" rel="noreferrer" className={cn(buttonVariants({ variant: 'outline', size: 'lg' }), 'border-white/60 text-white hover:bg-white/10', 'no-underline')}>
                 YouTube Sabha
               </a>
             </div>
