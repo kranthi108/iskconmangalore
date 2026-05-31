@@ -645,9 +645,9 @@ export default function HarinamPage() {
           />
           <div className="mt-10 grid gap-6 sm:grid-cols-3">
             {[
-              { step: '1', title: 'Chant', desc: 'Complete your daily japa rounds of the Hare Krishna Maha-mantra.' },
-              { step: '2', title: 'Submit', desc: 'Enter your name, phone, city, and number of rounds chanted.' },
-              { step: '3', title: 'Inspire', desc: 'Your rounds instantly add to the collective yagna counter.' },
+              { step: '1', title: 'Chant and Hear', desc: 'Hare Krishna Hare Krishna Krishna Krishna Hare Hare Hare Rama Hare Rama Rama Rama Hare Hare.' },
+              { step: '2', title: 'Count', desc: 'Count your japa rounds (1 round = 108 times Full Hare Krishna Mahamantra Japa).' },
+              { step: '3', title: 'Submit', desc: 'Submit the number of rounds you chanted on daily basis in this page.' },
             ].map((item) => (
               <motion.div
                 key={item.step}

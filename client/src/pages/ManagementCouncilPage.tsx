@@ -12,6 +12,7 @@ import gunakarImg from '@/assets/management council/gunakarramadas.png'
 import sanandanaImg from '@/assets/management council/sanandanadas.png'
 import radhavallabhImg from '@/assets/management council/radhavallabhdas.png'
 import rohiniImg from '@/assets/management council/radhajivandas.png'
+import nandanacharya from '@/assets/management council/nandanacharya.png'
 
 interface CouncilMember {
   name: string
@@ -29,22 +30,35 @@ const COUNCIL_MEMBERS: CouncilMember[] = [
   },
   {
     name: 'Sanandana Dasa',
-    role: 'Secretary',
+    role: 'Vice President',
     photo: sanandanaImg,
     bio: 'Sanandana Dasa serves as the Secretary of ISKCON Sri Krishna Balaram Mandir, Mangalore. He plays a key role in coordinating the temple\'s administrative and spiritual activities, ensuring smooth operations and devotee engagement across all programs.',
   },
   {
-    name: 'Radhavallabh Dasa',
-    role: 'Treasurer',
-    photo: radhavallabhImg,
-    bio: 'Radha Vallabha Dasa was born in 1979 in Chickmagaluru, Karnataka. He completed his MBA in Davanagere from Kuvempu University. While working as Sales Officer in Madras Cements Limited, Hassan, he developed interest in the message and mission of Srila Prabhupada. He joined the movement as a full-time dedicated member of ISKCON Bangalore in 2008 and later moved to ISKCON Mangalore. Since then he has been working for the development of the temple in various departments. As the Head of the Deities related services, he has ensured that good standards of worship are maintained in the temple.\n\nRadhavallabha Dasa is the Treasurer of ISKCON Mangalore.',
+      name: 'Radha Jivan Dasa',
+      role: 'Member of Executive Council',
+      photo: rohiniImg,
+      bio: 'Radha Jivan Dasa was born in 1986 in Motihari, Bihar. While an undergraduate student of Electrical and Electronics at National Institute of Technology Surathkal, Karnataka, he became interested in the message and mission of Srila Prabhupada. After his college, he worked for a financial company called \'FUTURES FIRST\' for 3 years in Bangalore. He became a full-time dedicated member of ISKCON Mangalore in 2012 and since then he is in the service of GOD and Mankind in various ways. He has organised seminars, workshops, and counselling programs to benefit students of colleges like NIT Calicut. He has guided many people especially youths to lead a life of happiness and fulfillment.\n\nHe is presently involved in Gifts and Books division and Youth empowerment division of ISKCON Mangalore.',
   },
   {
-    name: 'Rohini Suta Dasa',
-    role: 'Member of Management Council',
-    photo: rohiniImg,
-    bio: 'Rohini Suta Dasa was born in 1986 in Motihari, Bihar. While an undergraduate student of Electrical and Electronics at National Institute of Technology Surathkal, Karnataka, he became interested in the message and mission of Srila Prabhupada. After his college, he worked for a financial company called \'FUTURES FIRST\' for 3 years in Bangalore. He became a full-time dedicated member of ISKCON Mangalore in 2012 and since then he is in the service of GOD and Mankind in various ways. He has organised seminars, workshops, and counselling programs to benefit students of colleges like NIT Calicut. He has guided many people especially youths to lead a life of happiness and fulfillment.\n\nHe is presently involved in Gifts and Books division and Youth empowerment division of ISKCON Mangalore.',
+      name: 'Deendayal Hari Dasa',
+      role: 'Member of Executive Council',
+      photo: HERO_BANNER,
+      bio: 'Deendayal Hari Dasa was born in 1986 in Motihari, Bihar. While an undergraduate student of Electrical and Electronics at National Institute of Technology Surathkal, Karnataka, he became interested in the message and mission of Srila Prabhupada. After his college, he worked for a financial company called \'FUTURES FIRST\' for 3 years in Bangalore. He became a full-time dedicated member of ISKCON Mangalore in 2012 and since then he is in the service of GOD and Mankind in various ways. He has organised seminars, workshops, and counselling programs to benefit students of colleges like NIT Calicut. He has guided many people especially youths to lead a life of happiness and fulfillment.\n\nHe is presently involved in Gifts and Books division and Youth empowerment division of ISKCON Mangalore.',
   },
+
+  {
+    name: 'Nandanacharya Dasa',
+    role: 'Member of Executive Council',
+    photo: nandanacharya,
+    bio: 'Radha Jivan Dasa was born in 1986 in Motihari, Bihar. While an undergraduate student of Electrical and Electronics at National Institute of Technology Surathkal, Karnataka, he became interested in the message and mission of Srila Prabhupada. After his college, he worked for a financial company called \'FUTURES FIRST\' for 3 years in Bangalore. He became a full-time dedicated member of ISKCON Mangalore in 2012 and since then he is in the service of GOD and Mankind in various ways. He has organised seminars, workshops, and counselling programs to benefit students of colleges like NIT Calicut. He has guided many people especially youths to lead a life of happiness and fulfillment.\n\nHe is presently involved in Gifts and Books division and Youth empowerment division of ISKCON Mangalore.',
+  },
+  {
+      name: 'Devaki Tanaya Dasa',
+      role: 'Member of Executive Council',
+      photo: HERO_BANNER,
+      bio: 'Devaki Tanaya Dasa was born in 1986 in Motihari, Bihar. While an undergraduate student of Electrical and Electronics at National Institute of Technology Surathkal, Karnataka, he became interested in the message and mission of Srila Prabhupada. After his college, he worked for a financial company called \'FUTURES FIRST\' for 3 years in Bangalore. He became a full-time dedicated member of ISKCON Mangalore in 2012 and since then he is in the service of GOD and Mankind in various ways. He has organised seminars, workshops, and counselling programs to benefit students of colleges like NIT Calicut. He has guided many people especially youths to lead a life of happiness and fulfillment.\n\nHe is presently involved in Gifts and Books division and Youth empowerment division of ISKCON Mangalore.',
+    },
 ]
 
 const roleColors: Record<string, string> = {

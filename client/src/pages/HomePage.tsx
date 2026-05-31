@@ -126,13 +126,14 @@ export default function HomePage() {
               
             </motion.p>
             <h1 className="font-heading text-4xl font-semibold leading-tight text-cream sm:text-5xl lg:text-6xl">
-              ISKCON Sri Krishna Balaram Mandir, Mangalore
+              <br/>ISKCON <br/>
+              Govardhan Hills, Mangalore
             </h1>
             <p className="mt-5 max-w-2xl text-lg text-white/85 sm:text-xl">Experience the Divine</p>
             <div className="mt-10 flex flex-wrap gap-3">
               <Link
                 to="/festivals"
-                className={cn(buttonVariants({ variant: 'secondary', size: 'xl' }), 'min-w-[200px]', 'no-underline')}
+                className={cn(buttonVariants({ variant: 'outline', size: 'xl' }), 'border-white text-white hover:bg-white/15', 'no-underline')}
               >
                 <Sparkles className="h-5 w-5" aria-hidden />
                 Explore Festivals
@@ -148,6 +149,17 @@ export default function HomePage() {
                 <HeartHandshake className="h-5 w-5 text-gold-200" aria-hidden />
                 Donate Now
               </Link>
+              <Link
+                              to="/harinam"
+                              className={cn(
+                                buttonVariants({ variant: 'secondary', size: 'xl' }),
+                                'min-w-[200px]',
+                                    'no-underline'
+                              )}
+                            >
+
+                              Participate in Japa Yajña
+                            </Link>
             </div>
           </motion.div>
         </Container>

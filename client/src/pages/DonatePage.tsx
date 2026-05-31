@@ -306,7 +306,7 @@ export default function DonatePage() {
 
   if (!slug) {
     const heroImage = "https://guptvrindavandham.org/media/landingpage/General_Temple_Donation_Banner_Desktop.webp"
-    const categories: CategoryFilter[] = ['all', 'festival', 'seva', 'special', 'monthly']
+    const categories: CategoryFilter[] = ['all', 'festival', 'projects', 'membership', 'monthly']
 
     return (
       <>

@@ -33,8 +33,6 @@ export const NAV_LINKS: readonly NavItem[] = [
       label: 'About Us',
       children: [
         { label: 'Resources', href: '/resources' },
-        { label: 'Ongoing Japa Yagna', href: '/harinam' },
-        { label: 'Marathon Japa Yagna', href: '/marathon-japa' },
         {
           label: 'Governance',
           children: [
@@ -91,25 +89,25 @@ export const DARSHAN_TIMINGS: readonly DarshanTiming[] = [
   },
   {
     name: 'Raj Bhog Aarti',
-    time: '12:00 PM',
+    time: '12:30 PM',
     description: 'Grand offering at noon expressing gratitude for midday prasadam.',
     icon: 'UtensilsCrossed',
   },
   {
-    name: 'Utthapana Aarti',
+    name: 'Dhoopa Aarti',
     time: '4:15 PM',
     description: 'Afternoon awakening with gentle lamps and hymns as the Lords rise from rest.',
     icon: 'FlameKindling',
   },
   {
     name: 'Sandhya Aarti',
-    time: '6:30 PM',
+    time: '6:45 PM',
     description: 'Evening greeting as lamps glow and harinama floods the Sabha hall.',
     icon: 'Sunset',
   },
   {
     name: 'Shayana Aarti',
-    time: '8:15 PM',
+    time: '8:00 PM',
     description: 'The final seva of the day as the Deities peacefully retire for rest.',
     icon: 'MoonStar',
   },

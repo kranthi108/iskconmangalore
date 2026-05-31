@@ -24,8 +24,8 @@ export type DonationCardSource = FeaturedCampaignCard | Pick<
 
 const categoryVariant: Record<DonationCampaign['category'], 'peacock' | 'gold' | 'saffron' | 'maroon'> = {
   festival: 'saffron',
-  seva: 'peacock',
-  special: 'gold',
+  projects: 'peacock',
+  membership: 'gold',
   monthly: 'maroon',
 }
 
