@@ -3,7 +3,7 @@ export interface DonationCampaign {
   slug: string;
   title: string;
   subtitle: string;
-  category: 'festival' | 'projects' | 'membership' | 'monthly';
+  category: 'festival' | 'projects' | 'membership' | 'annadana';
   description: string;
   spiritualImportance: string;
   sloka: {

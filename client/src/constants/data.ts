@@ -185,7 +185,7 @@ export const FEATURED_CAMPAIGNS: readonly FeaturedCampaignCard[] = [
     slug: 'kartik-maas',
     title: 'Kartik Maas Offering',
     subtitle: 'Special month of Urja-vrata with deepotsava, lamp offerings, and Damodar songs.',
-    category: 'monthly',
+    category: 'annadana',
     description:
       'Support hand-dipped ghee lamps, silk vestments, flower garlands, and festival prasadam during the holiest month for Sri Damodara.',
     suggestedAmounts: [108, 501, 2108],

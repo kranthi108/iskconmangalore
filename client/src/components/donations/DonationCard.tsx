@@ -26,7 +26,7 @@ const categoryVariant: Record<DonationCampaign['category'], 'peacock' | 'gold' |
   festival: 'saffron',
   projects: 'peacock',
   membership: 'gold',
-  monthly: 'maroon',
+  annadana: 'maroon',
 }
 
 export interface DonationCardProps {
