@@ -10,7 +10,6 @@ import { cn } from '@/utils/cn'
 
 import gunakarImg from '@/assets/management council/gunakarramadas.png'
 import sanandanaImg from '@/assets/management council/sanandanadas.png'
-import radhavallabhImg from '@/assets/management council/radhavallabhdas.png'
 import rohiniImg from '@/assets/management council/radhajivandas.png'
 import nandanacharya from '@/assets/management council/nandanacharya.png'
 

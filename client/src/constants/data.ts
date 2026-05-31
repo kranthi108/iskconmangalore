@@ -152,7 +152,7 @@ export const FEATURED_CAMPAIGNS: readonly FeaturedCampaignCard[] = [
     slug: 'nitya-annadanam',
     title: 'Nitya Annadanam',
     subtitle: 'Daily honoring of Lord Vishnu-tattva through sanctified lunchtime prasadam.',
-    category: 'seva',
+    category: 'projects',
     description:
       'Sponsor seasonal vegetables, rice, lentils, firewood, cookware maintenance, and sevaka honorariums sustaining daily annadan.',
     suggestedAmounts: [108, 501, 2108],
@@ -163,7 +163,7 @@ export const FEATURED_CAMPAIGNS: readonly FeaturedCampaignCard[] = [
     slug: 'goshala-seva',
     title: 'Goshala Seva',
     subtitle: 'Care for protected cows as an integral limb of Vedic culture.',
-    category: 'seva',
+    category: 'projects',
     description:
       'Fund green fodder, veterinary care, shelter repairs, and winter blankets for the goshala serving Lord Krishna’s beloved cows.',
     suggestedAmounts: [501, 1108, 5100],
@@ -174,7 +174,7 @@ export const FEATURED_CAMPAIGNS: readonly FeaturedCampaignCard[] = [
     slug: 'gita-distribution',
     title: 'Bhagavad-gita Distribution',
     subtitle: 'Place the song of God in every sincere seeker’s hands.',
-    category: 'special',
+    category: 'membership',
     description:
       'Print softcover Gitas, sponsor college outreach tables, and cover shipping for youth and professionals requesting spiritual literature.',
     suggestedAmounts: [251, 751, 3001],
