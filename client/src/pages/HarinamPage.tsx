@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { BookOpen, Calendar, CalendarDays, Clock, Download, Loader2, MapPin, Phone, Search, Send, Sparkles, Trophy, Users, X } from 'lucide-react'
+import { Bell, BookOpen, Calendar, CalendarDays, Clock, Download, Loader2, MapPin, Phone, Search, Send, Sparkles, Trophy, Users, X } from 'lucide-react'
 import * as XLSX from 'xlsx'
 import { Helmet } from 'react-helmet-async'
 import namjapBg from '@/assets/namjap.jpg'
@@ -19,6 +19,10 @@ import {
   type LeaderboardEntry,
   type DevoteSuggestion,
 } from '@/services/harinamService'
+
+// ── Bell sound ───────────────────────────────────────────────────────────────
+// Replace with a different file path if you ever swap the audio clip.
+const BELL_SOUND_SRC = '/sounds/harekrishnamantra-prabhupad.mp3'
 
 const DEFAULT_STATS: HarinamStats = { totalRounds: 0, totalDevotees: 0, todayRounds: 0, todayDevotees: 0, deadline: '2026-08-15T23:59:59+05:30' }
 
@@ -328,6 +332,32 @@ export default function HarinamPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [todayOnly, setTodayOnly] = useState(false)
   const sentinelRef = useRef<HTMLDivElement>(null)
+  const [bellPlaying, setBellPlaying] = useState(false)
+  const bellAudioRef = useRef<HTMLAudioElement | null>(null)
+
+  function playBell() {
+    const audio = new Audio(BELL_SOUND_SRC)
+    audio.loop = true
+    bellAudioRef.current = audio
+    audio.play().catch(() => {})
+    setBellPlaying(true)
+  }
+
+  function stopBell() {
+    bellAudioRef.current?.pause()
+    if (bellAudioRef.current) bellAudioRef.current.currentTime = 0
+    setBellPlaying(false)
+  }
+
+  function toggleBell() {
+    if (bellPlaying) { stopBell(); return }
+    playBell()
+  }
+
+  useEffect(() => {
+    playBell()
+    return () => { stopBell() }
+  }, [])
 
   const filteredLeaderboard = useMemo(() => {
     let list = leaderboard
@@ -419,8 +449,21 @@ export default function HarinamPage() {
         height="large"
         centered
         topRight={
-          <div className="rounded-xl border border-white/20 bg-white/10 px-4 py-2 backdrop-blur-sm">
-            <CountdownTimer deadline={stats.deadline} />
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={toggleBell}
+              title={bellPlaying ? 'Stop bell' : 'Play temple bell'}
+              className={cn(
+                'rounded-full p-1.5 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-300',
+                bellPlaying ? 'text-gold-300' : 'text-white/70 hover:text-white',
+              )}
+            >
+              <Bell className={cn('h-5 w-5 shrink-0', bellPlaying && 'animate-[wiggle_0.4s_ease-in-out_infinite]')} />
+            </button>
+            <div className="rounded-xl border border-white/20 bg-white/10 px-4 py-2 backdrop-blur-sm">
+              <CountdownTimer deadline={stats.deadline} />
+            </div>
           </div>
         }
       >
