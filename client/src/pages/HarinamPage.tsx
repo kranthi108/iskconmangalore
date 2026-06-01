@@ -109,7 +109,12 @@ function SubmitModal({ open, onClose, onSuccess, expired }: { open: boolean; onC
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined)
+  const [isFocused, setIsFocused] = useState(false);
 
+  const maskPhone = (value) => {
+    if (value.length <= 4) return value;
+    return '*'.repeat(value.length - 4) + value.slice(-4);
+  };
   useEffect(() => {
     if (!open) return
     const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
@@ -244,8 +249,14 @@ function SubmitModal({ open, onClose, onSuccess, expired }: { open: boolean; onC
                   <Phone className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-peacock-400" />
                   <input
                     type="tel"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
+                    value={isFocused ? phone : maskPhone(phone)}
+                    onFocus={() => setIsFocused(true)}
+                    onBlur={() => setIsFocused(false)}
+//                     value={phone}
+                    onChange={(e) => {
+                        const value = e.target.value.replace(/\D/g, '');
+                            setPhone(value);
+                        }}
                     placeholder="e.g. 9876543210"
                     required
                     minLength={10}
@@ -399,7 +410,7 @@ export default function HarinamPage() {
     if (loading) return
     setLoading(true)
     try {
-      const data = await getLeaderboard(p, 20)
+      const data = await getLeaderboard(p, 50)
       setLeaderboard((prev) => append ? [...prev, ...data.leaderboard] : data.leaderboard)
       setHasMore(data.pagination.hasMore)
       setPage(p)
