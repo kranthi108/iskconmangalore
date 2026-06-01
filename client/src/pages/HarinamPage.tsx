@@ -399,7 +399,7 @@ export default function HarinamPage() {
     if (loading) return
     setLoading(true)
     try {
-      const data = await getLeaderboard(p, 5)
+      const data = await getLeaderboard(p, 20)
       setLeaderboard((prev) => append ? [...prev, ...data.leaderboard] : data.leaderboard)
       setHasMore(data.pagination.hasMore)
       setPage(p)
