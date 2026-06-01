@@ -298,7 +298,7 @@ function SubmitModal({ open, onClose, onSuccess, expired }: { open: boolean; onC
                     type="date"
                     value={chantedOn}
                     onChange={(e) => setChantedOn(e.target.value)}
-                    min={new Date().toISOString().slice(0, 10)}
+                    max={new Date().toISOString().slice(0, 10)}
                     required
                     className="w-full rounded-xl border border-peacock-200 bg-white px-4 py-3 text-peacock-950 outline-none transition focus:border-maroon focus:ring-2 focus:ring-maroon/20"
                   />
