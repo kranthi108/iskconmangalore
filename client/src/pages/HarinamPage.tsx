@@ -111,7 +111,7 @@ function SubmitModal({ open, onClose, onSuccess, expired }: { open: boolean; onC
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined)
   const [isFocused, setIsFocused] = useState(false);
 
-  const maskPhone = (value) => {
+  const maskPhone = (value: string) => {
     if (value.length <= 4) return value;
     return '*'.repeat(value.length - 4) + value.slice(-4);
   };
