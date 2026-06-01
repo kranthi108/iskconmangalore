@@ -374,8 +374,9 @@ export default function MarathonJapaPage() {
     const audio = new Audio(BELL_SOUND_SRC)
     audio.loop = true
     bellAudioRef.current = audio
-    audio.play().catch(() => {})
-    setBellPlaying(true)
+    audio.play()
+      .then(() => setBellPlaying(true))
+      .catch(() => { bellAudioRef.current = null })
   }
 
   function stopBell() {
