@@ -411,7 +411,7 @@ export default function HarinamPage() {
     if (loading) return
     setLoading(true)
     try {
-      const data = await getLeaderboard(p, 100)
+      const data = await getLeaderboard(p, 1000)
       setLeaderboard((prev) => append ? [...prev, ...data.leaderboard] : data.leaderboard)
       setHasMore(data.pagination.hasMore)
       setPage(p)
@@ -619,7 +619,7 @@ export default function HarinamPage() {
                         </tr>
                       </thead>
                     </table>
-                    <div className="max-h-[480px] overflow-y-auto">
+                    <div className="max-h-[480px] overflow-y-scroll [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-peacock-50 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-peacock-200">
                       <table className="w-full table-fixed text-left text-sm">
                         <colgroup>
                           <col className="w-14" />
