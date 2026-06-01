@@ -113,7 +113,7 @@ function SubmitModal({ open, onClose, onSuccess, expired }: { open: boolean; onC
 
   const maskPhone = (value: string) => {
     if (value.length <= 4) return value;
-    return '*'.repeat(value.length - 4) + value.slice(-4);
+    return '∗∗∗∗∗∗' + value.slice(-4);
   };
   useEffect(() => {
     if (!open) return
