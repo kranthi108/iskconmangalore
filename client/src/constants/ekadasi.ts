@@ -126,8 +126,7 @@ export const EKADASI_LIST: Ekadasi[] = [
     date: '2026-06-11',
     paksha: 'Krishna',
     description: 'The second Adhik Maas Ekadasi, supremely auspicious for spiritual advancement.',
-    export const PARAMA_EKADASHI_STORY = `
-    Lord Krishna Begins the Narration
+    export const PARAMA_EKADASHI_STORY = `Lord Krishna Begins the Narration
 
     The Supreme Personality of Godhead, Lord Sri Krishna, replied:
 
@@ -147,9 +146,7 @@ export const EKADASI_LIST: Ekadasi[] = [
 
     Lord Krishna concluded by explaining that the merits gained from observing Parama Ekadashi are immeasurable. Such observance is equal to performing many great acts of charity, visiting holy places, and conducting sacred rituals. One who faithfully observes this Ekadashi becomes freed from sins and ultimately attains Vishnuloka.
 
-    Thus ends the narration of the glories of Parama Ekadashi from the Skanda Purana.
-    `;
-
+    Thus ends the narration of the glories of Parama Ekadashi from the Skanda Purana.`;
     significance: '',
     pastime: PARAMA_EKADASHI_STORY,
     banner: paramaekadasiImg,
