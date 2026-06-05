@@ -74,9 +74,7 @@ export default function EkadasiPage() {
                       <span className="inline-flex items-center gap-1.5">
                         <CalendarDays className="h-4 w-4" /> {formatDate(upcoming.date)}
                       </span>
-                      <span className="inline-flex items-center gap-1.5">
-                        <Clock className="h-4 w-4" /> Parana: {upcoming.paranaTime}
-                      </span>
+
                     </div>
 
                     {daysUntil(upcoming.date) >= 0 && (

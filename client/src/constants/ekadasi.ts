@@ -4,6 +4,7 @@
  * All dates and times are IST (Indian Standard Time).
  */
 import mohiniekadasiImg from '@/assets/ekadasi/mohiniekadasi.png'
+import paramaekadasiImg from '@/assets/ekadasi/paramaekadasi.png'
 import ekadasiImg from '@/assets/ekadasi/ekadasi.png'
 
 export interface Ekadasi {
@@ -138,7 +139,7 @@ export const EKADASI_LIST: Ekadasi[] = [
     description: 'The second Adhik Maas Ekadasi, supremely auspicious for spiritual advancement.',
     significance: 'Like Padmini, Parama Ekadasi is a rare occurrence during the extra month. "Parama" means supreme, and this Ekadasi lives up to its name by granting the highest spiritual benefit. Devotees who observe it with devotion attain the abode of Lord Vishnu.',
     pastime: '',
-    banner: ekadasiImg,
+    banner: paramaekadasiImg,
   },
   {
     slug: 'pandava-nirjala',

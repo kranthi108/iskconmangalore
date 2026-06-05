@@ -63,11 +63,7 @@ export default function EkadasiDetailPage() {
               <p className="mt-3 text-xs font-semibold uppercase tracking-wider text-peacock-600">Date</p>
               <p className="mt-1 font-heading text-lg font-semibold text-peacock-900">{formatDate(ekadasi.date)}</p>
             </motion.div>
-            <motion.div {...fade} className="rounded-2xl border border-peacock-100 bg-white p-6 text-center shadow-md">
-              <Clock className="mx-auto h-8 w-8 text-maroon" />
-              <p className="mt-3 text-xs font-semibold uppercase tracking-wider text-peacock-600">Parana (Break Fast)</p>
-              <p className="mt-1 font-heading text-lg font-semibold text-peacock-900">{ekadasi.paranaTime}</p>
-            </motion.div>
+
             <motion.div {...fade} className="rounded-2xl border border-peacock-100 bg-white p-6 text-center shadow-md">
               <Leaf className="mx-auto h-8 w-8 text-maroon" />
               <p className="mt-3 text-xs font-semibold uppercase tracking-wider text-peacock-600">Paksha</p>
@@ -91,7 +87,7 @@ export default function EkadasiDetailPage() {
             <h2 className="font-heading text-2xl font-semibold text-maroon">Fasting Guidelines</h2>
             <div className="mt-4 space-y-4">
               <p className="text-base leading-relaxed text-peacock-900/85">
-                On {ekadasi.name}, devotees should completely abstain from grains, beans, and grain-derived products from sunrise to the next day's Parana time.
+                On {ekadasi.name}, devotees should completely abstain from grains, beans, and grain-derived products from sunrise to the next day's Sunrise.
               </p>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="rounded-xl bg-green-50 p-5">
