@@ -146,7 +146,7 @@ export const EKADASI_LIST: Ekadasi[] = [
 
     Lord Krishna concluded by explaining that the merits gained from observing Parama Ekadashi are immeasurable. Such observance is equal to performing many great acts of charity, visiting holy places, and conducting sacred rituals. One who faithfully observes this Ekadashi becomes freed from sins and ultimately attains Vishnuloka.
 
-    Thus ends the narration of the glories of Parama Ekadashi from the Skanda Purana.`;
+    Thus ends the narration of the glories of Parama Ekadashi from the Skanda Purana.`,
     significance: '',
     pastime: PARAMA_EKADASHI_STORY,
     banner: paramaekadasiImg,
