@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef } from 'react'
 import { motion } from 'framer-motion'
-import { CalendarDays, ChevronRight, Clock } from 'lucide-react'
+import { CalendarDays, ChevronRight } from 'lucide-react'
 import { Helmet } from 'react-helmet-async'
 import { Link } from 'react-router-dom'
 import HeroBanner from '@/components/layout/HeroBanner'
