@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { motion } from 'framer-motion'
-import { ArrowLeft, ArrowRight, CalendarDays, Clock, Leaf } from 'lucide-react'
+import { ArrowLeft, ArrowRight, CalendarDays, Leaf } from 'lucide-react'
 import { Helmet } from 'react-helmet-async'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import HeroBanner from '@/components/layout/HeroBanner'
