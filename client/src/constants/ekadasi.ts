@@ -12,7 +12,6 @@ export interface Ekadasi {
   name: string
   date: string
   paksha: 'Krishna' | 'Shukla'
-  paranaTime: string
   description: string
   significance: string
   pastime: string
