@@ -18,6 +18,27 @@ export interface Ekadasi {
   pastime: string
   banner: string
 }
+export const PARAMA_EKADASHI_STORY = `Lord Krishna Begins the Narration
+
+    The Supreme Personality of Godhead, Lord Sri Krishna, replied:
+
+    "O Yudhishthira, this meritorious day is called Parama Ekadashi. It bestows the great benediction of an enjoyable life and ultimate liberation from birth and death. The process for observing it is similar to the Ekadashi that occurs during the bright fortnight of Kartika. One should worship Me with full love and devotion.
+
+    Once there lived a pious brahmana named Sumedha in Kampilya along with his chaste wife Pavitra. Due to reactions from previous lives, Sumedha suffered from extreme poverty. Despite their hardships, Pavitra remained devoted and faithfully served her husband. Even when guests arrived, she would offer them her own food.
+
+    Seeing their suffering, Sumedha wished to travel abroad to earn wealth. Pavitra, however, explained that wealth and fortune are largely the result of charity performed in previous lives. She requested him not to leave her alone and encouraged him to remain satisfied with whatever destiny provided.
+
+    One day the great sage Kaundinya visited their home. The couple respectfully welcomed him and served him according to their means. Pavitra then asked the sage how they could overcome their poverty.
+
+    Kaundinya Muni replied that Parama Ekadashi, observed during the dark fortnight of the extra month (Purushottama Masa), destroys sins and removes the miseries of poverty. He instructed them to observe the fast, worship Lord Hari, remain awake throughout the night singing His glories, and afterwards perform the five-day Pancharatrika vrata.
+
+    The sage explained that this observance had previously blessed great personalities such as Kuvera and King Harishchandra.
+
+    Following the instructions carefully, Sumedha and Pavitra observed Parama Ekadashi and the Pancharatrika fast. Soon afterward, a prince arrived on the order of Lord Brahma and gifted them a beautiful residence and an entire village for their livelihood. They lived happily and, at the end of their lives, attained the abode of Lord Vishnu.
+
+    Lord Krishna concluded by explaining that the merits gained from observing Parama Ekadashi are immeasurable. Such observance is equal to performing many great acts of charity, visiting holy places, and conducting sacred rituals. One who faithfully observes this Ekadashi becomes freed from sins and ultimately attains Vishnuloka.
+
+    Thus ends the narration of the glories of Parama Ekadashi from the Skanda Purana.`;
 
 export const EKADASI_LIST: Ekadasi[] = [
   {
@@ -126,27 +147,6 @@ export const EKADASI_LIST: Ekadasi[] = [
     date: '2026-06-11',
     paksha: 'Krishna',
     description: 'The second Adhik Maas Ekadasi, supremely auspicious for spiritual advancement.',
-    export const PARAMA_EKADASHI_STORY = `Lord Krishna Begins the Narration
-
-    The Supreme Personality of Godhead, Lord Sri Krishna, replied:
-
-    "O Yudhishthira, this meritorious day is called Parama Ekadashi. It bestows the great benediction of an enjoyable life and ultimate liberation from birth and death. The process for observing it is similar to the Ekadashi that occurs during the bright fortnight of Kartika. One should worship Me with full love and devotion.
-
-    Once there lived a pious brahmana named Sumedha in Kampilya along with his chaste wife Pavitra. Due to reactions from previous lives, Sumedha suffered from extreme poverty. Despite their hardships, Pavitra remained devoted and faithfully served her husband. Even when guests arrived, she would offer them her own food.
-
-    Seeing their suffering, Sumedha wished to travel abroad to earn wealth. Pavitra, however, explained that wealth and fortune are largely the result of charity performed in previous lives. She requested him not to leave her alone and encouraged him to remain satisfied with whatever destiny provided.
-
-    One day the great sage Kaundinya visited their home. The couple respectfully welcomed him and served him according to their means. Pavitra then asked the sage how they could overcome their poverty.
-
-    Kaundinya Muni replied that Parama Ekadashi, observed during the dark fortnight of the extra month (Purushottama Masa), destroys sins and removes the miseries of poverty. He instructed them to observe the fast, worship Lord Hari, remain awake throughout the night singing His glories, and afterwards perform the five-day Pancharatrika vrata.
-
-    The sage explained that this observance had previously blessed great personalities such as Kuvera and King Harishchandra.
-
-    Following the instructions carefully, Sumedha and Pavitra observed Parama Ekadashi and the Pancharatrika fast. Soon afterward, a prince arrived on the order of Lord Brahma and gifted them a beautiful residence and an entire village for their livelihood. They lived happily and, at the end of their lives, attained the abode of Lord Vishnu.
-
-    Lord Krishna concluded by explaining that the merits gained from observing Parama Ekadashi are immeasurable. Such observance is equal to performing many great acts of charity, visiting holy places, and conducting sacred rituals. One who faithfully observes this Ekadashi becomes freed from sins and ultimately attains Vishnuloka.
-
-    Thus ends the narration of the glories of Parama Ekadashi from the Skanda Purana.`,
     significance: '',
     pastime: PARAMA_EKADASHI_STORY,
     banner: paramaekadasiImg,
