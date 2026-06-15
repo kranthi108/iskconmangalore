@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Bell, BookOpen, Calendar, CalendarDays, Clock, Download, Loader2, MapPin, Phone, Search, Send, Sparkles, Trophy, Users, X } from 'lucide-react'
+import { Bell, BookOpen, Calendar, CalendarDays, Clock, Download, Globe2, Loader2, MapPin, Phone, Search, Send, Sparkles, Trophy, Users, X } from 'lucide-react'
 import * as XLSX from 'xlsx'
 import { Helmet } from 'react-helmet-async'
 import namjapBg from '@/assets/namjap.jpg'
@@ -345,7 +345,7 @@ export default function HarinamPage() {
   const [loading, setLoading] = useState(false)
   const [modalOpen, setModalOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
-  const [todayOnly, setTodayOnly] = useState(false)
+  const [leaderboardMode, setLeaderboardMode] = useState<'global' | 'today'>('global')
   const sentinelRef = useRef<HTMLDivElement>(null)
   const [bellPlaying, setBellPlaying] = useState(false)
   const bellAudioRef = useRef<HTMLAudioElement | null>(null)
@@ -375,9 +375,18 @@ export default function HarinamPage() {
     return () => { stopBell() }
   }, [])
 
+  const rankedLeaderboard = useMemo(() => {
+    if (leaderboardMode === 'today') {
+      return [...leaderboard]
+        .filter((entry) => entry.todayRounds > 0)
+        .sort((a, b) => b.todayRounds - a.todayRounds || b.totalRounds - a.totalRounds)
+    }
+
+    return [...leaderboard].sort((a, b) => b.totalRounds - a.totalRounds || b.todayRounds - a.todayRounds)
+  }, [leaderboard, leaderboardMode])
+
   const filteredLeaderboard = useMemo(() => {
-    let list = leaderboard
-    if (todayOnly) list = list.filter((e) => e.todayRounds > 0)
+    let list = rankedLeaderboard
     if (searchQuery.trim()) {
       const q = searchQuery.trim().toLowerCase()
       list = list.filter(
@@ -385,10 +394,15 @@ export default function HarinamPage() {
       )
     }
     return list
-  }, [leaderboard, searchQuery, todayOnly])
+  }, [rankedLeaderboard, searchQuery])
+
+  const hasSearch = searchQuery.trim().length > 0
+  const podiumLeaderboard = rankedLeaderboard.slice(0, 3)
+  const tableLeaderboard = hasSearch ? filteredLeaderboard : rankedLeaderboard.slice(3)
+  const leaderboardTransition = { type: 'spring', stiffness: 420, damping: 34, mass: 0.8 } as const
 
   const downloadExcel = useCallback(() => {
-    const data = (searchQuery.trim() || todayOnly) ? filteredLeaderboard : leaderboard
+    const data = searchQuery.trim() ? filteredLeaderboard : rankedLeaderboard
     const rows = data.map((e, i) => ({
       '#': i + 1,
       'Devotee': e.devoteName,
@@ -399,8 +413,8 @@ export default function HarinamPage() {
     const ws = XLSX.utils.json_to_sheet(rows)
     const wb = XLSX.utils.book_new()
     XLSX.utils.book_append_sheet(wb, ws, 'Leaderboard')
-    XLSX.writeFile(wb, 'harinam-leaderboard.xlsx')
-  }, [leaderboard, filteredLeaderboard, searchQuery, todayOnly])
+    XLSX.writeFile(wb, `harinam-${leaderboardMode}-leaderboard.xlsx`)
+  }, [filteredLeaderboard, rankedLeaderboard, searchQuery, leaderboardMode])
 
   const expired = useMemo(() => Date.now() > new Date(stats.deadline).getTime(), [stats.deadline])
 
@@ -529,18 +543,75 @@ export default function HarinamPage() {
 
           {leaderboard.length > 0 && (
             <>
+              <motion.div layout className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="relative inline-grid w-full grid-cols-2 rounded-xl border border-peacock-200 bg-white p-1 shadow-sm sm:w-auto">
+                  <motion.span
+                    layout
+                    aria-hidden="true"
+                    className={cn(
+                      'absolute bottom-1 top-1 w-[calc(50%-4px)] rounded-lg shadow-sm sm:w-[calc(50%-4px)]',
+                      leaderboardMode === 'today' ? 'bg-maroon' : 'bg-peacock-700',
+                    )}
+                    animate={{ left: leaderboardMode === 'global' ? 4 : '50%' }}
+                    transition={leaderboardTransition}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setLeaderboardMode('global')}
+                    className={cn(
+                      'relative z-10 inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-peacock-200',
+                      leaderboardMode === 'global'
+                        ? 'text-white'
+                        : 'text-peacock-700 hover:bg-peacock-50',
+                    )}
+                  >
+                    <Globe2 className="h-4 w-4" />
+                    Global
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setLeaderboardMode('today')}
+                    className={cn(
+                      'relative z-10 inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-peacock-200',
+                      leaderboardMode === 'today'
+                        ? 'text-white'
+                        : 'text-peacock-700 hover:bg-peacock-50',
+                    )}
+                  >
+                    <CalendarDays className="h-4 w-4" />
+                    Today
+                  </button>
+                </div>
+                <p className="text-sm text-peacock-600">
+                  {leaderboardMode === 'today'
+                    ? "Ranked by today's rounds from the payload."
+                    : 'Ranked by total rounds offered.'}
+                </p>
+              </motion.div>
+
               {/* Top 3 podium cards */}
-              <div className="mt-10 grid gap-4 sm:grid-cols-3">
-                {leaderboard.slice(0, 3).map((entry, idx) => {
+              <AnimatePresence mode="wait">
+              {podiumLeaderboard.length > 0 ? (
+              <motion.div
+                key={`podium-${leaderboardMode}`}
+                layout
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.22, ease: 'easeOut' }}
+                className="mt-6 grid gap-4 sm:grid-cols-3"
+              >
+                {podiumLeaderboard.map((entry, idx) => {
                   const medals = ['bg-gradient-to-br from-gold-400 to-gold-200', 'bg-gradient-to-br from-gray-300 to-gray-100', 'bg-gradient-to-br from-amber-600 to-amber-400']
                   const ranks = ['1st', '2nd', '3rd']
+                  const rounds = leaderboardMode === 'today' ? entry.todayRounds : entry.totalRounds
                   return (
                     <motion.div
-                      key={entry.devoteName}
+                      key={`${leaderboardMode}-${entry.devoteName}`}
+                      layout
                       initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: idx * 0.1 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ ...leaderboardTransition, delay: idx * 0.04 }}
                       className={cn(
                         'relative overflow-hidden rounded-2xl border p-6 text-center shadow-md',
                         idx === 0 ? 'border-gold-300 bg-gradient-to-b from-gold-50 to-cream sm:order-2 sm:-mt-4 sm:scale-105' : 'border-peacock-100 bg-white',
@@ -556,19 +627,40 @@ export default function HarinamPage() {
                         <MapPin className="h-3.5 w-3.5" /> {entry.city}
                       </p>
                       <p className="mt-3 font-heading text-3xl font-bold text-peacock-900">
-                        {entry.totalRounds.toLocaleString('en-IN')}
+                        {rounds.toLocaleString('en-IN')}
                       </p>
-                      <p className="text-xs uppercase tracking-wider text-peacock-600">total rounds</p>
-                      {entry.todayRounds > 0 && (
+                      <p className="text-xs uppercase tracking-wider text-peacock-600">
+                        {leaderboardMode === 'today' ? 'today rounds' : 'total rounds'}
+                      </p>
+                      {leaderboardMode === 'global' && entry.todayRounds > 0 && (
                         <p className="mt-1 text-xs font-semibold text-maroon/70">Today: {entry.todayRounds.toLocaleString('en-IN')}</p>
+                      )}
+                      {leaderboardMode === 'today' && (
+                        <p className="mt-1 text-xs font-semibold text-maroon/70">Total: {entry.totalRounds.toLocaleString('en-IN')}</p>
                       )}
                     </motion.div>
                   )
                 })}
-              </div>
+              </motion.div>
+              ) : (
+                <motion.div
+                  key={`empty-${leaderboardMode}`}
+                  layout
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.22, ease: 'easeOut' }}
+                  className="mt-8 rounded-2xl border border-dashed border-peacock-200 bg-peacock-50/30 p-10 text-center"
+                >
+                  <Trophy className="mx-auto h-10 w-10 text-peacock-300" />
+                  <h3 className="mt-3 font-heading text-lg text-peacock-800">No submissions today yet.</h3>
+                  <p className="mt-2 text-sm text-peacock-600">When devotees submit today&apos;s rounds, they will appear here ranked by today&apos;s count.</p>
+                </motion.div>
+              )}
+              </AnimatePresence>
 
               {/* Search + remaining devotees table */}
-              {leaderboard.length > 3 && (
+              {(rankedLeaderboard.length > 3 || hasSearch) && (
                 <>
                   <div className="mt-10 flex items-center gap-3">
                     <div className="relative flex-1">
@@ -581,19 +673,6 @@ export default function HarinamPage() {
                         className="w-full rounded-xl border border-peacock-200 bg-white py-2.5 pl-11 pr-4 text-sm text-peacock-900 placeholder:text-peacock-400 focus:border-peacock-400 focus:outline-none focus:ring-2 focus:ring-peacock-200"
                       />
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => setTodayOnly((v) => !v)}
-                      className={cn(
-                        'inline-flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-peacock-200',
-                        todayOnly
-                          ? 'border-peacock-500 bg-peacock-600 text-white hover:bg-peacock-700'
-                          : 'border-peacock-200 bg-white text-peacock-700 hover:bg-peacock-50',
-                      )}
-                    >
-                      <CalendarDays className="h-4 w-4" />
-                      <span className="hidden sm:inline">Today</span>
-                    </button>
                     <button
                       type="button"
                       onClick={downloadExcel}
@@ -633,16 +712,20 @@ export default function HarinamPage() {
                           <col className="w-[15%]" />
                         </colgroup>
                         <tbody>
-                          {((searchQuery.trim() || todayOnly) ? filteredLeaderboard : leaderboard.slice(3)).map((entry, idx) => (
+                          <AnimatePresence initial={false}>
+                          {tableLeaderboard.map((entry, idx) => (
                             <motion.tr
-                              key={`${entry.devoteName}-${idx}`}
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
+                              key={`${leaderboardMode}-${entry.devoteName}-${idx}`}
+                              layout
+                              initial={{ opacity: 0, y: 6 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: -6 }}
+                              transition={{ duration: 0.18, ease: 'easeOut' }}
                               className="border-b border-peacock-50 transition-colors hover:bg-peacock-50/40"
                             >
                               <td className="px-4 py-3.5 text-center">
                                 <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-peacock-100 text-xs font-bold text-peacock-800">
-                                  {(searchQuery.trim() || todayOnly) ? idx + 1 : idx + 4}
+                                  {searchQuery.trim() ? idx + 1 : idx + 4}
                                 </span>
                               </td>
                               <td className="px-5 py-3.5">
@@ -656,10 +739,11 @@ export default function HarinamPage() {
                               <td className="px-5 py-3.5 text-right font-bold tabular-nums text-maroon">{entry.totalRounds.toLocaleString('en-IN')}</td>
                             </motion.tr>
                           ))}
-                          {(searchQuery.trim() || todayOnly) && filteredLeaderboard.length === 0 && (
+                          </AnimatePresence>
+                          {hasSearch && filteredLeaderboard.length === 0 && (
                             <tr>
                               <td colSpan={5} className="px-5 py-8 text-center text-sm text-peacock-500">
-                                {todayOnly ? 'No submissions today yet.' : `No devotees found matching "${searchQuery}"`}
+                                No devotees found matching &quot;{searchQuery}&quot;
                               </td>
                             </tr>
                           )}
