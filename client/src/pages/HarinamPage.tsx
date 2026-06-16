@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Bell, BookOpen, Calendar, CalendarDays, Clock, Download, Loader2, MapPin, Phone, Search, Send, Sparkles, Trophy, Users, X } from 'lucide-react'
+import { Bell, BookOpen, Calendar, Clock, Download, Loader2, MapPin, Phone, Search, Send, Sparkles, Trophy, Users, X } from 'lucide-react'
 import * as XLSX from 'xlsx'
 import { Helmet } from 'react-helmet-async'
 import namjapBg from '@/assets/namjap.jpg'
@@ -20,11 +20,51 @@ import {
   type DevoteSuggestion,
 } from '@/services/harinamService'
 
+type LeaderboardScope = 'today' | 'overall'
+
 // ── Bell sound ───────────────────────────────────────────────────────────────
 // Replace with a different file path if you ever swap the audio clip.
 const BELL_SOUND_SRC = '/sounds/harekrishnamantra-prabhupad.mp3'
 
 const DEFAULT_STATS: HarinamStats = { totalRounds: 0, totalDevotees: 0, todayRounds: 0, todayDevotees: 0, deadline: '2026-08-15T23:59:59+05:30' }
+
+function LeaderboardScopeTabs({
+  value,
+  onChange,
+}: {
+  value: LeaderboardScope
+  onChange: (scope: LeaderboardScope) => void
+}) {
+  const tabs: { id: LeaderboardScope; label: string }[] = [
+    { id: 'today', label: 'Today' },
+    { id: 'overall', label: 'Overall' },
+  ]
+
+  return (
+    <div className="mx-auto mt-8 flex w-full max-w-xs rounded-xl border border-peacock-200 bg-peacock-50/50 p-1">
+      {tabs.map((tab) => (
+        <button
+          key={tab.id}
+          type="button"
+          onClick={() => onChange(tab.id)}
+          className={cn(
+            'relative flex-1 rounded-lg py-2.5 text-sm font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-peacock-300',
+            value === tab.id ? 'text-white' : 'text-peacock-700 hover:text-peacock-900',
+          )}
+        >
+          {value === tab.id && (
+            <motion.span
+              layoutId="harinam-leaderboard-tab"
+              className="absolute inset-0 rounded-lg bg-peacock-600 shadow-sm"
+              transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+            />
+          )}
+          <span className="relative z-10">{tab.label}</span>
+        </button>
+      ))}
+    </div>
+  )
+}
 
 function AnimatedCounter({ value, label }: { value: number; label: string }) {
   const [displayed, setDisplayed] = useState(0)
@@ -345,8 +385,9 @@ export default function HarinamPage() {
   const [loading, setLoading] = useState(false)
   const [modalOpen, setModalOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
-  const [todayOnly, setTodayOnly] = useState(false)
+  const [leaderboardScope, setLeaderboardScope] = useState<LeaderboardScope>('today')
   const sentinelRef = useRef<HTMLDivElement>(null)
+  const loadingRef = useRef(false)
   const [bellPlaying, setBellPlaying] = useState(false)
   const bellAudioRef = useRef<HTMLAudioElement | null>(null)
 
@@ -375,20 +416,27 @@ export default function HarinamPage() {
     return () => { stopBell() }
   }, [])
 
+  const scopedLeaderboard = useMemo(() => {
+    const list = leaderboardScope === 'today'
+      ? leaderboard.filter((e) => e.todayRounds > 0)
+      : leaderboard
+    return [...list].sort((a, b) => {
+      const aRounds = leaderboardScope === 'today' ? a.todayRounds : a.totalRounds
+      const bRounds = leaderboardScope === 'today' ? b.todayRounds : b.totalRounds
+      return bRounds - aRounds
+    })
+  }, [leaderboard, leaderboardScope])
+
   const filteredLeaderboard = useMemo(() => {
-    let list = leaderboard
-    if (todayOnly) list = list.filter((e) => e.todayRounds > 0)
-    if (searchQuery.trim()) {
-      const q = searchQuery.trim().toLowerCase()
-      list = list.filter(
-        (e) => e.devoteName.toLowerCase().includes(q) || e.city.toLowerCase().includes(q),
-      )
-    }
-    return list
-  }, [leaderboard, searchQuery, todayOnly])
+    if (!searchQuery.trim()) return scopedLeaderboard
+    const q = searchQuery.trim().toLowerCase()
+    return scopedLeaderboard.filter(
+      (e) => e.devoteName.toLowerCase().includes(q) || e.city.toLowerCase().includes(q),
+    )
+  }, [scopedLeaderboard, searchQuery])
 
   const downloadExcel = useCallback(() => {
-    const data = (searchQuery.trim() || todayOnly) ? filteredLeaderboard : leaderboard
+    const data = searchQuery.trim() ? filteredLeaderboard : scopedLeaderboard
     const rows = data.map((e, i) => ({
       '#': i + 1,
       'Devotee': e.devoteName,
@@ -399,8 +447,8 @@ export default function HarinamPage() {
     const ws = XLSX.utils.json_to_sheet(rows)
     const wb = XLSX.utils.book_new()
     XLSX.utils.book_append_sheet(wb, ws, 'Leaderboard')
-    XLSX.writeFile(wb, 'harinam-leaderboard.xlsx')
-  }, [leaderboard, filteredLeaderboard, searchQuery, todayOnly])
+    XLSX.writeFile(wb, `harinam-leaderboard-${leaderboardScope}.xlsx`)
+  }, [scopedLeaderboard, filteredLeaderboard, searchQuery, leaderboardScope])
 
   const expired = useMemo(() => Date.now() > new Date(stats.deadline).getTime(), [stats.deadline])
 
@@ -412,7 +460,8 @@ export default function HarinamPage() {
   }, [])
 
   const fetchLeaderboard = useCallback(async (p: number, append = false) => {
-    if (loading) return
+    if (loadingRef.current) return
+    loadingRef.current = true
     setLoading(true)
     try {
       const data = await getLeaderboard(p, 1000)
@@ -420,19 +469,24 @@ export default function HarinamPage() {
       setHasMore(data.pagination.hasMore)
       setPage(p)
     } catch { /* ignore */ }
+    loadingRef.current = false
     setLoading(false)
-  }, [loading])
+  }, [])
 
   useEffect(() => {
     fetchStats()
     fetchLeaderboard(1)
-  }, [])
+  }, [fetchStats, fetchLeaderboard])
+
+  useEffect(() => {
+    setSearchQuery('')
+  }, [leaderboardScope])
 
   useEffect(() => {
     if (!sentinelRef.current || !hasMore) return
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && hasMore && !loading) {
+        if (entry.isIntersecting && hasMore && !loadingRef.current) {
           fetchLeaderboard(page + 1, true)
         }
       },
@@ -440,7 +494,7 @@ export default function HarinamPage() {
     )
     observer.observe(sentinelRef.current)
     return () => observer.disconnect()
-  }, [hasMore, loading, page])
+  }, [hasMore, loading, page, fetchLeaderboard])
 
   const [toast, setToast] = useState<ToastData | null>(null)
 
@@ -527,11 +581,19 @@ export default function HarinamPage() {
             decorative
           />
 
-          {leaderboard.length > 0 && (
+          <LeaderboardScopeTabs value={leaderboardScope} onChange={setLeaderboardScope} />
+
+          {loading && leaderboard.length === 0 && (
+            <div className="mt-12 flex justify-center">
+              <Loader2 className="h-8 w-8 animate-spin text-peacock-400" />
+            </div>
+          )}
+
+          {scopedLeaderboard.length > 0 && (
             <>
               {/* Top 3 podium cards */}
               <div className="mt-10 grid gap-4 sm:grid-cols-3">
-                {leaderboard.slice(0, 3).map((entry, idx) => {
+                {scopedLeaderboard.slice(0, 3).map((entry, idx) => {
                   const medals = ['bg-gradient-to-br from-gold-400 to-gold-200', 'bg-gradient-to-br from-gray-300 to-gray-100', 'bg-gradient-to-br from-amber-600 to-amber-400']
                   const ranks = ['1st', '2nd', '3rd']
                   return (
@@ -556,11 +618,16 @@ export default function HarinamPage() {
                         <MapPin className="h-3.5 w-3.5" /> {entry.city}
                       </p>
                       <p className="mt-3 font-heading text-3xl font-bold text-peacock-900">
-                        {entry.totalRounds.toLocaleString('en-IN')}
+                        {(leaderboardScope === 'today' ? entry.todayRounds : entry.totalRounds).toLocaleString('en-IN')}
                       </p>
-                      <p className="text-xs uppercase tracking-wider text-peacock-600">total rounds</p>
-                      {entry.todayRounds > 0 && (
+                      <p className="text-xs uppercase tracking-wider text-peacock-600">
+                        {leaderboardScope === 'today' ? 'rounds today' : 'total rounds'}
+                      </p>
+                      {leaderboardScope === 'overall' && entry.todayRounds > 0 && (
                         <p className="mt-1 text-xs font-semibold text-maroon/70">Today: {entry.todayRounds.toLocaleString('en-IN')}</p>
+                      )}
+                      {leaderboardScope === 'today' && entry.totalRounds > entry.todayRounds && (
+                        <p className="mt-1 text-xs font-semibold text-maroon/70">Total: {entry.totalRounds.toLocaleString('en-IN')}</p>
                       )}
                     </motion.div>
                   )
@@ -568,7 +635,7 @@ export default function HarinamPage() {
               </div>
 
               {/* Search + remaining devotees table */}
-              {leaderboard.length > 3 && (
+              {scopedLeaderboard.length > 3 && (
                 <>
                   <div className="mt-10 flex items-center gap-3">
                     <div className="relative flex-1">
@@ -581,19 +648,6 @@ export default function HarinamPage() {
                         className="w-full rounded-xl border border-peacock-200 bg-white py-2.5 pl-11 pr-4 text-sm text-peacock-900 placeholder:text-peacock-400 focus:border-peacock-400 focus:outline-none focus:ring-2 focus:ring-peacock-200"
                       />
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => setTodayOnly((v) => !v)}
-                      className={cn(
-                        'inline-flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-peacock-200',
-                        todayOnly
-                          ? 'border-peacock-500 bg-peacock-600 text-white hover:bg-peacock-700'
-                          : 'border-peacock-200 bg-white text-peacock-700 hover:bg-peacock-50',
-                      )}
-                    >
-                      <CalendarDays className="h-4 w-4" />
-                      <span className="hidden sm:inline">Today</span>
-                    </button>
                     <button
                       type="button"
                       onClick={downloadExcel}
@@ -633,7 +687,7 @@ export default function HarinamPage() {
                           <col className="w-[15%]" />
                         </colgroup>
                         <tbody>
-                          {((searchQuery.trim() || todayOnly) ? filteredLeaderboard : leaderboard.slice(3)).map((entry, idx) => (
+                          {(searchQuery.trim() ? filteredLeaderboard : scopedLeaderboard.slice(3)).map((entry, idx) => (
                             <motion.tr
                               key={`${entry.devoteName}-${idx}`}
                               initial={{ opacity: 0 }}
@@ -642,7 +696,7 @@ export default function HarinamPage() {
                             >
                               <td className="px-4 py-3.5 text-center">
                                 <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-peacock-100 text-xs font-bold text-peacock-800">
-                                  {(searchQuery.trim() || todayOnly) ? idx + 1 : idx + 4}
+                                  {searchQuery.trim() ? idx + 1 : idx + 4}
                                 </span>
                               </td>
                               <td className="px-5 py-3.5">
@@ -656,10 +710,10 @@ export default function HarinamPage() {
                               <td className="px-5 py-3.5 text-right font-bold tabular-nums text-maroon">{entry.totalRounds.toLocaleString('en-IN')}</td>
                             </motion.tr>
                           ))}
-                          {(searchQuery.trim() || todayOnly) && filteredLeaderboard.length === 0 && (
+                          {searchQuery.trim() && filteredLeaderboard.length === 0 && (
                             <tr>
                               <td colSpan={5} className="px-5 py-8 text-center text-sm text-peacock-500">
-                                {todayOnly ? 'No submissions today yet.' : `No devotees found matching "${searchQuery}"`}
+                                {`No devotees found matching "${searchQuery}"`}
                               </td>
                             </tr>
                           )}
@@ -672,18 +726,24 @@ export default function HarinamPage() {
 
               <div ref={sentinelRef} className="flex items-center justify-center py-6">
                 {loading && <Loader2 className="h-6 w-6 animate-spin text-peacock-400" />}
-                {!hasMore && leaderboard.length > 0 && (
+                {!hasMore && scopedLeaderboard.length > 0 && (
                   <p className="text-sm text-peacock-500">Hare Krishna! All devotees displayed.</p>
                 )}
               </div>
             </>
           )}
 
-          {leaderboard.length === 0 && !loading && (
+          {scopedLeaderboard.length === 0 && !loading && (
             <div className="mt-12 rounded-2xl border border-dashed border-peacock-200 bg-peacock-50/30 p-12 text-center">
               <Trophy className="mx-auto h-12 w-12 text-peacock-300" />
-              <h3 className="mt-4 font-heading text-xl text-peacock-800">Be the first to chant!</h3>
-              <p className="mt-2 text-peacock-600">No entries yet. Submit your japa rounds and inspire others.</p>
+              <h3 className="mt-4 font-heading text-xl text-peacock-800">
+                {leaderboardScope === 'today' ? 'No submissions today yet' : 'Be the first to chant!'}
+              </h3>
+              <p className="mt-2 text-peacock-600">
+                {leaderboardScope === 'today'
+                  ? 'No devotees have submitted japa rounds today. Switch to Overall or submit yours now.'
+                  : 'No entries yet. Submit your japa rounds and inspire others.'}
+              </p>
               {!expired && (
                 <Button type="button" variant="maroon" size="lg" className="mt-6" onClick={() => setModalOpen(true)}>
                   Submit Japa Rounds
