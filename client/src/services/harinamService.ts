@@ -16,6 +16,13 @@ export interface LeaderboardEntry {
   lastChanted: string
 }
 
+export interface ActivityEntry {
+  id: number
+  rounds: number
+  chantedOn: string
+  createdAt: string
+}
+
 export interface LeaderboardResponse {
   leaderboard: LeaderboardEntry[]
   pagination: { page: number; limit: number; total: number; hasMore: boolean }
@@ -49,4 +56,8 @@ export async function searchDevoteNames(q: string): Promise<DevoteSuggestion[]> 
 
 export async function submitHarinam(data: HarinamSubmitInput): Promise<{ id: number }> {
   return readApiData(api.post('/harinam/submit', data))
+}
+
+export async function getDevoteeActivity(devoteName: string): Promise<ActivityEntry[]> {
+  return readApiData(api.get(`/harinam/activity?name=${encodeURIComponent(devoteName)}`))
 }
