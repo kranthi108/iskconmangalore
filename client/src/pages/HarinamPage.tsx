@@ -140,7 +140,7 @@ function CountdownTimer({ deadline }: { deadline: string }) {
   )
 }
 
-function ActivityModal({ entry, onClose }: { entry: { devoteName: string } | null; onClose: () => void }) {
+function ActivityModal({ entry, onClose }: { entry: { devoteName: string; phoneLast4: string } | null; onClose: () => void }) {
   const [rows, setRows] = useState<ActivityEntry[]>([])
   const [loading, setLoading] = useState(false)
 
@@ -148,7 +148,7 @@ function ActivityModal({ entry, onClose }: { entry: { devoteName: string } | nul
     if (!entry) return
     setLoading(true)
     setRows([])
-    getDevoteeActivity(entry.devoteName)
+    getDevoteeActivity(entry.devoteName, entry.phoneLast4)
       .then(setRows)
       .catch(() => setRows([]))
       .finally(() => setLoading(false))
@@ -596,7 +596,7 @@ export default function HarinamPage() {
   }, [hasMore, loading, page, fetchLeaderboard])
 
   const [toast, setToast] = useState<ToastData | null>(null)
-  const [activityEntry, setActivityEntry] = useState<{ devoteName: string } | null>(null)
+  const [activityEntry, setActivityEntry] = useState<{ devoteName: string; phoneLast4: string } | null>(null)
 
   function handleSubmitSuccess(message: string) {
     fetchStats()
@@ -731,7 +731,7 @@ export default function HarinamPage() {
                       )}
                       <button
                         type="button"
-                        onClick={() => setActivityEntry({ devoteName: entry.devoteName })}
+                        onClick={() => setActivityEntry({ devoteName: entry.devoteName, phoneLast4: entry.phoneLast4 })}
                         className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-peacock-200 bg-white/70 px-3 py-1.5 text-xs font-semibold text-peacock-700 transition-colors hover:bg-peacock-50 hover:text-peacock-900"
                       >
                         <Calendar className="h-3.5 w-3.5" />
@@ -822,7 +822,7 @@ export default function HarinamPage() {
                               <td className="px-4 py-3 text-center">
                                 <button
                                   type="button"
-                                  onClick={() => setActivityEntry({ devoteName: entry.devoteName })}
+                                  onClick={() => setActivityEntry({ devoteName: entry.devoteName, phoneLast4: entry.phoneLast4 })}
                                   className="inline-flex items-center gap-1 rounded-lg border border-peacock-200 bg-peacock-50 px-2.5 py-1.5 text-xs font-semibold text-peacock-700 transition-colors hover:bg-peacock-100 hover:text-peacock-900"
                                 >
                                   <Calendar className="h-3.5 w-3.5 shrink-0" />
