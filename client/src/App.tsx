@@ -30,6 +30,7 @@ const BhagavatamPage = lazy(() => import('@/pages/BhagavatamPage'))
 const EkadasiPage = lazy(() => import('@/pages/EkadasiPage'))
 const EkadasiDetailPage = lazy(() => import('@/pages/EkadasiDetailPage'))
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
+const PanihatiRecipePage = lazy(() => import('@/pages/blog/PanihatiRecipePage'))
 
 function RouteFallback() {
   return (
@@ -76,6 +77,7 @@ export default function App() {
               <Route path="/resources/ekadasi/:slug" element={<EkadasiDetailPage />} />
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/about" element={<AboutPage />} />
+              <Route path="/blog/panihati-chida-dahi-recipe" element={<PanihatiRecipePage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Route>
           </Routes>
