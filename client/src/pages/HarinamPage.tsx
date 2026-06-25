@@ -13,10 +13,12 @@ import { cn } from '@/utils/cn'
 import {
   getHarinamStats,
   getLeaderboard,
+  getDevoteeActivity,
   searchDevoteNames,
   submitHarinam,
   type HarinamStats,
   type LeaderboardEntry,
+  type ActivityEntry,
   type DevoteSuggestion,
 } from '@/services/harinamService'
 
@@ -135,6 +137,103 @@ function CountdownTimer({ deadline }: { deadline: string }) {
         {pad(hrs)}:{pad(mins)}:{pad(secs)}
       </span>
     </div>
+  )
+}
+
+function ActivityModal({ entry, onClose }: { entry: { devoteName: string; phone: string } | null; onClose: () => void }) {
+  const [rows, setRows] = useState<ActivityEntry[]>([])
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (!entry) return
+    setLoading(true)
+    setRows([])
+    getDevoteeActivity(entry.phone)
+      .then(setRows)
+      .catch(() => setRows([]))
+      .finally(() => setLoading(false))
+  }, [entry])
+
+  useEffect(() => {
+    if (!entry) return
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [entry, onClose])
+
+  if (!entry) return null
+
+  const formatDate = (d: string) =>
+    new Date(d).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-[120] flex items-center justify-center bg-black/60 px-4 backdrop-blur-sm"
+        onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
+      >
+        <motion.div
+          initial={{ opacity: 0, scale: 0.92, y: 24 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.92, y: 24 }}
+          className="relative flex w-full max-w-md flex-col overflow-hidden rounded-3xl border border-gold-200/30 bg-cream shadow-2xl"
+        >
+          <div className="bg-gradient-to-r from-maroon to-peacock-900 px-6 py-5 text-cream">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Calendar className="h-6 w-6 text-gold-200" />
+                <div>
+                  <h2 className="font-heading text-lg font-semibold leading-tight">{entry.devoteName}</h2>
+                  <p className="text-xs text-gold-200/80">Japa Activity Log</p>
+                </div>
+              </div>
+              <button type="button" onClick={onClose} className="rounded-full p-1.5 text-white/70 hover:bg-white/10 hover:text-white">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+          </div>
+
+          <div className="max-h-[60vh] overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-peacock-50 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-peacock-200">
+            {loading ? (
+              <div className="flex justify-center py-12">
+                <Loader2 className="h-7 w-7 animate-spin text-peacock-400" />
+              </div>
+            ) : rows.length === 0 ? (
+              <p className="py-10 text-center text-sm text-peacock-500">No activity records found.</p>
+            ) : (
+              <table className="w-full text-left text-sm">
+                <thead className="sticky top-0 border-b border-peacock-100 bg-peacock-50/90 text-xs uppercase tracking-wider text-peacock-700 backdrop-blur-sm">
+                  <tr>
+                    <th className="px-5 py-3 font-semibold">#</th>
+                    <th className="px-5 py-3 font-semibold">Date</th>
+                    <th className="px-5 py-3 text-right font-semibold">Rounds</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rows.map((row, i) => (
+                    <tr key={row.id} className="border-b border-peacock-50 transition-colors hover:bg-peacock-50/40">
+                      <td className="px-5 py-3 text-peacock-500">{i + 1}</td>
+                      <td className="px-5 py-3 text-peacock-800">{formatDate(row.chantedOn)}</td>
+                      <td className="px-5 py-3 text-right font-bold tabular-nums text-maroon">{row.rounds}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+
+          {rows.length > 0 && (
+            <div className="border-t border-peacock-100 bg-peacock-50/50 px-5 py-3 text-right text-xs font-semibold text-peacock-600">
+              Total entries: {rows.length} &nbsp;·&nbsp; Total rounds:{' '}
+              <span className="text-maroon">{rows.reduce((s, r) => s + r.rounds, 0).toLocaleString('en-IN')}</span>
+            </div>
+          )}
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
   )
 }
 
@@ -497,6 +596,7 @@ export default function HarinamPage() {
   }, [hasMore, loading, page, fetchLeaderboard])
 
   const [toast, setToast] = useState<ToastData | null>(null)
+  const [activityEntry, setActivityEntry] = useState<{ devoteName: string; phone: string } | null>(null)
 
   function handleSubmitSuccess(message: string) {
     fetchStats()
@@ -629,6 +729,14 @@ export default function HarinamPage() {
                       {leaderboardScope === 'today' && entry.totalRounds > entry.todayRounds && (
                         <p className="mt-1 text-xs font-semibold text-maroon/70">Total: {entry.totalRounds.toLocaleString('en-IN')}</p>
                       )}
+                      <button
+                        type="button"
+                        onClick={() => setActivityEntry({ devoteName: entry.devoteName, phone: entry.phone })}
+                        className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-peacock-200 bg-white/70 px-3 py-1.5 text-xs font-semibold text-peacock-700 transition-colors hover:bg-peacock-50 hover:text-peacock-900"
+                      >
+                        <Calendar className="h-3.5 w-3.5" />
+                        View Activity
+                      </button>
                     </motion.div>
                   )
                 })}
@@ -664,8 +772,9 @@ export default function HarinamPage() {
                         <col className="w-14" />
                         <col />
                         <col className="hidden w-[22%] sm:table-column" />
-                        <col className="w-[15%]" />
-                        <col className="w-[15%]" />
+                        <col className="w-[12%]" />
+                        <col className="w-[12%]" />
+                        <col className="w-[10%] sm:w-[130px]" />
                       </colgroup>
                       <thead>
                         <tr className="border-b border-peacock-100 bg-peacock-50/50 text-xs uppercase tracking-wider text-peacock-700">
@@ -674,6 +783,7 @@ export default function HarinamPage() {
                           <th className="hidden px-5 py-3.5 font-semibold sm:table-cell">City</th>
                           <th className="px-5 py-3.5 text-right font-semibold">Today</th>
                           <th className="px-5 py-3.5 text-right font-semibold">Total</th>
+                          <th className="px-4 py-3.5 text-center font-semibold">Activity</th>
                         </tr>
                       </thead>
                     </table>
@@ -683,8 +793,9 @@ export default function HarinamPage() {
                           <col className="w-14" />
                           <col />
                           <col className="hidden w-[22%] sm:table-column" />
-                          <col className="w-[15%]" />
-                          <col className="w-[15%]" />
+                          <col className="w-[12%]" />
+                          <col className="w-[12%]" />
+                          <col className="w-[10%] sm:w-[130px]" />
                         </colgroup>
                         <tbody>
                           {(searchQuery.trim() ? filteredLeaderboard : scopedLeaderboard.slice(3)).map((entry, idx) => (
@@ -708,11 +819,21 @@ export default function HarinamPage() {
                                 {entry.todayRounds > 0 ? entry.todayRounds.toLocaleString('en-IN') : '—'}
                               </td>
                               <td className="px-5 py-3.5 text-right font-bold tabular-nums text-maroon">{entry.totalRounds.toLocaleString('en-IN')}</td>
+                              <td className="px-4 py-3 text-center">
+                                <button
+                                  type="button"
+                                  onClick={() => setActivityEntry({ devoteName: entry.devoteName, phone: entry.phone })}
+                                  className="inline-flex items-center gap-1 rounded-lg border border-peacock-200 bg-peacock-50 px-2.5 py-1.5 text-xs font-semibold text-peacock-700 transition-colors hover:bg-peacock-100 hover:text-peacock-900"
+                                >
+                                  <Calendar className="h-3.5 w-3.5 shrink-0" />
+                                  <span className="hidden sm:inline">View</span>
+                                </button>
+                              </td>
                             </motion.tr>
                           ))}
                           {searchQuery.trim() && filteredLeaderboard.length === 0 && (
                             <tr>
-                              <td colSpan={5} className="px-5 py-8 text-center text-sm text-peacock-500">
+                              <td colSpan={6} className="px-5 py-8 text-center text-sm text-peacock-500">
                                 {`No devotees found matching "${searchQuery}"`}
                               </td>
                             </tr>
@@ -808,6 +929,7 @@ export default function HarinamPage() {
         </Container>
       </section>
 
+      <ActivityModal entry={activityEntry} onClose={() => setActivityEntry(null)} />
       <SubmitModal open={modalOpen} onClose={() => setModalOpen(false)} onSuccess={handleSubmitSuccess} expired={expired} />
     </>
   )

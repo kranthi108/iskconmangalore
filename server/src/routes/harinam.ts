@@ -1,5 +1,5 @@
 import { Hono } from 'hono'
-import { sql, desc, ilike } from 'drizzle-orm'
+import { sql, desc, ilike, eq } from 'drizzle-orm'
 import { harinamEntries } from '../db/schema'
 import { createDb } from '../db/client'
 import { successResponse, errorResponse } from '../lib/response'
@@ -78,6 +78,7 @@ app.get('/leaderboard', async (c) => {
   return successResponse(c, {
     leaderboard: rows.map((r) => ({
       devoteName: r.devoteName,
+      phone: r.phone,
       city: r.city,
       totalRounds: Number(r.totalRounds),
       todayRounds: Number(r.todayRounds),
@@ -85,6 +86,26 @@ app.get('/leaderboard', async (c) => {
     })),
     pagination: { page, limit, total, hasMore: offset + limit < total },
   })
+})
+
+app.get('/activity', async (c) => {
+  const db = createDb(c.env.DATABASE_URL)
+  const phone = c.req.query('phone') ?? ''
+
+  if (!phone) return errorResponse(c, 'phone is required', 400)
+
+  const rows = await db
+    .select({
+      id: harinamEntries.id,
+      rounds: harinamEntries.rounds,
+      chantedOn: harinamEntries.chantedOn,
+      createdAt: harinamEntries.createdAt,
+    })
+    .from(harinamEntries)
+    .where(eq(harinamEntries.phone, phone))
+    .orderBy(desc(harinamEntries.chantedOn), desc(harinamEntries.createdAt))
+
+  return successResponse(c, rows)
 })
 
 app.get('/names', async (c) => {
