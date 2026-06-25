@@ -10,7 +10,6 @@ export interface HarinamStats {
 
 export interface LeaderboardEntry {
   devoteName: string
-  phone: string
   city: string
   totalRounds: number
   todayRounds: number
@@ -59,6 +58,6 @@ export async function submitHarinam(data: HarinamSubmitInput): Promise<{ id: num
   return readApiData(api.post('/harinam/submit', data))
 }
 
-export async function getDevoteeActivity(phone: string): Promise<ActivityEntry[]> {
-  return readApiData(api.get(`/harinam/activity?phone=${encodeURIComponent(phone)}`))
+export async function getDevoteeActivity(devoteName: string): Promise<ActivityEntry[]> {
+  return readApiData(api.get(`/harinam/activity?name=${encodeURIComponent(devoteName)}`))
 }

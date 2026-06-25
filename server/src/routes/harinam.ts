@@ -78,7 +78,6 @@ app.get('/leaderboard', async (c) => {
   return successResponse(c, {
     leaderboard: rows.map((r) => ({
       devoteName: r.devoteName,
-      phone: r.phone,
       city: r.city,
       totalRounds: Number(r.totalRounds),
       todayRounds: Number(r.todayRounds),
@@ -90,9 +89,17 @@ app.get('/leaderboard', async (c) => {
 
 app.get('/activity', async (c) => {
   const db = createDb(c.env.DATABASE_URL)
-  const phone = c.req.query('phone') ?? ''
+  const name = c.req.query('name') ?? ''
 
-  if (!phone) return errorResponse(c, 'phone is required', 400)
+  if (!name) return errorResponse(c, 'name is required', 400)
+
+  const devotee = await db
+    .select({ phone: harinamEntries.phone })
+    .from(harinamEntries)
+    .where(eq(harinamEntries.devoteName, name))
+    .limit(1)
+
+  if (devotee.length === 0) return successResponse(c, [])
 
   const rows = await db
     .select({
@@ -102,7 +109,7 @@ app.get('/activity', async (c) => {
       createdAt: harinamEntries.createdAt,
     })
     .from(harinamEntries)
-    .where(eq(harinamEntries.phone, phone))
+    .where(eq(harinamEntries.phone, devotee[0].phone))
     .orderBy(desc(harinamEntries.chantedOn), desc(harinamEntries.createdAt))
 
   return successResponse(c, rows)
