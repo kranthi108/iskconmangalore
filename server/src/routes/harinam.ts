@@ -1,5 +1,5 @@
 import { Hono } from 'hono'
-import { sql, desc, ilike, eq } from 'drizzle-orm'
+import { sql, desc, ilike } from 'drizzle-orm'
 import { harinamEntries } from '../db/schema'
 import { createDb } from '../db/client'
 import { successResponse, errorResponse } from '../lib/response'
@@ -78,6 +78,7 @@ app.get('/leaderboard', async (c) => {
   return successResponse(c, {
     leaderboard: rows.map((r) => ({
       devoteName: r.devoteName,
+      phoneLast4: r.phone.slice(-4),
       city: r.city,
       totalRounds: Number(r.totalRounds),
       todayRounds: Number(r.todayRounds),
@@ -90,16 +91,9 @@ app.get('/leaderboard', async (c) => {
 app.get('/activity', async (c) => {
   const db = createDb(c.env.DATABASE_URL)
   const name = c.req.query('name') ?? ''
+  const phoneLast4 = c.req.query('phoneLast4') ?? ''
 
-  if (!name) return errorResponse(c, 'name is required', 400)
-
-  const devotee = await db
-    .select({ phone: harinamEntries.phone })
-    .from(harinamEntries)
-    .where(eq(harinamEntries.devoteName, name))
-    .limit(1)
-
-  if (devotee.length === 0) return successResponse(c, [])
+  if (!name || !phoneLast4) return errorResponse(c, 'name and phoneLast4 are required', 400)
 
   const rows = await db
     .select({
@@ -109,7 +103,9 @@ app.get('/activity', async (c) => {
       createdAt: harinamEntries.createdAt,
     })
     .from(harinamEntries)
-    .where(eq(harinamEntries.phone, devotee[0].phone))
+    .where(
+      sql`${harinamEntries.devoteName} = ${name} and right(${harinamEntries.phone}, 4) = ${phoneLast4}`,
+    )
     .orderBy(desc(harinamEntries.chantedOn), desc(harinamEntries.createdAt))
 
   return successResponse(c, rows)
