@@ -7,6 +7,7 @@ import mohiniekadasiImg from '@/assets/ekadasi/mohiniekadasi.png'
 import paramaekadasiImg from '@/assets/ekadasi/paramaekadasi.png'
 import ekadasiImg from '@/assets/ekadasi/ekadasi.png'
 import yoginiekadasiImg from '@/assets/ekadasi/YoginiEkadasi.png'
+import pandava from '@/assets/ekadasi/pandavaekadasi.png'
 
 export interface Ekadasi {
   slug: string
@@ -158,8 +159,48 @@ export const EKADASI_LIST: Ekadasi[] = [
     paksha: 'Shukla',
     description: 'The most rigorous Ekadasi — observed without even water. It grants the cumulative merit of all 24 Ekadasis.',
     significance: 'Bhimasena, the mighty Pandava, could not fast on every Ekadasi due to his insatiable appetite. Srila Vyasadeva prescribed this single Ekadasi to be observed without food or water for a full 24 hours. By its power, one receives the merit of all Ekadasis in the year. It is the most challenging and most rewarding fast.',
-    pastime: '',
-    banner: ekadasiImg,
+    pastime: `
+                <p><strong>Bhimasena</strong>, the second of the Pandava brothers, approached <strong>Sage Vyasadeva</strong> with a concern. Unlike his brothers and family members, he found it impossible to fast twice every month on Ekadasi because of his insatiable hunger. He asked if there was a single Ekadasi whose observance would grant the benefits of observing all the Ekadasis throughout the year.</p>
+
+                <p>Vyasadeva replied that <strong>Nirjala Ekadasi</strong>, observed during the <strong>Shukla Paksha (waxing moon) of Jyeshtha (May–June)</strong>, is the most powerful of all Ekadasis. He instructed Bhima to observe a complete fast <strong>without eating or drinking even water</strong> from sunrise on Ekadasi until sunrise on Dwadashi. Only a few drops of water may be taken for <strong>Achamana (purification)</strong> if required for worship.</p>
+
+                <p>Vyasadeva explained that <strong>Lord Keshava (Sri Krishna)</strong> Himself declared that anyone who faithfully observes Nirjala Ekadasi receives the same spiritual merit as observing <strong>all twenty-four Ekadasis</strong> of the year. The fast destroys sinful reactions, grants immense spiritual merit, and leads one toward liberation.</p>
+
+                <h3>The Observance</h3>
+
+                <p>On <strong>Dwadashi</strong>, the devotee should:</p>
+
+                <ul>
+                  <li>Bathe early in the morning.</li>
+                  <li>Worship Lord Vishnu with devotion.</li>
+                  <li>Donate water, pots, clothes, gold, cows, or other charity according to one's ability.</li>
+                  <li>Feed qualified brahmanas before breaking the fast with prasadam.</li>
+                </ul>
+
+                <h3>Benefits of Nirjala Ekadasi</h3>
+
+                <p>Vyasadeva further described the extraordinary benefits of observing Nirjala Ekadasi:</p>
+
+                <ul>
+                  <li>It grants the merit of all Ekadasi fasts combined.</li>
+                  <li>It destroys even the greatest sinful reactions.</li>
+                  <li>It bestows health, strength, prosperity, and spiritual advancement.</li>
+                  <li>At the time of death, the <strong>Vishnudutas</strong> escort the devotee to the spiritual abode of Lord Vishnu, while the <strong>Yamadutas</strong> do not approach such a devotee.</li>
+                  <li>Even hearing the glories of Nirjala Ekadasi bestows great spiritual benefit.</li>
+                </ul>
+
+                <p>Inspired by Vyasadeva's instructions, <strong>Bhimasena and the other Pandavas</strong> faithfully observed this complete fast. Since Bhima first observed it, the Ekadasi became widely known as <strong>Pandava Nirjala Ekadasi</strong> or <strong>Bhimaseni Nirjala Ekadasi</strong>.</p>
+
+                <h3>Key Lessons</h3>
+
+                <ul>
+                  <li><strong>Nirjala Ekadasi</strong> is considered the most powerful Ekadasi, especially for those unable to observe every Ekadasi throughout the year.</li>
+                  <li>Fasting <strong>without food and water</strong>, when physically able, is an act of great devotion and austerity.</li>
+                  <li>Sincere observance of this Ekadasi destroys accumulated sins, grants the merit of all other Ekadasis, and leads one toward the eternal abode of Lord Vishnu.</li>
+                  <li>Charity, worship of Lord Krishna, chanting His holy names, and breaking the fast properly on Dwadashi complete the observance and enhance its spiritual benefits.</li>
+                </ul>
+              `,
+    banner: pandava,
   },
   {
     slug: 'yogini',
