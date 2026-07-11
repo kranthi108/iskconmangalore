@@ -79,7 +79,28 @@ export default function EkadasiDetailPage() {
           {ekadasi.pastime && (
             <motion.div {...fade} className="mt-8 rounded-2xl border border-peacock-200/50 bg-gradient-to-br from-peacock-50/40 to-white p-8 shadow-sm">
               <h2 className="font-heading text-2xl font-semibold text-maroon">Pastime</h2>
-              <p className="mt-4 text-base leading-relaxed text-peacock-900/85">{ekadasi.pastime}</p>
+              <div
+                className="
+                  mt-4
+                  text-base
+                  leading-relaxed
+                  text-peacock-900/85
+
+                  [&_h3]:mt-6
+                  [&_h3]:mb-3
+                  [&_h3]:text-xl
+                  [&_h3]:font-semibold
+                  [&_p]:mb-4
+
+                  [&_ul]:list-disc
+                  [&_ul]:pl-6
+                  [&_ul]:mb-4
+
+                  [&_li]:mb-2
+                  [&_strong]:font-semibold
+                "
+                dangerouslySetInnerHTML={{ __html: ekadasi.pastime }}
+              />
             </motion.div>
           )}
 

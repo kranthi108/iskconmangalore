@@ -5,7 +5,7 @@ import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom'
 import Button from '@/components/ui/Button'
 import Container from '@/components/ui/Container'
 import { NAV_LINKS, type NavChild } from '@/constants/data'
-import logo from '@/assets/logo.png'
+import logo from '@/assets/logo.webp'
 import { useUiStore } from '@/store/uiStore'
 import { cn } from '@/utils/cn'
 
@@ -174,7 +174,7 @@ export default function Navbar() {
       >
         <Container className="relative flex items-center justify-between gap-4 py-3 sm:py-4">
           <Link to="/" className="flex items-center gap-2.5 transition hover:opacity-90">
-            <img src={logo} alt="Srila Prabhupada's ISKCON Mangalore" className="h-12 w-auto object-contain sm:h-14" />
+            <img src={logo} alt="Srila Prabhupada's ISKCON Mangalore" className="h-14 w-auto object-contain scale-150 origin-left mr-8" />
             <span className="hidden border-l border-maroon/25 pl-2.5 font-heading text-[13px] font-semibold leading-tight tracking-wide text-maroon sm:block">
               Sri Krishna<br />Balaram Mandir
             </span>

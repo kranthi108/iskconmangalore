@@ -6,6 +6,7 @@
 import mohiniekadasiImg from '@/assets/ekadasi/mohiniekadasi.png'
 import paramaekadasiImg from '@/assets/ekadasi/paramaekadasi.png'
 import ekadasiImg from '@/assets/ekadasi/ekadasi.png'
+import yoginiekadasiImg from '@/assets/ekadasi/YoginiEkadasi.png'
 
 export interface Ekadasi {
   slug: string
@@ -167,8 +168,47 @@ export const EKADASI_LIST: Ekadasi[] = [
     paksha: 'Krishna',
     description: 'This Ekadasi frees one from the reactions of even the most terrible sins, including the killing of a brahmana.',
     significance: 'A king\'s gardener named Hema Mala neglected his duty due to attachment to his wife. Cursed by the king to suffer as a leper and his wife to become a demoness, they were later advised by the sage Markandeya to observe Yogini Ekadasi. By its power, both were freed from their curses.',
-    pastime: '',
-    banner: ekadasiImg,
+    pastime: `
+      <p><strong>Yudhishthira</strong> asks <strong>Lord Krishna</strong> about the significance of <strong>Yogini Ekadasi</strong>, observed during the waning moon (Krishna Paksha) of <strong>Ashadha (June–July)</strong>.</p>
+
+      <p>Lord Krishna explains that <strong>Yogini Ekadasi</strong> is one of the most powerful Ekadasis. It destroys sinful reactions, frees one from material bondage, and grants liberation.</p>
+
+      <h3>The Story of Hemamali</h3>
+
+      <ul>
+        <li><strong>Kuvera</strong>, the treasurer of the demigods and a devotee of <strong>Lord Shiva</strong>, had a servant named <strong>Hemamali</strong>, whose duty was to collect flowers daily from <strong>Manasarovara Lake</strong> for Shiva's worship.</li>
+
+        <li>Hemamali became deeply attached to his beautiful wife, <strong>Swarupavati</strong>. One day, after gathering flowers, he spent time with her instead of delivering the flowers for Kuvera's worship.</li>
+
+        <li>As a result, Shiva's worship was delayed. Enraged by Hemamali's negligence, <strong>Kuvera cursed him</strong> to suffer from <strong>white leprosy</strong>, lose his wife, and wander in misery.</li>
+
+        <li>Hemamali endured great suffering in the forest but continued remembering and worshipping Lord Shiva.</li>
+
+        <li>Eventually, he met the great sage <strong>Markandeya Rishi</strong>, who compassionately advised him to observe the fast of <strong>Yogini Ekadasi</strong>.</li>
+
+        <li>Hemamali faithfully observed the Ekadasi fast. By its spiritual power, he was freed from the curse, regained his handsome form, reunited with his wife, and returned to his service.</li>
+      </ul>
+
+      <h3>Teachings and Benefits</h3>
+
+      <p>Lord Krishna concludes that:</p>
+
+      <ul>
+        <li><strong>Yogini Ekadasi destroys even great sinful reactions.</strong></li>
+        <li>It grants purity, piety, and ultimately <strong>liberation (moksha)</strong>.</li>
+        <li>Observing this Ekadasi with sincerity gives the same spiritual merit as <strong>feeding 88,000 Brahmins</strong>.</li>
+        <li>It is one of the most sacred fasting days and helps devotees cross the ocean of material existence.</li>
+      </ul>
+
+      <h3>Key Lesson</h3>
+
+      <ul>
+        <li>Neglecting one's duties due to attachment and sense enjoyment leads to suffering.</li>
+        <li>Honest repentance, guidance from a saintly person, and sincere observance of <strong>Yogini Ekadasi</strong> can remove even severe karmic reactions.</li>
+        <li>Devotion, discipline, and faith have the power to transform one's life spiritually.</li>
+      </ul>
+    `,
+    banner: yoginiekadasiImg,
   },
   {
     slug: 'devshayani',
