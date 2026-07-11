@@ -119,7 +119,46 @@ export const EKADASI_LIST: Ekadasi[] = [
     paksha: 'Shukla',
     description: 'Named after Lord Vishnu\'s enchanting Mohini form, this Ekadasi grants liberation from material illusion.',
     significance: 'A merchant named Dhanapala had five sons, the youngest of whom was sinful. After being disowned, he met the sage Kaundinya, who prescribed the observance of Mohini Ekadasi. By its power, the young man was purified and attained the spiritual world.',
-    pastime: 'This is the pastime of Mohini Ekadasi',
+    pastime: `
+               <p><strong>King Yudhishthira</strong> asked <strong>Lord Sri Krishna</strong> about the significance of <strong>Mohini Ekadasi</strong>, observed during the <strong>Shukla Paksha (waxing moon) of Vaishakha (April–May)</strong>, and the proper way to observe it.</p>
+
+               <p>Lord Krishna replied by recounting a conversation between <strong>Lord Rama</strong> and <strong>Sage Vasishtha</strong>. While separated from Mother Sita, Lord Rama asked Vasishtha about a sacred observance that could destroy all sins and relieve suffering. Vasishtha explained that <strong>Mohini Ekadasi</strong> is one of the most auspicious Ekadasis. It removes illusion (<em>moha</em>), destroys sins, removes obstacles, and grants liberation to those who observe it with devotion.</p>
+
+               <h3>The Story of Dhrishthabuddhi</h3>
+
+               <p>On the banks of the <strong>Sarasvati River</strong> stood the prosperous city of <strong>Bhadravati</strong>, ruled by the righteous <strong>King Dyutiman</strong>. A wealthy and charitable merchant named <strong>Dhanapala</strong> lived there with his five sons. While his other sons were virtuous, his youngest son, <strong>Dhrishthabuddhi</strong>, became addicted to sinful habits such as gambling, intoxication, prostitution, and disrespect toward elders, brahmanas, and the demigods.</p>
+
+               <p>Despite his father's repeated warnings, Dhrishthabuddhi continued his sinful lifestyle and squandered all his wealth. Eventually, Dhanapala expelled him from the family. Abandoned by everyone, including the prostitute he associated with, Dhrishthabuddhi turned to theft. After repeated arrests, he was permanently banished from the kingdom.</p>
+
+               <p>Forced to live in the forest, he survived by hunting and killing animals and birds, accumulating even more sinful reactions. Miserable and hopeless, he wandered until, by the influence of his previous pious deeds, he arrived at the ashram of <strong>Kaundinya Muni</strong> during the month of Vaishakha.</p>
+
+               <p>As Kaundinya Muni returned from bathing in the sacred Ganges, a few drops of water from his wet clothes touched Dhrishthabuddhi. Instantly, his heart became purified, and he sincerely repented for his sinful life. He humbly asked the sage for a means of atonement.</p>
+
+               <p>The compassionate sage instructed him to faithfully observe <strong>Mohini Ekadasi</strong>, explaining that this sacred fast has the power to destroy sins as great as <strong>Mount Sumeru</strong>. Dhrishthabuddhi followed the instructions with sincerity and observed the Ekadasi fast.</p>
+
+               <p>By the power of Mohini Ekadasi, all his accumulated sins were destroyed. He attained a beautiful spiritual form and was carried by <strong>Garuda</strong>, Lord Vishnu's eternal carrier, to the Supreme abode of the Lord.</p>
+
+               <h3>Teachings and Benefits</h3>
+
+               <p>Lord Krishna concluded that:</p>
+
+               <ul>
+                 <li><strong>Mohini Ekadasi destroys illusion (moha) and frees one from material attachment.</strong></li>
+                 <li>It removes even the greatest sinful reactions accumulated over many lifetimes.</li>
+                 <li>It eliminates obstacles on the path of spiritual advancement.</li>
+                 <li>Faithfully observing this Ekadasi grants immense spiritual merit and ultimately leads one to the abode of Lord Vishnu.</li>
+                 <li>The merit of observing Mohini Ekadasi surpasses that of many pilgrimages, sacrifices, and charitable acts.</li>
+                 <li>Simply hearing or studying the glories of Mohini Ekadasi bestows the merit of donating one thousand cows.</li>
+               </ul>
+
+               <h3>Key Lessons</h3>
+
+               <ul>
+                 <li>Even a person deeply immersed in sinful activities can attain purification through sincere repentance and devotion.</li>
+                 <li>Association with saintly persons can transform one's life and awaken spiritual consciousness.</li>
+                 <li>Observing <strong>Mohini Ekadasi</strong> with faith destroys illusion, removes sinful reactions, and guides the devotee toward liberation and eternal service to Lord Vishnu.</li>
+               </ul>
+             `,
     banner: mohiniekadasiImg,
   },
   {
@@ -149,7 +188,45 @@ export const EKADASI_LIST: Ekadasi[] = [
     paksha: 'Krishna',
     description: 'The second Adhik Maas Ekadasi, supremely auspicious for spiritual advancement.',
     significance: '',
-    pastime: PARAMA_EKADASHI_STORY,
+    pastime: `
+               <p><strong>King Yudhishthira</strong> asked <strong>Lord Sri Krishna</strong> about <strong>Parama Ekadasi</strong>, observed during the <strong>Krishna Paksha (waning moon) of the extra month (Purushottama Masa/Adhika Masa)</strong>, and how it should be observed.</p>
+
+               <p>Lord Krishna explained that <strong>Parama Ekadasi</strong> is one of the most auspicious Ekadasis. It removes sins, relieves poverty and suffering, grants prosperity, and ultimately awards liberation. He then narrated the story of the pious brahmin <strong>Sumedha</strong> and his devoted wife <strong>Pavitra</strong>.</p>
+
+               <h3>The Story of Sumedha and Pavitra</h3>
+
+               <p>In the city of <strong>Kampilya</strong> lived a poor but virtuous brahmin named <strong>Sumedha</strong> and his chaste wife <strong>Pavitra</strong>. Due to the reactions of previous karma, they lived in extreme poverty. Although Sumedha begged for alms, he barely obtained enough food for survival. Even in hardship, Pavitra faithfully served her husband and generously offered food to guests before feeding herself.</p>
+
+               <p>Feeling distressed by their poverty, Sumedha decided to leave home in search of wealth. However, Pavitra gently reminded him that wealth is attained according to one's past charitable deeds and that abandoning one's family would not change destiny. She encouraged him to remain with her and continue living faithfully, trusting in the Lord's arrangement.</p>
+
+               <p>Soon afterward, the great sage <strong>Kaundinya Muni</strong> visited their home. The couple warmly welcomed him and offered whatever hospitality they could despite their poverty. Pavitra humbly asked the sage if there was any spiritual practice that could free them from their suffering.</p>
+
+               <p>Moved by her sincerity, Kaundinya Muni instructed them to observe <strong>Parama Ekadasi</strong>, explaining that this sacred fast is especially dear to Lord Hari and destroys sins, removes poverty, fulfills material needs, and ultimately grants liberation. He also advised them to remain awake throughout the night in devotional worship by chanting the Lord's holy names and glorifying Him.</p>
+
+               <p>The sage further instructed them to observe the <strong>Pancharatrika Vrata</strong>, a five-day fast beginning on Dwadashi according to their ability. During these days they were advised to worship Lord Vishnu, practice charity, feed qualified brahmanas, remain self-controlled, and perform devotional activities.</p>
+
+               <p>Sumedha and Pavitra faithfully observed both <strong>Parama Ekadasi</strong> and the <strong>Pancharatrika Vrata</strong>. Pleased with their devotion, Lord Brahma inspired a prince to provide them with a beautiful home, wealth, and an entire village for their livelihood. They lived happily and prosperously for the rest of their lives, and at the end of life they attained the eternal abode of <strong>Lord Vishnu</strong>.</p>
+
+               <h3>Teachings and Benefits</h3>
+
+               <p>Lord Krishna concluded that:</p>
+
+               <ul>
+                 <li><strong>Parama Ekadasi removes poverty, suffering, and sinful reactions.</strong></li>
+                 <li>It fulfills both material and spiritual desires when observed with sincerity.</li>
+                 <li>Observing the <strong>Pancharatrika Vrata</strong> after Ekadasi greatly increases the spiritual benefits.</li>
+                 <li>The merit of observing Parama Ekadasi equals that of performing many pilgrimages, charitable acts, sacrifices, and sacred rituals.</li>
+                 <li>Faithful observance ultimately grants residence in the spiritual abode of Lord Vishnu.</li>
+               </ul>
+
+               <h3>Key Lessons</h3>
+
+               <ul>
+                 <li>Sincere devotion and faith in the Lord are more powerful than material wealth.</li>
+                 <li>Hospitality, charity, patience, and steadfastness in difficult circumstances attract the Lord's mercy.</li>
+                 <li>Observing <strong>Parama Ekadasi</strong> and the <strong>Pancharatrika Vrata</strong> purifies the heart, removes suffering, fulfills righteous desires, and leads the devotee toward eternal service to Lord Vishnu.</li>
+               </ul>
+             `,
     banner: paramaekadasiImg,
   },
   {
