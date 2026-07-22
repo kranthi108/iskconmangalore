@@ -123,9 +123,29 @@ export default function Footer() {
           Hare Rama Hare Rama Rama Rama Hare Hare
         </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/25 pt-6 text-xs font-semibold text-white/70">
-          <p>© {year} · ISKCON Mangalore seva trust</p>
-          <p>Goloka-bound consciousness begins today · All glories to Śrī Guru and Śrī Gaurāṅga</p>
+        <div className="flex flex-col gap-4 border-t border-white/25 pt-6">
+          <nav aria-label="Legal policies" className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-sm font-semibold text-gold-200">
+            <Link className="transition hover:text-gold-400" to="/privacy-policy">
+              Privacy Policy
+            </Link>
+            <span aria-hidden className="text-white/40">
+              |
+            </span>
+            <Link className="transition hover:text-gold-400" to="/terms-and-conditions">
+              Terms and Conditions
+            </Link>
+            <span aria-hidden className="text-white/40">
+              |
+            </span>
+            <Link className="transition hover:text-gold-400" to="/refund-policy">
+              Refund Policy
+            </Link>
+          </nav>
+
+          <div className="flex flex-wrap items-center justify-between gap-3 text-xs font-semibold text-white/70">
+            <p>© {year} · ISKCON Mangalore seva trust</p>
+            <p>Goloka-bound consciousness begins today · All glories to Śrī Guru and Śrī Gaurāṅga</p>
+          </div>
         </div>
       </Container>
     </footer>

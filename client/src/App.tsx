@@ -31,6 +31,9 @@ const EkadasiPage = lazy(() => import('@/pages/EkadasiPage'))
 const EkadasiDetailPage = lazy(() => import('@/pages/EkadasiDetailPage'))
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
 const PanihatiRecipePage = lazy(() => import('@/pages/blog/PanihatiRecipePage'))
+const PrivacyPolicyPage = lazy(() => import('@/pages/PrivacyPolicyPage'))
+const TermsAndConditionsPage = lazy(() => import('@/pages/TermsAndConditionsPage'))
+const RefundPolicyPage = lazy(() => import('@/pages/RefundPolicyPage'))
 
 function RouteFallback() {
   return (
@@ -78,6 +81,9 @@ export default function App() {
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="/blog/panihati-chida-dahi-recipe" element={<PanihatiRecipePage />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+              <Route path="/terms-and-conditions" element={<TermsAndConditionsPage />} />
+              <Route path="/refund-policy" element={<RefundPolicyPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Route>
           </Routes>
