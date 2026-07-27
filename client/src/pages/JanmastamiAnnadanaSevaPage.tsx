@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react'
 import { motion } from 'framer-motion'
-import { Gift, Plane, Sparkles } from 'lucide-react'
+import { Gift } from 'lucide-react'
 import { Helmet } from 'react-helmet-async'
 import DonateModal from '@/components/donations/DonateModal'
 import banner from '@/assets/banners/janmastamiannadanaseva.png'
