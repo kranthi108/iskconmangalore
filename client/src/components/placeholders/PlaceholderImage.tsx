@@ -73,10 +73,10 @@ export default function PlaceholderImage({
             setHasError(true)
             setIsLoaded(false)
           }}
-          className={cn(
-            'absolute inset-0 size-full rounded-2xl object-cover transition-opacity duration-500',
-            isLoaded ? 'opacity-100' : 'opacity-0',
-          )}
+         className={cn(
+           'absolute inset-0 size-full rounded-2xl object-contain md:object-cover transition-opacity duration-500',
+           isLoaded ? 'opacity-100' : 'opacity-0',
+         )}
         />
       ) : null}
 
