@@ -24,6 +24,7 @@ import { createOrder, verifyPayment } from '@/services/donationService'
 import { ApiHttpError } from '@/services/api'
 import type { DonationCampaign } from '@/types'
 import { useDonationStore } from '@/store/donationStore'
+import bgimg  from '@/assets/krishna_balaram.JPG'
 import { cn } from '@/utils/cn'
 
 type CategoryFilter = 'all' | DonationCampaign['category']
@@ -305,7 +306,7 @@ export default function DonatePage() {
   )
 
   if (!slug) {
-    const heroImage = "https://guptvrindavandham.org/media/landingpage/General_Temple_Donation_Banner_Desktop.webp"
+    const heroImage = { bgimg }
     const categories: CategoryFilter[] = ['all', 'festival', 'projects', 'membership', 'annadana']
 
     return (
@@ -320,7 +321,7 @@ export default function DonatePage() {
         <HeroBanner
           title="Seva & Donations"
           subtitle="Honor every limb of Śrīla Prabhupāda’s Mādhva mission · transparent · prayerful · community witnessed."
-          backgroundImage={heroImage}
+          backgroundImage={bgimg}
           height="large"
         />
         <section className="bg-gradient-to-b from-cream to-white py-12">

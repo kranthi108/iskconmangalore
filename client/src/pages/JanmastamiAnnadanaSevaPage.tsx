@@ -14,6 +14,10 @@ import SectionHeading from '@/components/ui/SectionHeading'
 import { useRazorpay } from '@/hooks/useRazorpay'
 import { createOrder, verifyPayment } from '@/services/donationService'
 import { ApiHttpError } from '@/services/api'
+import { HeartHandshake } from "lucide-react"
+import { Building2 } from "lucide-react"
+import { useNavigate } from 'react-router-dom'
+
 // import { useEffect } from 'react'
 
 // TODO: Replace with actual campaign ID from database when campaign is created
@@ -29,7 +33,8 @@ type RazorpayHandlerResponseSimple = {
 export default function JanmastamiAnnadanaSevaPage() {
   const razorpay = useRazorpay()
   const [modalOpen, setModalOpen] = useState(false)
-  const [donateAmount] = useState(1)
+  const [donateAmount] = useState(1000)
+  const navigate = useNavigate()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [blessings, setBlessings] = useState<{
     receiptNumber: string
@@ -192,7 +197,7 @@ export default function JanmastamiAnnadanaSevaPage() {
         title=""
         subtitle=""
         backgroundImage= { banner }
-        height="large"
+        height="small"
       >
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -377,6 +382,33 @@ export default function JanmastamiAnnadanaSevaPage() {
               Donate ₹1000 for Annadana Seva
             </Button>
           </motion.div>
+          <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.6 }}
+                      className="mt-12 flex flex-col sm:flex-row justify-center gap-4"
+                    >
+                      <Button
+                        variant="secondary"
+                        size="xl"
+                        onClick={() => navigate('/donate')}
+                        className="bg-gradient-to-r from-gold-400 via-saffron to-gold-400 hover:from-gold-400/90 hover:to-gold-400/90 text-maroon font-bold"
+                      >
+                        <HeartHandshake className="mr-2 h-6 w-6" />
+                        Explore other Seva Opportunities
+                      </Button>
+                      <Button
+                                              variant="secondary"
+                                              size="xl"
+                                              onClick={() => window.location.href = "https://projects.iskconmangalore.org"}
+                                              className="bg-gradient-to-r from-gold-400 via-saffron to-gold-400 hover:from-gold-400/90 hover:to-gold-400/90 text-maroon font-bold"
+                                            >
+                                              <Building2 className="mr-2 h-6 w-6" />
+                                              Know more about our projects
+                                            </Button>
+                    </motion.div>
+
           <p className="mt-6 text-sm text-white/70">
             Secure payment via Razorpay · Tax benefits available (80G)
           </p>
