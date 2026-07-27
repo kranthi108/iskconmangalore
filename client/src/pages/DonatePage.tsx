@@ -306,7 +306,6 @@ export default function DonatePage() {
   )
 
   if (!slug) {
-    const heroImage = { bgimg }
     const categories: CategoryFilter[] = ['all', 'festival', 'projects', 'membership', 'annadana']
 
     return (
