@@ -11,11 +11,10 @@ import HeroBanner from '@/components/layout/HeroBanner'
 import Button from '@/components/ui/Button'
 import Container from '@/components/ui/Container'
 import SectionHeading from '@/components/ui/SectionHeading'
-import PlaceholderImage from '@/components/placeholders/PlaceholderImage'
 import { useRazorpay } from '@/hooks/useRazorpay'
 import { createOrder, verifyPayment } from '@/services/donationService'
 import { ApiHttpError } from '@/services/api'
-import { useEffect } from 'react'
+// import { useEffect } from 'react'
 
 // TODO: Replace with actual campaign ID from database when campaign is created
 // This is a placeholder ID for the meta ad campaign
