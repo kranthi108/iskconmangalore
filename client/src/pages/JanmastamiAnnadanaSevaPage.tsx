@@ -215,21 +215,32 @@ export default function JanmastamiAnnadanaSevaPage() {
             className="rounded-3xl border-2 border-gold-400 bg-white/10 p-8 backdrop-blur-sm"
           >
             <div className="mb-6 flex justify-center">
-              <div className="rounded-full bg-gold-400/20 p-4">
-                <Plane className="h-12 w-12 text-gold-200" />
-              </div>
+
             </div>
             <h2 className="font-heading text-3xl font-bold text-gold-200 sm:text-4xl">
-              Special Vrindavan Yatra Opportunity
+              Special Annadana Seva Opportunity
             </h2>
             <p className="mt-4 text-lg text-white/90">
               Selected donors from this Annadana Seva will receive a <span className="font-bold text-gold-200">FREE trip to Vrindavan</span> — 
               the sacred land where Lord Krishna performed His pastimes
             </p>
-            <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-gold-400/50 bg-gold-400/10 px-6 py-3 text-sm font-semibold text-gold-200">
-              <Sparkles className="h-5 w-5" />
-              Limited Time Offer
-            </div>
+            <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6 }}
+                        className="mt-12"
+                      >
+                        <Button
+                          variant="secondary"
+                          size="xl"
+                          onClick={handleOpenDonateModal}
+                          className="bg-gradient-to-r from-gold-400 via-saffron to-gold-400 hover:from-gold-400/90 hover:to-gold-400/90 text-maroon font-bold"
+                        >
+                          <Gift className="mr-2 h-6 w-6" />
+                          Donate Now
+                        </Button>
+                      </motion.div>
           </motion.div>
         </Container>
       </section>
@@ -327,11 +338,11 @@ export default function JanmastamiAnnadanaSevaPage() {
             >
               <h3 className="font-heading text-xl font-bold text-gold-600">తెలుగు</h3>
               <p className="mt-3 text-peacock-900/85 leading-relaxed font-sanskrit">
-                ఈ జన్మాష్టమి సందర్భంగా పవిత్రమైన **అన్నదాన సేవ**లో భాగస్వాములు కండి. కేవలం **₹1000 విరాళం** అందించి, శ్రీకృష్ణ భగవానుని అవతార మహోత్సవ సందర్భంగా వేలాది మంది భక్తులకు ప్రసాదం పంపిణీ చేసే ఈ దివ్య సేవలో పాలుపంచుకోండి.
+                ఈ జన్మాష్టమి సందర్భంగా పవిత్రమైన **అన్నదాన సేవ**లో భాగస్వాములు కండి. కేవలం ₹1000 విరాళం అందించి, శ్రీకృష్ణ భగవానుని అవతార మహోత్సవ సందర్భంగా వేలాది మంది భక్తులకు ప్రసాదం పంపిణీ చేసే ఈ దివ్య సేవలో పాలుపంచుకోండి.
 
-                మీ భక్తిపూర్వక సహకారానికి ప్రత్యేక ఆశీర్వాదంగా, ఎంపిక చేయబడిన దాతలకు **వృందావన యాత్ర**ను పూర్తిగా ఉచితంగా (ప్రయాణం, వసతి మరియు ఇతర ఖర్చులతో సహా) అందజేయబడుతుంది. శ్రీకృష్ణుడు తన బాల్య లీలలను ఆవిష్కరించిన ఆ పవిత్ర ధామాన్ని దర్శించే ఈ అరుదైన అవకాశం మీకు లభించవచ్చు.
+                మీ భక్తిపూర్వక సహకారానికి ప్రత్యేక ఆశీర్వాదంగా, ఎంపిక చేయబడిన దాతలకు వృందావన యాత్రను పూర్తిగా ఉచితంగా (ప్రయాణం, వసతి మరియు ఇతర ఖర్చులతో సహా) అందజేయబడుతుంది. శ్రీకృష్ణుడు తన బాల్య లీలలను ఆవిష్కరించిన ఆ పవిత్ర ధామాన్ని దర్శించే ఈ అరుదైన అవకాశం మీకు లభించవచ్చు.
 
-                ఇది భగవంతుని సేవ చేసే సువర్ణావకాశం మాత్రమే కాదు, ప్రపంచంలోనే అత్యంత పవిత్రమైన ధామమైన **శ్రీ వృందావన ధామం**ను దర్శించి శ్రీకృష్ణుని అపార కృపను పొందే దివ్య అవకాశం కూడా.
+                ఇది భగవంతుని సేవ చేసే సువర్ణావకాశం మాత్రమే కాదు, ప్రపంచంలోనే అత్యంత పవిత్రమైన ధామమైన శ్రీ వృందావన ధామంను దర్శించి శ్రీకృష్ణుని అపార కృపను పొందే దివ్య అవకాశం కూడా.
 
               </p>
             </motion.div>

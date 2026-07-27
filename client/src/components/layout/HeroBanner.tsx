@@ -83,7 +83,7 @@ export default function HeroBanner({
             src={backgroundImage}
             alt={`${title} hero backdrop`}
             aspectRatio="none"
-            className="size-full min-h-full rounded-none ring-0"
+            className="w-full h-full object-contain rounded-none ring-0"
             loading="eager"
             showOverlay={false}
           />
