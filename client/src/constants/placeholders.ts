@@ -22,7 +22,7 @@ export const HERO_BANNER = ph(
   800,
   P.peacock,
   P.gold,
-  'ISKCON Mangalore - Divine Darshan',
+  ' - ',
 )
 
 export const KRISHNA_DARSHAN = ph(800, 600, P.maroon, P.cream, 'Sri Krishna Darshan')

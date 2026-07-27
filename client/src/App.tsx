@@ -34,6 +34,7 @@ const PanihatiRecipePage = lazy(() => import('@/pages/blog/PanihatiRecipePage'))
 const PrivacyPolicyPage = lazy(() => import('@/pages/PrivacyPolicyPage'))
 const TermsAndConditionsPage = lazy(() => import('@/pages/TermsAndConditionsPage'))
 const RefundPolicyPage = lazy(() => import('@/pages/RefundPolicyPage'))
+const JanmastamiAnnadanaSevaPage = lazy(() => import('@/pages/JanmastamiAnnadanaSevaPage'))
 
 function RouteFallback() {
   return (
@@ -84,6 +85,7 @@ export default function App() {
               <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
               <Route path="/terms-and-conditions" element={<TermsAndConditionsPage />} />
               <Route path="/refund-policy" element={<RefundPolicyPage />} />
+              <Route path="/janmastami-annadana-seva" element={<JanmastamiAnnadanaSevaPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Route>
           </Routes>
