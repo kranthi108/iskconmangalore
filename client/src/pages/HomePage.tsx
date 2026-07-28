@@ -92,7 +92,7 @@ export default function HomePage() {
   return (
     <>
       <Helmet>
-        <title>ISKCON Sri Krishna Balaram Mandir — Divine Darshan in Mangalore</title>
+        <title>ISKCON Mangalore - Sri Krishna Balaram Mandir | Govardhan Hills</title>
         <meta
           name="description"
           content="Experience Śrīla Prabhupāda’s Mādhava oasis in Mangalore — saṅkīrtana, festivals, prasādam, and lovingly guided devotional life."
