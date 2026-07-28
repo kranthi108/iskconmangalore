@@ -312,7 +312,7 @@ export default function HomePage() {
               transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
               className="order-2 lg:order-1"
             >
-              <SectionHeading alignment="left" title="ISKCON Mangalore — a spiritual oasis" subtitle="Architected devotion where the Arabian Sea breezes mingle with Śrīla Prabhupāda’s fearless kīrtana." decorative />
+              <SectionHeading alignment="left" title="ISKCON Mangalore — Shri Krishna Balaram Mandir" subtitle="A sacred place of worship, spiritual learning, and selfless service dedicated to Sri Sri Krishna Balaram under the guidance of His Divine Grace A.C. Bhaktivedanta Swami Srila Prabhupada." decorative />
               <p className="mt-8 text-lg text-peacock-900/82">
               From japa enclosures to childrens’ Śrīmad Bhāgavatam picnics — this mandir lovingly guides coastal seekers into Kṛṣṇa’s protective embrace while honoring daṇḍavat brāhmaṇa culture rooted in Śrīdhāma Māyāpur.
               </p>
