@@ -4,10 +4,10 @@ import { Gift } from 'lucide-react'
 import { Helmet } from 'react-helmet-async'
 import DonateModal from '@/components/donations/DonateModal'
 import banner from '@/assets/banners/janmastamiannadanaseva.png'
+import quoteBg from '@/assets/prasadamdistibution.JPG'
 import type { DonateModalFormValues } from '@/components/donations/DonateModal'
 import BlessingsSuccessScreen from '@/components/donations/BlessingsSuccessScreen'
 import type { DonorInfo } from '@/components/donations/BlessingsSuccessScreen'
-import HeroBanner from '@/components/layout/HeroBanner'
 import Button from '@/components/ui/Button'
 import Container from '@/components/ui/Container'
 import SectionHeading from '@/components/ui/SectionHeading'
@@ -192,22 +192,16 @@ export default function JanmastamiAnnadanaSevaPage() {
         />
       </Helmet>
 
-      {/* Background Banner Placeholder */}
-      <HeroBanner
-        title=""
-        subtitle=""
-        backgroundImage= { banner }
-        height="small"
-      >
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.6 }}
-          className="mt-8 flex flex-wrap gap-4"
-        >
-
-        </motion.div>
-      </HeroBanner>
+      {/* Background Banner - Custom for proper mobile fit */}
+      <section className="relative w-full bg-white">
+        <div className="relative w-full">
+          <img
+            src={banner}
+            alt="Janmastami Annadana Seva Banner"
+            className="w-full h-auto"
+          />
+        </div>
+      </section>
 
       {/* Special Offer Highlight */}
       <section className="bg-gradient-to-r from-maroon via-peacock-900 to-maroon py-16 text-white">
@@ -217,35 +211,44 @@ export default function JanmastamiAnnadanaSevaPage() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="rounded-3xl border-2 border-gold-400 bg-white/10 p-8 backdrop-blur-sm"
+            className="relative overflow-hidden rounded-3xl border-2 border-gold-400/35 p-8"
           >
-            <div className="mb-6 flex justify-center">
+            <img
+              src={quoteBg}
+              alt=""
+              className="absolute inset-0 h-full w-full object-cover object-top"
+              aria-hidden="true"
+            />
+            <div className="absolute inset-0 bg-gradient-to-br from-peacock-900/80 via-maroon/75 to-peacock-800/80" />
+            <div className="relative z-[1]">
+              <div className="mb-6 flex justify-center">
 
-            </div>
-            <h2 className="font-heading text-3xl font-bold text-gold-200 sm:text-4xl">
-              Special Annadana Seva Opportunity
-            </h2>
-            <p className="mt-4 text-lg text-white/90">
-              Selected donors from this Annadana Seva will receive a <span className="font-bold text-gold-200">FREE trip to Vrindavan</span> — 
-              the sacred land where Lord Krishna performed His pastimes
-            </p>
-            <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.6 }}
-                        className="mt-12"
-                      >
-                        <Button
-                          variant="secondary"
-                          size="xl"
-                          onClick={handleOpenDonateModal}
-                          className="bg-gradient-to-r from-gold-400 via-saffron to-gold-400 hover:from-gold-400/90 hover:to-gold-400/90 text-maroon font-bold"
+              </div>
+              <h2 className="font-heading text-3xl font-bold text-gold-200 sm:text-4xl">
+                Special Annadana Seva Opportunity
+              </h2>
+              <p className="mt-4 text-lg text-white/90">
+                Selected donors from this Annadana Seva will receive a <span className="font-bold text-gold-200">FREE trip to Vrindavan</span> — 
+                the sacred land where Lord Krishna performed His pastimes
+              </p>
+              <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ duration: 0.6 }}
+                          className="mt-12"
                         >
-                          <Gift className="mr-2 h-6 w-6" />
-                          Donate Now
-                        </Button>
-                      </motion.div>
+                          <Button
+                            variant="secondary"
+                            size="xl"
+                            onClick={handleOpenDonateModal}
+                            className="bg-gradient-to-r from-gold-400 via-saffron to-gold-400 hover:from-gold-400/90 hover:to-gold-400/90 text-maroon font-bold"
+                          >
+                            <Gift className="mr-2 h-6 w-6" />
+                            Donate Now
+                          </Button>
+                        </motion.div>
+            </div>
           </motion.div>
         </Container>
       </section>
