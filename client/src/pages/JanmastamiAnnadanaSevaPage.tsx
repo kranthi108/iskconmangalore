@@ -33,7 +33,7 @@ type RazorpayHandlerResponseSimple = {
 export default function JanmastamiAnnadanaSevaPage() {
   const razorpay = useRazorpay()
   const [modalOpen, setModalOpen] = useState(false)
-  const [donateAmount] = useState(1000)
+  const [donateAmount] = useState(1)
   const navigate = useNavigate()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [blessings, setBlessings] = useState<{

@@ -1,5 +1,5 @@
 import { jsPDF } from 'jspdf'
-import logoUrl from '@/assets/logo.webp'
+import logoUrl from '@/assets/logo.png'
 
 export interface ReceiptData {
   receiptNumber: string
