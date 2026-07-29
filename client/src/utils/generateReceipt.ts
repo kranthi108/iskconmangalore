@@ -192,9 +192,8 @@ export async function downloadReceipt(data: ReceiptData): Promise<void> {
   pdf.setFont('helvetica', 'normal')
   pdf.setFontSize(7.5)
   pdf.setTextColor(...gray)
-  pdf.text('Donations to this institution are exempted u/s 80G vide No. ITA/355/2010 DT.12.01.2011', centerX, y, { align: 'center' })
+  pdf.text('(Donations to this institution are exempted u/s 80G)', centerX, y, { align: 'center' })
   y += 3.5
-  pdf.text('Valid from 01-04-2009  |  PAN: AAATI2696G', centerX, y, { align: 'center' })
   y += 5
 
   pdf.setFont('helvetica', 'italic')
