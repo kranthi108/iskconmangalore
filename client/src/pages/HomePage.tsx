@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import type { LucideIcon } from 'lucide-react'
 import {
   Camera,
+  Car,
   ChevronDown,
   Clock as ClockIcon,
   FlameKindling,
@@ -12,6 +13,7 @@ import {
   Sparkles,
   Sunrise,
   Sunset,
+  User,
   UtensilsCrossed,
 } from 'lucide-react'
 import { Helmet } from 'react-helmet-async'
@@ -92,7 +94,7 @@ export default function HomePage() {
   return (
     <>
       <Helmet>
-        <title>ISKCON Mangalore - Sri Krishna Balaram Mandir</title>
+        <title>ISKCON Mangalore | Official Sri Krishna Balaram Mandir | Temple, Darshan & Donations</title>
         <meta
           name="description"
           content="Experience Śrīla Prabhupāda’s Mādhava oasis in Mangalore — saṅkīrtana, festivals, prasādam, and lovingly guided devotional life."
@@ -126,8 +128,8 @@ export default function HomePage() {
               
             </motion.p>
             <h1 className="font-heading text-4xl font-semibold leading-tight text-cream sm:text-5xl lg:text-6xl">
-              <br/>ISKCON <br/>
-              Govardhan Hills, Mangalore
+              ISKCON Mangalore<br/>
+              <span className="text-gold-200">Official Sri Krishna Balaram Mandir</span>
             </h1>
             <p className="mt-5 max-w-2xl text-lg text-white/85 sm:text-xl">Experience the Divine</p>
             <div className="mt-10 flex flex-wrap gap-3">
@@ -394,8 +396,118 @@ export default function HomePage() {
                 'text-white no-underline',
               )}
             >
-              Offer Today’s Bhoga
+              Offer Today's Bhoga
             </Link>
+          </div>
+        </Container>
+      </section>
+
+      {/* Visitor Information & FAQ Section */}
+      <section className="bg-cream py-20">
+        <Container size="lg">
+          <SectionHeading
+            title="Visitor Information"
+            subtitle="Plan your visit to ISKCON Mangalore"
+            alignment="center"
+            decorative
+          />
+          <div className="mt-12 grid gap-8 md:grid-cols-3">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="rounded-2xl bg-white p-6 shadow-lg"
+            >
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-maroon/10">
+                <ClockIcon className="h-6 w-6 text-maroon" />
+              </div>
+              <h3 className="font-heading text-xl font-bold text-peacock-900">Darshan Timings</h3>
+              <p className="mt-3 text-sm text-peacock-900/75">
+                Morning: 4:30 AM - 1:00 PM<br/>
+                Evening: 4:30 PM - 9:00 PM<br/>
+                <span className="font-semibold">Open daily</span>
+              </p>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="rounded-2xl bg-white p-6 shadow-lg"
+            >
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-maroon/10">
+                <Car className="h-6 w-6 text-maroon" />
+              </div>
+              <h3 className="font-heading text-xl font-bold text-peacock-900">Parking</h3>
+              <p className="mt-3 text-sm text-peacock-900/75">
+                Ample parking space available for devotees and visitors. Well-maintained and easily accessible parking area.
+              </p>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="rounded-2xl bg-white p-6 shadow-lg"
+            >
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-maroon/10">
+                <User className="h-6 w-6 text-maroon" />
+              </div>
+              <h3 className="font-heading text-xl font-bold text-peacock-900">Dress Code</h3>
+              <p className="mt-3 text-sm text-peacock-900/75">
+                Traditional or modest attire recommended. Devotees are encouraged to wear dhoti, kurta, or saree to maintain the sanctity of the temple.
+              </p>
+            </motion.div>
+          </div>
+
+          <div className="mt-16">
+            <SectionHeading
+              title="Frequently Asked Questions"
+              subtitle="Learn more about ISKCON Mangalore"
+              alignment="center"
+            />
+            <div className="mt-8 space-y-4">
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="rounded-xl bg-white p-6 shadow-md"
+              >
+                <h3 className="font-heading text-lg font-semibold text-peacock-900">What are the darshan timings at ISKCON Mangalore?</h3>
+                <p className="mt-2 text-sm text-peacock-900/75">ISKCON Mangalore temple is open from 4:30 AM to 9:00 PM daily. Morning darshan starts at 4:30 AM and evening darshan continues until 9:00 PM. Special aratis are performed throughout the day.</p>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.1 }}
+                className="rounded-xl bg-white p-6 shadow-md"
+              >
+                <h3 className="font-heading text-lg font-semibold text-peacock-900">Where is ISKCON Mangalore located?</h3>
+                <p className="mt-2 text-sm text-peacock-900/75">ISKCON Mangalore is located at PVS Kalakunj, Mangalore, Karnataka. The temple is situated in a serene environment perfect for spiritual activities.</p>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2 }}
+                className="rounded-xl bg-white p-6 shadow-md"
+              >
+                <h3 className="font-heading text-lg font-semibold text-peacock-900">How can I donate to ISKCON Mangalore?</h3>
+                <p className="mt-2 text-sm text-peacock-900/75">You can donate to ISKCON Mangalore through our official website iskconmangalore.org/donate. We accept donations for various sevas including Annadana Seva, Goshala, Temple Construction, and Festival celebrations.</p>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.3 }}
+                className="rounded-xl bg-white p-6 shadow-md"
+              >
+                <h3 className="font-heading text-lg font-semibold text-peacock-900">What festivals are celebrated at ISKCON Mangalore?</h3>
+                <p className="mt-2 text-sm text-peacock-900/75">ISKCON Mangalore celebrates all major Vaishnava festivals including Janmashtami, Rath Yatra, Narasimha Chaturdashi, Gaura Purnima, Ekadashi, and many more. Each festival is celebrated with great devotion and grandeur.</p>
+              </motion.div>
+            </div>
           </div>
         </Container>
       </section>
