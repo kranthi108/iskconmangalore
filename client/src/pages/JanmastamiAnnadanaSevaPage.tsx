@@ -211,16 +211,16 @@ export default function JanmastamiAnnadanaSevaPage() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="relative overflow-hidden rounded-3xl border-2 border-gold-400/35 p-8"
+            className="relative overflow-hidden rounded-3xl border-2 border-gold-400/35"
           >
             <img
               src={quoteBg}
               alt=""
-              className="absolute inset-0 h-full w-full object-cover object-top"
+              className="absolute inset-0 h-full w-full object-cover"
               aria-hidden="true"
             />
             <div className="absolute inset-0 bg-gradient-to-br from-peacock-900/80 via-maroon/75 to-peacock-800/80" />
-            <div className="relative z-[1]">
+            <div className="relative z-[1] p-8">
               <div className="mb-6 flex justify-center">
 
               </div>
@@ -228,7 +228,7 @@ export default function JanmastamiAnnadanaSevaPage() {
                 Special Annadana Seva Opportunity
               </h2>
               <p className="mt-4 text-lg text-white/90">
-                Selected donors from this Annadana Seva will receive a <span className="font-bold text-gold-200">FREE trip to Vrindavan</span> — 
+                Selected donors from this Annadana Seva will receive a <span className="font-bold text-gold-200">FREE trip to Vrindavan</span> —
                 the sacred land where Lord Krishna performed His pastimes
               </p>
               <motion.div

@@ -5,6 +5,7 @@
  */
 import mohiniekadasiImg from '@/assets/ekadasi/mohiniekadasi.png'
 import paramaekadasiImg from '@/assets/ekadasi/paramaekadasi.png'
+import shayaniekadasiImg from '@/assets/ekadasi/shayaniekadashi.png'
 import ekadasiImg from '@/assets/ekadasi/ekadasi.png'
 import yoginiekadasiImg from '@/assets/ekadasi/YoginiEkadasi.png'
 import pandava from '@/assets/ekadasi/pandavaekadasi.png'
@@ -573,7 +574,7 @@ export const EKADASI_LIST: Ekadasi[] = [
   },
   {
     slug: 'devshayani',
-    name: 'Devshayani (Sayana) Ekadasi',
+    name: '',
     date: '2026-07-25',
     paksha: 'Shukla',
     description: 'On this day, Lord Vishnu goes to sleep for four months (Chaturmas). It marks the beginning of the holy Chaturmas period.',
@@ -683,7 +684,7 @@ export const EKADASI_LIST: Ekadasi[] = [
                  from sinful reactions, have their righteous desires fulfilled, receive the Lord's mercy, and
                  ultimately attain His eternal abode in Vaikuntha.
              </p>`,
-    banner: ekadasiImg,
+    banner: shayaniekadasiImg,
   },
   {
     slug: 'kamika',

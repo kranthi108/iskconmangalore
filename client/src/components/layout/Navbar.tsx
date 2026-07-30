@@ -129,9 +129,12 @@ function DesktopDropdown({ label, children }: { label: string; children: readonl
 
 export default function Navbar() {
   const navigate = useNavigate()
+  const location = useLocation()
   const { isMobileMenuOpen, toggleMobileMenu } = useUiStore()
   const [isScrolled, setIsScrolled] = useState(false)
   const [mobileExpanded, setMobileExpanded] = useState<string | null>(null)
+
+  const isJanmastamiPage = location.pathname.includes('janmastami-annadana-seva')
 
   useEffect(() => {
     const listener = () => setIsScrolled(window.scrollY > 12)
@@ -216,13 +219,15 @@ export default function Navbar() {
             })}
           </nav>
 
-          <div className="hidden items-center gap-3 lg:flex">
-            <Link to="/donate">
-              <Button variant="secondary" size="md" className="shadow-lg" leftIcon={<Heart className="h-4 w-4 fill-current" aria-hidden />}>
-                Donate
-              </Button>
-            </Link>
-          </div>
+          {!isJanmastamiPage && (
+            <div className="hidden items-center gap-3 lg:flex">
+              <Link to="/donate">
+                <Button variant="secondary" size="md" className="shadow-lg" leftIcon={<Heart className="h-4 w-4 fill-current" aria-hidden />}>
+                  Donate
+                </Button>
+              </Link>
+            </div>
+          )}
 
           <button
             type="button"
@@ -369,21 +374,23 @@ export default function Navbar() {
               })}
             </nav>
 
-            <div className="mt-8 border-t border-dashed border-peacock-900/15 pt-6">
-              <Button
-                variant="secondary"
-                size="lg"
-                type="button"
-                className="w-full shadow-lg"
-                leftIcon={<Heart className="h-4 w-4 fill-current" aria-hidden />}
-                onClick={() => {
-                  toggleMobileMenu(false)
-                  navigate('/donate')
-                }}
-              >
-                Proceed to seva
-              </Button>
-            </div>
+            {!isJanmastamiPage && (
+              <div className="mt-8 border-t border-dashed border-peacock-900/15 pt-6">
+                <Button
+                  variant="secondary"
+                  size="lg"
+                  type="button"
+                  className="w-full shadow-lg"
+                  leftIcon={<Heart className="h-4 w-4 fill-current" aria-hidden />}
+                  onClick={() => {
+                    toggleMobileMenu(false)
+                    navigate('/donate')
+                  }}
+                >
+                  Proceed to seva
+                </Button>
+              </div>
+            )}
           </motion.aside>
         ) : null}
       </AnimatePresence>
