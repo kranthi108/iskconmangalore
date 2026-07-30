@@ -425,7 +425,7 @@ export default function HomePage() {
               <h3 className="font-heading text-xl font-bold text-peacock-900">Darshan Timings</h3>
               <p className="mt-3 text-sm text-peacock-900/75">
                 Morning: 4:30 AM - 1:00 PM<br/>
-                Evening: 4:30 PM - 9:00 PM<br/>
+                Evening: 4:30 PM - 8:30 PM<br/>
                 <span className="font-semibold">Open daily</span>
               </p>
             </motion.div>
@@ -475,7 +475,7 @@ export default function HomePage() {
                 className="rounded-xl bg-white p-6 shadow-md"
               >
                 <h3 className="font-heading text-lg font-semibold text-peacock-900">What are the darshan timings at ISKCON Mangalore?</h3>
-                <p className="mt-2 text-sm text-peacock-900/75">ISKCON Mangalore temple is open from 4:30 AM to 9:00 PM daily. Morning darshan starts at 4:30 AM and evening darshan continues until 9:00 PM. Special aratis are performed throughout the day.</p>
+                <p className="mt-2 text-sm text-peacock-900/75">ISKCON Mangalore temple is open from 4:30 AM to 8:30 PM daily with breaks in between. Morning darshan starts at 4:30 AM and evening darshan continues until 8:30 PM. Special aratis are performed throughout the day.</p>
               </motion.div>
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
