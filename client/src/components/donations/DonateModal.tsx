@@ -176,7 +176,7 @@ export default function DonateModal({
                 </div>
 
                 <div>
-                  <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-peacock-600">Address (Optiona) </p>
+                  <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-peacock-600">Address (Optional) </p>
                   <div className="grid grid-cols-2 gap-4">
                     <Input
                       label="House / Flat No."
