@@ -7,6 +7,12 @@ import { createOrderSchema, verifyPaymentSchema } from '../lib/validation'
 import { createRazorpayOrder, verifyRazorpaySignature } from '../services/razorpay'
 import { generateReceiptNumber } from '../lib/receipt'
 
+function toIST(date: Date = new Date()): Date {
+  const istOffset = 5.5 * 60 * 60 * 1000 // IST is UTC+5:30
+  const utcTime = date.getTime() + date.getTimezoneOffset() * 60 * 1000
+  return new Date(utcTime + istOffset)
+}
+
 type Env = {
   Bindings: {
     DATABASE_URL: string
@@ -90,6 +96,8 @@ app.post('/order', async (c) => {
     receiptNumber,
     isAnonymous: isAnonymous ?? false,
     dedication: dedication || null,
+    createdAt: toIST(),
+    updatedAt: toIST(),
   })
 
   return successResponse(c, {
@@ -139,7 +147,7 @@ app.post('/verify', async (c) => {
       razorpayPaymentId: razorpay_payment_id,
       razorpaySignature: razorpay_signature,
       status: 'captured',
-      updatedAt: new Date(),
+      updatedAt: toIST(),
     })
     .where(eq(donations.razorpayOrderId, razorpay_order_id))
     .returning()

@@ -91,7 +91,7 @@ export default function JanmastamiAnnadanaSevaPage() {
               donorName,
               donorEmail,
               donorPhone: values.phone.trim(),
-              description: 'Janmastami Annadana Seva · ISKCON Mangalore',
+              description: 'Special SKJ Annadana Seva',
               imageUrl: 'https://guptvrindavandham.org/media/landingpage/General_Temple_Donation_Banner_Desktop.webp',
               themeColor: '#6D071A',
               onSuccess(response: RazorpayHandlerResponseSimple) {
@@ -111,16 +111,6 @@ export default function JanmastamiAnnadanaSevaPage() {
                       razorpay_payment_id: response.razorpay_payment_id,
                       razorpay_signature: response.razorpay_signature,
                     })
-
-                    // Track Meta Pixel Purchase event
-                    if (typeof window !== 'undefined' && (window as any).fbq) {
-                      (window as any).fbq('track', 'Purchase', {
-                        content_name: 'Janmastami Annadana Seva',
-                        content_category: 'Donation',
-                        value: 1000,
-                        currency: 'INR',
-                      })
-                    }
 
                     setModalOpen(false)
                     setBlessings({
@@ -168,23 +158,6 @@ export default function JanmastamiAnnadanaSevaPage() {
   return (
     <>
       <Helmet>
-        <> {/* Meta Pixel Base Code */}
-          <script>
-            {`
-              !function(f,b,e,v,n,t,s)
-              {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-              n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-              if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-              n.queue=[];t=b.createElement(e);t.async=!0;
-              t.src=v;s=b.getElementsByTagName(e)[0];
-              s.parentNode.insertBefore(t,s)}(window, document,'script',
-              'https://connect.facebook.net/en_US/fbevents.js');
-              fbq('init', '1753677682747615');
-              fbq('track', 'PageView');
-            `}
-          </script>
-          <noscript>{`<img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1753677682747615&ev=PageView&noscript=1" />`}</noscript>
-        </>
         <title>Janmastami Annadana Seva · ISKCON Mangalore</title>
         <meta
           name="description"
