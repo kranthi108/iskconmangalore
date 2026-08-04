@@ -13,7 +13,7 @@ type Env = {
 
 const app = new Hono<Env>()
 
-app.post('/razorpay', async (c) => {
+app.post('/webhook/razorpay', async (c) => {
   const db = createDb(c.env.DATABASE_URL)
   const webhookSecret = c.env.RAZORPAY_WEBHOOK_SECRET || ''
 
