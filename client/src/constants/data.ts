@@ -130,7 +130,7 @@ export const FEATURED_CAMPAIGNS: readonly FeaturedCampaignCard[] = [
     slug: 'janmastami-annadana-seva',
     title: 'Janmashtami Annadana Seva',
     subtitle: 'Special Annadana Seva for Sri Krishna Janmashtami — feed thousands of devotees.',
-    category: 'Janmashtami',
+    category: 'festival',
     description:
       'Support the grand Annadana Seva on Sri Krishna Janmashtami — provide sanctified prasadam to thousands of devotees celebrating the appearance of Lord Krishna.',
     suggestedAmounts: [501, 1108, 5001],
