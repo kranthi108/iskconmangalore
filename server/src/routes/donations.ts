@@ -6,6 +6,8 @@ import { successResponse, errorResponse } from '../lib/response'
 import { createOrderSchema, verifyPaymentSchema } from '../lib/validation'
 import { createRazorpayOrder, verifyRazorpaySignature } from '../services/razorpay'
 import { generateReceiptNumber } from '../lib/receipt'
+import { generateReceiptPDF, amountInWords } from '../services/generateReceipt'
+import { sendWhatsAppReceipt } from '../services/aisensy'
 
 function toIST(date: Date = new Date()): Date {
   const istOffset = 5.5 * 60 * 60 * 1000 // IST is UTC+5:30
@@ -18,6 +20,10 @@ type Env = {
     DATABASE_URL: string
     RAZORPAY_KEY_ID: string
     RAZORPAY_KEY_SECRET: string
+    ASENSY_API_KEY: string
+    ASENSY_CAMPAIGN_NAME: string
+    RECEIPTS_BUCKET: R2Bucket
+    R2_PUBLIC_URL: string
   }
 }
 
@@ -67,7 +73,11 @@ app.post('/order', async (c) => {
   }
 
   const receiptNumber = await generateReceiptNumber(db)
-  const sevaName = campaign.title
+  let sevaName = campaign.title
+  // Override sevaName for Janmashtami Annadana Seva
+  if (campaign.slug === 'janmashtami-annadana-seva' || campaign.category === 'Janmashtami') {
+    sevaName = 'Special SKJ Annadana Seva'
+  }
   const amountPaise = Math.round(amount * 100)
 
   const order = await createRazorpayOrder(
@@ -151,6 +161,55 @@ app.post('/verify', async (c) => {
     })
     .where(eq(donations.razorpayOrderId, razorpay_order_id))
     .returning()
+
+  // Generate and send WhatsApp receipt after successful payment
+  try {
+    const donorAddress = updated.donorAddress
+      ? `${updated.donorAddress.house || ''} ${updated.donorAddress.street || ''} ${updated.donorAddress.city || ''} ${updated.donorAddress.state || ''} ${updated.donorAddress.pincode || ''}`.trim()
+      : ''
+
+    const receiptData = {
+      receiptNumber: updated.receiptNumber || '',
+      date: updated.createdAt.toISOString().split('T')[0],
+      donorName: updated.donorName,
+      donorAddress,
+      donorPhone: updated.donorPhone,
+      donorEmail: updated.donorEmail || '',
+      donorPan: updated.donorPan || '',
+      amount: updated.amount,
+      amountInWords: amountInWords(updated.amount),
+      paymentType: 'Online Payment',
+      sevaType: updated.sevaName,
+    }
+
+    const pdfBuffer = await generateReceiptPDF(receiptData)
+
+    const fileName = `ISKCON-Receipt-${updated.receiptNumber}.pdf`
+
+    const objectKey = `receipts/${crypto.randomUUID()}.pdf`
+
+    await c.env.RECEIPTS_BUCKET.put(objectKey, pdfBuffer, {
+      httpMetadata: {
+        contentType: "application/pdf",
+      },
+    })
+
+    const pdfUrl = `${c.env.R2_PUBLIC_URL}/${objectKey}`
+
+    await sendWhatsAppReceipt(
+      {
+        phoneNumber: updated.donorPhone,
+        campaignName: c.env.ASENSY_CAMPAIGN_NAME,
+        pdfUrl,
+        fileName,
+        recipientName: updated.donorName,
+      },
+      c.env.ASENSY_API_KEY,
+    )
+  } catch (error) {
+    console.error('Failed to send WhatsApp receipt:', error)
+    // Continue with response even if WhatsApp fails
+  }
 
   return successResponse(c, toDonationDTO(updated))
 })

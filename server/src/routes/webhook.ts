@@ -3,11 +3,15 @@ import { eq } from 'drizzle-orm'
 import { donations } from '../db/schema'
 import { createDb } from '../db/client'
 import { verifyWebhookSignature } from '../services/razorpay'
+import { generateReceiptPDF, amountInWords } from '../services/generateReceipt'
+import { sendWhatsAppReceipt } from '../services/aisensy'
 
 type Env = {
   Bindings: {
     DATABASE_URL: string
     RAZORPAY_WEBHOOK_SECRET: string
+    ASENSY_API_KEY: string
+    ASENSY_CAMPAIGN_ID: string
   }
 }
 
@@ -45,7 +49,7 @@ app.post('/webhook/razorpay', async (c) => {
       case 'payment.captured': {
         const p = event.payload.payment.entity
         if (p.order_id) {
-          await db
+          const [updated] = await db
             .update(donations)
             .set({
               razorpayPaymentId: p.id,
@@ -54,6 +58,47 @@ app.post('/webhook/razorpay', async (c) => {
               updatedAt: new Date(),
             })
             .where(eq(donations.razorpayOrderId, p.order_id))
+            .returning()
+
+          // Generate and send WhatsApp receipt after successful payment
+          try {
+            const donorAddress = updated.donorAddress
+              ? `${updated.donorAddress.house || ''} ${updated.donorAddress.street || ''} ${updated.donorAddress.city || ''} ${updated.donorAddress.state || ''} ${updated.donorAddress.pincode || ''}`.trim()
+              : ''
+
+            const receiptData = {
+              receiptNumber: updated.receiptNumber || '',
+              date: updated.createdAt.toISOString().split('T')[0],
+              donorName: updated.donorName,
+              donorAddress,
+              donorPhone: updated.donorPhone,
+              donorEmail: updated.donorEmail || '',
+              donorPan: updated.donorPan || '',
+              amount: updated.amount,
+              amountInWords: amountInWords(updated.amount),
+              paymentType: 'Online Payment',
+              sevaType: updated.sevaName,
+            }
+
+            const pdfBuffer = await generateReceiptPDF(receiptData)
+            const fileName = `ISKCON-Receipt-${updated.receiptNumber}.pdf`
+
+            await sendWhatsAppReceipt(
+              {
+                phoneNumber: updated.donorPhone,
+                campaignId: c.env.ASENSY_CAMPAIGN_ID,
+                pdfBuffer,
+                fileName,
+                recipientName: updated.donorName,
+                receiptNumber: updated.receiptNumber || '',
+                amount: updated.amount,
+              },
+              c.env.ASENSY_API_KEY,
+            )
+          } catch (error) {
+            console.error('Failed to send WhatsApp receipt:', error)
+            // Continue with webhook response even if WhatsApp fails
+          }
         }
         break
       }
