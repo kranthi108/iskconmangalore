@@ -7,16 +7,13 @@ interface AisensyMessageParams {
 }
 
 export async function sendWhatsAppReceipt(params: AisensyMessageParams, apiKey: string): Promise<void> {
-  const { phoneNumber, campaignId, pdfBuffer, fileName, recipientName, receiptNumber, amount } = params
+  const { phoneNumber, campaignName, pdfUrl, fileName, recipientName } = params
 
   // Format phone number to ensure it has country code
   let formattedPhone = phoneNumber.replace(/\D/g, '')
   if (!formattedPhone.startsWith('91')) {
     formattedPhone = '91' + formattedPhone
   }
-
-  // Convert PDF buffer to base64 using Web API
-  const base64Pdf = btoa(String.fromCharCode(...new Uint8Array(pdfBuffer)))
 
   const messageData = {
     apiKey,
