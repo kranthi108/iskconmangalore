@@ -32,7 +32,7 @@ export async function generateReceiptPDF(data: ReceiptData): Promise<Uint8Array>
   let y = 14
   // --- Logo ---
   const logoWidth = 28
-  const logoHeight = 28
+  const logoHeight = 14
 
   pdf.addImage(
     LOGO_BASE64,
