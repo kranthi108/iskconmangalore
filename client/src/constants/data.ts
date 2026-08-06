@@ -45,6 +45,7 @@ export const NAV_LINKS: readonly NavItem[] = [
     label: 'Festivals',
     children: [
       { label: 'Festivals', href: '/festivals' },
+      { label: 'Ratha Yatra', href: '/ratha-yatra' },
       { label: 'Ekadasi', href: '/resources/ekadasi' },
     ],
   },
