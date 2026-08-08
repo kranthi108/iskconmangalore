@@ -7,6 +7,7 @@ import { z } from 'zod'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import { formatCurrency } from '@/utils/formatCurrency'
+import { trackAddPaymentInfo } from '@/utils/metaPixel'
 import { cn } from '@/utils/cn'
 
 const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]$/
@@ -76,6 +77,12 @@ export default function DonateModal({
     },
   })
 
+  const handleFormSubmit = (values: DonateModalFormValues) => {
+    // Track AddPaymentInfo event when user fills payment information
+    trackAddPaymentInfo(amount, sevaName)
+    onSubmit(values)
+  }
+
   useEffect(() => {
     if (open) {
       document.body.style.overflow = 'hidden'
@@ -138,7 +145,7 @@ export default function DonateModal({
               </p>
             </div>
 
-            <form onSubmit={handleSubmit(onSubmit)} className="px-6 pb-6 pt-5">
+            <form onSubmit={handleSubmit(handleFormSubmit)} className="px-6 pb-6 pt-5">
               <h2 className="font-heading text-xl font-bold text-peacock-950">Donor Information</h2>
               <div className="mb-5 mt-1 h-px bg-gradient-to-r from-saffron via-gold-400 to-transparent" />
               <p className="mb-5 text-sm text-peacock-700">

@@ -413,7 +413,14 @@ JSON format:
 
     // Process each donation
     for (const donation of filteredDonations) {
-      const filename = `ISKCON-Receipt-${donation.receipt_number}.pdf`;
+      // Sanitize donor name for filename (remove special characters)
+      const sanitizedDonorName = donation.donor_name.replace(/[^a-zA-Z0-9\s]/g, '').trim().replace(/\s+/g, '_');
+      
+      // Format date for filename (DD-MM-YYYY)
+      const dateObj = new Date(donation.created_at);
+      const dateStr = dateObj.toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, '-');
+      
+      const filename = `${sanitizedDonorName}-${donation.amount}-${dateStr}.pdf`;
       const outputPath = path.join(outputFolder, filename);
 
       // Skip if file exists and --skip-existing flag is set

@@ -24,6 +24,7 @@ import { createOrder, verifyPayment } from '@/services/donationService'
 import { ApiHttpError } from '@/services/api'
 import type { DonationCampaign } from '@/types'
 import { useDonationStore } from '@/store/donationStore'
+import { trackPurchase, trackPaymentFailed, trackInitiateCheckout, trackViewContent, trackLandingPageView } from '@/utils/metaPixel'
 import bgimg  from '@/assets/krishna_balaram.JPG'
 import { cn } from '@/utils/cn'
 
@@ -180,6 +181,20 @@ export default function DonatePage() {
     [campaign?.title, slug, featured?.title],
   )
 
+  // Track ViewContent when viewing a specific campaign
+  useEffect(() => {
+    if (slug && campaignTitle) {
+      trackViewContent(campaignTitle, campaign?.category)
+    }
+  }, [slug, campaignTitle, campaign?.category])
+
+  // Track LandingPageView when viewing the donation listing page
+  useEffect(() => {
+    if (!slug) {
+      trackLandingPageView('Donation Campaigns Listing')
+    }
+  }, [slug])
+
   const handleOpenDonateModal = useCallback((amount: number) => {
     setDonateAmount(amount)
     setModalOpen(true)
@@ -225,6 +240,9 @@ export default function DonatePage() {
 
         const donorEmail = (values.email ?? '').trim()
 
+        // Track InitiateCheckout event
+        trackInitiateCheckout(amount, campaignMeta.title, campaign?.category)
+
         const order = await createOrder({
           campaignId,
           amount,
@@ -262,6 +280,9 @@ export default function DonatePage() {
                       razorpay_signature: response.razorpay_signature,
                     })
 
+                    // Track Purchase event on successful payment
+                    trackPurchase(amount, campaignMeta.title, donation.receiptNumber, campaign?.category)
+
                     setModalOpen(false)
                     setBlessings({
                       receiptNumber: donation.receiptNumber,
@@ -277,15 +298,21 @@ export default function DonatePage() {
                     resolvePromise()
                   } catch (error: unknown) {
                     console.error('[DonateModal] verify failed', error)
+                    // Track payment failure
+                    trackPaymentFailed(amount, campaignMeta.title, error instanceof Error ? error.message : 'Unknown error')
                     rejectPromise(error instanceof Error ? error : new Error('verify failed'))
                   }
                 })()
               },
               onFailure(reason: unknown) {
+                // Track payment failure
+                trackPaymentFailed(amount, campaignMeta.title, reason instanceof Error ? reason.message : 'Payment dismissed')
                 rejectPromise(reason instanceof Error ? reason : new Error('payment dismissed'))
               },
             })
             .catch((error: unknown) => {
+              // Track payment failure
+              trackPaymentFailed(amount, campaignMeta.title, error instanceof Error ? error.message : 'Checkout bootstrap failed')
               rejectPromise(error instanceof Error ? error : new Error('checkout bootstrap failed'))
             })
         })
@@ -297,12 +324,14 @@ export default function DonatePage() {
               ? error.message
               : 'Something went wrong. Please try again.'
         console.error('[DonateModal] error', message, error)
+        // Track payment failure
+        trackPaymentFailed(donateAmount, campaignMeta?.title || 'Unknown', message)
         alert(message)
       } finally {
         setIsSubmitting(false)
       }
     },
-    [campaignId, campaignMeta, donateAmount, razorpay],
+    [campaignId, campaignMeta, donateAmount, razorpay, campaign?.category],
   )
 
   if (!slug) {

@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Gift } from 'lucide-react'
 import { Helmet } from 'react-helmet-async'
@@ -17,8 +17,7 @@ import { ApiHttpError } from '@/services/api'
 import { HeartHandshake } from "lucide-react"
 import { Building2 } from "lucide-react"
 import { useNavigate } from 'react-router-dom'
-
-// import { useEffect } from 'react'
+import { trackLandingPageView, trackInitiateCheckout, trackPurchase, trackPaymentFailed } from '@/utils/metaPixel'
 
 // TODO: Replace with actual campaign ID from database when campaign is created
 // This is a placeholder ID for the meta ad campaign
@@ -42,18 +41,16 @@ export default function JanmastamiAnnadanaSevaPage() {
     donorInfo: DonorInfo
   } | null>(null)
 
+  // Track landing page view on mount
+  useEffect(() => {
+    trackLandingPageView('Janmastami Annadana Seva')
+  }, [])
+
   const handleOpenDonateModal = useCallback(() => {
     setModalOpen(true)
-    // Track Meta Pixel InitiateCheckout event
-    if (typeof window !== 'undefined' && (window as any).fbq) {
-      (window as any).fbq('track', 'InitiateCheckout', {
-        content_name: 'Janmastami Annadana Seva',
-        content_category: 'Donation',
-        value: 1000,
-        currency: 'INR',
-      })
-    }
-  }, [])
+    // Track InitiateCheckout event
+    trackInitiateCheckout(donateAmount, 'Janmastami Annadana Seva', 'annadana')
+  }, [donateAmount])
 
 
   const handleModalSubmit = useCallback(
@@ -112,6 +109,9 @@ export default function JanmastamiAnnadanaSevaPage() {
                       razorpay_signature: response.razorpay_signature,
                     })
 
+                    // Track Purchase event on successful payment
+                    trackPurchase(amount, 'Janmastami Annadana Seva', donation.receiptNumber, 'annadana')
+
                     setModalOpen(false)
                     setBlessings({
                       receiptNumber: donation.receiptNumber,
@@ -127,15 +127,21 @@ export default function JanmastamiAnnadanaSevaPage() {
                     resolvePromise()
                   } catch (error: unknown) {
                     console.error('[DonateModal] verify failed', error)
+                    // Track payment failure
+                    trackPaymentFailed(amount, 'Janmastami Annadana Seva', error instanceof Error ? error.message : 'Unknown error')
                     rejectPromise(error instanceof Error ? error : new Error('verify failed'))
                   }
                 })()
               },
               onFailure(reason: unknown) {
+                // Track payment failure
+                trackPaymentFailed(amount, 'Janmastami Annadana Seva', reason instanceof Error ? reason.message : 'Payment dismissed')
                 rejectPromise(reason instanceof Error ? reason : new Error('payment dismissed'))
               },
             })
             .catch((error: unknown) => {
+              // Track payment failure
+              trackPaymentFailed(amount, 'Janmastami Annadana Seva', error instanceof Error ? error.message : 'Checkout bootstrap failed')
               rejectPromise(error instanceof Error ? error : new Error('checkout bootstrap failed'))
             })
         })
@@ -147,6 +153,8 @@ export default function JanmastamiAnnadanaSevaPage() {
               ? error.message
               : 'Something went wrong. Please try again.'
         console.error('[DonateModal] error', message, error)
+        // Track payment failure
+        trackPaymentFailed(donateAmount, 'Janmastami Annadana Seva', message)
         alert(message)
       } finally {
         setIsSubmitting(false)
