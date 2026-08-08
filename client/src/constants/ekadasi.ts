@@ -9,6 +9,7 @@ import shayaniekadasiImg from '@/assets/ekadasi/shayaniekadashi.png'
 import ekadasiImg from '@/assets/ekadasi/ekadasi.png'
 import yoginiekadasiImg from '@/assets/ekadasi/YoginiEkadasi.png'
 import pandava from '@/assets/ekadasi/pandavaekadasi.png'
+import kamika from '@/assets/ekadasi/kamikaekadasi.png'
 
 export interface Ekadasi {
   slug: string
@@ -772,7 +773,7 @@ export const EKADASI_LIST: Ekadasi[] = [
               <p>
                   Those who faithfully hear, read, or observe Kamika Ekadasi become free from sinful reactions, receive Lord Vishnu's mercy, and ultimately attain His eternal abode in Vaikuntha.
               </p>`,
-    banner: ekadasiImg,
+    banner: kamika,
   },
   {
     slug: 'shravana-putrada',
