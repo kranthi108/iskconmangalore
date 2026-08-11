@@ -42,7 +42,7 @@ export default function EkadasiDetailPage() {
       </Helmet>
 
       <HeroBanner
-//         title={}
+        title={ekadasi.name}
         subtitle={`${ekadasi.paksha} Paksha · ${formatDate(ekadasi.date)}`}
         backgroundImage={ekadasi.banner}
         height="medium"
