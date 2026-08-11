@@ -575,7 +575,7 @@ export const EKADASI_LIST: Ekadasi[] = [
   },
   {
     slug: 'devshayani',
-    name: '',
+    name: 'Shayani',
     date: '2026-07-25',
     paksha: 'Shukla',
     description: 'On this day, Lord Vishnu goes to sleep for four months (Chaturmas). It marks the beginning of the holy Chaturmas period.',
