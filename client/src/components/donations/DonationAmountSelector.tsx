@@ -14,6 +14,7 @@ export interface DonationAmountSelectorProps {
   onCustomAmountChange: (value: string) => void
   onDonate?: (amount: number) => void
   className?: string
+  minAmount?: number
 }
 
 export default function DonationAmountSelector({
@@ -24,11 +25,12 @@ export default function DonationAmountSelector({
   onCustomAmountChange,
   onDonate,
   className,
+  minAmount = 1,
 }: DonationAmountSelectorProps) {
   const parsedCustom = Number.parseFloat(customAmount.replace(/,/g, ''))
   const resolvedAmount =
-    selectedAmount ?? (Number.isFinite(parsedCustom) && parsedCustom >= 1 ? Math.round(parsedCustom) : null)
-  const canDonate = resolvedAmount !== null && resolvedAmount >= 1
+    selectedAmount ?? (Number.isFinite(parsedCustom) && parsedCustom >= minAmount ? Math.round(parsedCustom) : null)
+  const canDonate = resolvedAmount !== null && resolvedAmount >= minAmount
 
   return (
     <Card className={cn('border border-gold-400/30 bg-gradient-to-br from-cream via-white to-peacock-50 shadow-xl', className)}>

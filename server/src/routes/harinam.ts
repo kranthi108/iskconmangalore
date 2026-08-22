@@ -50,7 +50,7 @@ app.get('/stats', async (c) => {
 app.get('/leaderboard', async (c) => {
   const db = createDb(c.env.DATABASE_URL)
   const page = Number(c.req.query('page') ?? '1')
-  const limit = Math.min(Number(c.req.query('limit') ?? '15'), 1000)
+  const limit = Math.min(Number(c.req.query('limit') ?? '15'), 1500)
   const offset = (page - 1) * limit
   const today = new Date().toISOString().slice(0, 10)
 

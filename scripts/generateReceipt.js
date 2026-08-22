@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Load logo from client assets
-const logoPath = path.join(__dirname, '../client/public/logo.png');
+const logoPath = path.join(__dirname, '../client/src/assets/logo.png');
 let logoBase64 = '';
 
 try {

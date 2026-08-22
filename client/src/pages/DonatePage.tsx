@@ -397,6 +397,8 @@ export default function DonatePage() {
   const countdownTarget = 'festivalDate' in story ? story.festivalDate : undefined
   const slokaStory = story.sloka ?? DEFAULT_SLOKA
 
+  const minAmount = Math.min(...story.suggestedAmounts)
+
   return (
     <>
       <Helmet>
@@ -456,6 +458,7 @@ export default function DonatePage() {
             customAmount={customAmount}
             onCustomAmountChange={setCustomAmount}
             onDonate={handleOpenDonateModal}
+            minAmount={minAmount}
           />
         </Container>
       </section>
