@@ -305,12 +305,14 @@ export default function DonatePage() {
                 })()
               },
               onFailure(reason: unknown) {
+                setIsSubmitting(false)
                 // Track payment failure
                 trackPaymentFailed(amount, campaignMeta.title, reason instanceof Error ? reason.message : 'Payment dismissed')
                 rejectPromise(reason instanceof Error ? reason : new Error('payment dismissed'))
               },
             })
             .catch((error: unknown) => {
+              setIsSubmitting(false)
               // Track payment failure
               trackPaymentFailed(amount, campaignMeta.title, error instanceof Error ? error.message : 'Checkout bootstrap failed')
               rejectPromise(error instanceof Error ? error : new Error('checkout bootstrap failed'))

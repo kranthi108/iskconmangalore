@@ -69,7 +69,7 @@ export default function DonationAmountSelector({
         <Input
           label="Custom amount"
           inputMode="decimal"
-          placeholder="Enter any amount in ₹"
+          placeholder={`Enter any amount more than ${formatCurrency(minAmount)}`}
           value={customAmount}
           onChange={(e) => {
             const next = e.target.value.replace(/[^0-9.]/g, '')
