@@ -32,7 +32,8 @@ type RazorpayHandlerResponseSimple = {
 export default function JanmastamiAnnadanaSevaPage() {
   const razorpay = useRazorpay()
   const [modalOpen, setModalOpen] = useState(false)
-  const [donateAmount] = useState(1000)
+  const [quantity, setQuantity] = useState(1)
+  const donateAmount = 1000 * quantity
   const navigate = useNavigate()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [blessings, setBlessings] = useState<{
@@ -46,11 +47,19 @@ export default function JanmastamiAnnadanaSevaPage() {
     trackLandingPageView('Janmastami Annadana Seva')
   }, [])
 
+  const handleDecreaseQuantity = () => {
+    setQuantity(prev => Math.max(1, prev - 1))
+  }
+
+  const handleIncreaseQuantity = () => {
+    setQuantity(prev => prev + 1)
+  }
+
   const handleOpenDonateModal = useCallback(() => {
     setModalOpen(true)
     // Track InitiateCheckout event
     trackInitiateCheckout(donateAmount, 'Janmastami Annadana Seva', 'annadana')
-  }, [donateAmount])
+  }, [donateAmount, quantity])
 
 
   const handleModalSubmit = useCallback(
@@ -160,7 +169,7 @@ export default function JanmastamiAnnadanaSevaPage() {
         setIsSubmitting(false)
       }
     },
-    [donateAmount, razorpay],
+    [donateAmount, razorpay, quantity],
   )
 
   return (
@@ -169,8 +178,67 @@ export default function JanmastamiAnnadanaSevaPage() {
         <title>Janmastami Annadana Seva · ISKCON Mangalore</title>
         <meta
           name="description"
-          content="Support the sacred Annadana Seva this Janmastami with ₹1000 donation. Selected devotees get a chance to visit Vrindavan for free. Donate now and receive blessings."
+          content="Support the sacred Annadana Seva this Janmastami. Selected devotees get a chance to visit Vrindavan for free. Donate now and receive blessings."
         />
+        <style>{`
+          .seva-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+          }
+          .qty-btn {
+            flex: 0 0 auto;
+            height: 3rem;
+            width: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.5rem;
+            background: #FFF8E7;
+            color: #6D071A;
+            font-size: 1.5rem;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+            border: 2px solid #6D071A;
+            cursor: pointer;
+          }
+          .qty-btn:hover:not(:disabled) {
+            background: #FFE4B5;
+            transform: translateY(-1px);
+          }
+          .qty-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+          }
+          .seva-display-btn {
+            flex: 1;
+            max-width: 300px;
+            height: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            border-radius: 0.5rem;
+            background: #FFF8E7;
+            padding: 0 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 2px solid #6D071A;
+            cursor: not-allowed;
+            opacity: 0.85;
+          }
+          .seva-display-amount {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #6D071A;
+          }
+          .seva-display-quantity {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #6D071A;
+          }
+        `}</style>
       </Helmet>
 
       {/* Background Banner - Custom for proper mobile fit */}
@@ -219,6 +287,29 @@ export default function JanmastamiAnnadanaSevaPage() {
                           transition={{ duration: 0.6 }}
                           className="mt-12"
                         >
+                          {/* Quantity Selector */}
+                          <div className="seva-row mb-6">
+                            <button
+                              onClick={handleDecreaseQuantity}
+                              disabled={quantity === 1}
+                              className="qty-btn"
+                            >
+                              −
+                            </button>
+                            <button
+                              disabled
+                              className="seva-display-btn"
+                            >
+                              <span className="seva-display-amount">₹1,000</span>
+                              <span className="seva-display-quantity">× {quantity}</span>
+                            </button>
+                            <button
+                              onClick={handleIncreaseQuantity}
+                              className="qty-btn"
+                            >
+                              +
+                            </button>
+                          </div>
                           <Button
                             variant="secondary"
                             size="xl"
@@ -226,7 +317,7 @@ export default function JanmastamiAnnadanaSevaPage() {
                             className="bg-gradient-to-r from-gold-400 via-saffron to-gold-400 hover:from-gold-400/90 hover:to-gold-400/90 text-maroon font-bold"
                           >
                             <Gift className="mr-2 h-6 w-6" />
-                            Donate Now
+                            Donate ₹{donateAmount}
                           </Button>
                         </motion.div>
             </div>
@@ -345,7 +436,7 @@ export default function JanmastamiAnnadanaSevaPage() {
           <SectionHeading
             alignment="center"
             title="Make Your Offering"
-            subtitle="Your ₹1000 donation feeds devotees and opens the door to Vrindavan"
+            subtitle="Your donation feeds devotees and opens the door to Vrindavan"
             decorative
             className="text-cream [&_h2]:text-cream [&_p]:text-gold-100/85"
           />
@@ -356,6 +447,29 @@ export default function JanmastamiAnnadanaSevaPage() {
             transition={{ duration: 0.6 }}
             className="mt-12"
           >
+            {/* Quantity Selector */}
+            <div className="seva-row mb-6">
+              <button
+                onClick={handleDecreaseQuantity}
+                disabled={quantity === 1}
+                className="qty-btn"
+              >
+                −
+              </button>
+              <button
+                disabled
+                className="seva-display-btn"
+              >
+                <span className="seva-display-amount">₹1,000</span>
+                <span className="seva-display-quantity">× {quantity}</span>
+              </button>
+              <button
+                onClick={handleIncreaseQuantity}
+                className="qty-btn"
+              >
+                +
+              </button>
+            </div>
             <Button
               variant="secondary"
               size="xl"
@@ -363,7 +477,7 @@ export default function JanmastamiAnnadanaSevaPage() {
               className="bg-gradient-to-r from-gold-400 via-saffron to-gold-400 hover:from-gold-400/90 hover:to-gold-400/90 text-maroon font-bold"
             >
               <Gift className="mr-2 h-6 w-6" />
-              Donate ₹1000 for Annadana Seva
+              Donate Now
             </Button>
           </motion.div>
           <motion.div
