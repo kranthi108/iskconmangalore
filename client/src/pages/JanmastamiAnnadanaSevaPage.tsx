@@ -186,6 +186,12 @@ export default function JanmastamiAnnadanaSevaPage() {
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
+            flex-wrap: nowrap;
+          }
+          @media (max-width: 640px) {
+            .seva-row {
+              gap: 0.25rem;
+            }
           }
           .qty-btn {
             flex: 0 0 auto;
@@ -212,8 +218,16 @@ export default function JanmastamiAnnadanaSevaPage() {
             opacity: 0.5;
             cursor: not-allowed;
           }
+          @media (max-width: 640px) {
+            .qty-btn {
+              height: 2.75rem;
+              width: 2.75rem;
+              font-size: 1.25rem;
+            }
+          }
           .seva-display-btn {
             flex: 1;
+            min-width: 120px;
             max-width: 300px;
             height: 3rem;
             display: flex;
@@ -222,11 +236,25 @@ export default function JanmastamiAnnadanaSevaPage() {
             gap: 0.5rem;
             border-radius: 0.5rem;
             background: #FFF8E7;
-            padding: 0 2rem;
+            padding: 0 1rem;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             border: 2px solid #6D071A;
             cursor: not-allowed;
             opacity: 0.85;
+            white-space: nowrap;
+          }
+          @media (max-width: 640px) {
+            .seva-display-btn {
+              min-width: 100px;
+              padding: 0 0.75rem;
+              gap: 0.25rem;
+            }
+            .seva-display-amount {
+              font-size: 1rem;
+            }
+            .seva-display-quantity {
+              font-size: 1rem;
+            }
           }
           .seva-display-amount {
             font-size: 1.25rem;
